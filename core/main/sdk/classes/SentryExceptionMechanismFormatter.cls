@@ -1,11 +1,21 @@
 public virtual class SentryExceptionMechanismFormatter implements Comparable {
+  private string stacktraceStringKey;
+
+  public SentryExceptionMechanismFormatter(String stacktraceStringKey) {
+    this.stacktraceStringKey = stacktraceStringKey;
+  }
+
+  public SentryExceptionMechanismFormatter() {
+    this.stacktraceStringKey = SentryStacktraceFactory.STACKTRACE_AS_STRING_KEY;
+  }
+
   public virtual System.Type getExceptionType() {
     return Exception.class;
   }
 
   public virtual SentryValueClass.Mechanism getMechanism(Exception ex) {
     Map<String, Object> data = new Map<String, Object>{
-      'stacktraceString' => ex.getStackTraceString() // will be used by transport to generate the SentryValueClass.Stacktrace
+      stacktraceStringKey => ex.getStackTraceString() // will be used by transport to generate the SentryValueClass.Stacktrace
     };
 
     SentryValueClass.Mechanism mechanism = new SentryValueClass.Mechanism();

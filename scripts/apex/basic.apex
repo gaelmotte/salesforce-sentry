@@ -12,5 +12,9 @@ public class SomeClass {
 try {
   (new SomeClass()).throwsMathException();
 } catch (Exception e) {
+  System.debug(e.getStacktraceString());
+  System.debug(
+    JSON.serialize(SentryStacktraceParser.parse(e.getStacktraceString()))
+  );
   Sentry.captureException(e);
 }

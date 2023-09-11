@@ -1,9 +1,11 @@
 public class SentryStacktraceFactory {
+  public static final String STACKTRACE_AS_STRING_KEY = 'stacktraceString';
+
   private SentryStacktraceFactory() {
   }
 
   private static final List<SentryExceptionMechanismFormatter> DEFAULT_FORMATTERS = new List<SentryExceptionMechanismFormatter>{
-    new SentryExceptionMechanismFormatter(),
+    new SentryExceptionMechanismFormatter(STACKTRACE_AS_STRING_KEY),
     new SentryDMLExceptionMechanismFormatter()
   };
 
