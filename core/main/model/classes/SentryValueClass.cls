@@ -8,21 +8,7 @@ public with sharing class SentryValueClass {
   public String type; // exception.getTypeName()
   public String value; // exception.getMessage()
 
-  private SentryValueClass(Exception ex) {
-    this.type = ex.getTypeName();
-    this.value = ex.getMessage();
-  }
-
-  public static List<SentryValueClass> fromException(Exception ex) {
-    List<SentryValueClass> values = new List<SentryValueClass>{
-      new SentryValueClass(ex)
-    };
-    Exception cause = ex.getCause();
-    while (cause != null) {
-      values.add(new SentryValueClass(cause));
-      cause = cause.getCause();
-    }
-    return values;
+  public SentryValueClass() {
   }
 
   public class Mechanism {
