@@ -13,8 +13,26 @@ public virtual class SentryScope {
   }
 
   public static SentryScope getDefaultScope() {
-    return new SentryScope();
+    SentryScope defaultScope = new SentryScope();
+    defaultScope.setUser(getUser());
+    defaultScope.contexts.put(SentryOrgContext.TYPE, new SentryOrgContext());
+
+    return defaultScope;
   }
+
+  private static SentryUser getUser() {
+    SentryUser user = new SentryUser();
+    user.id = UserInfo.getOrganizationId() + '/' + UserInfo.getUserId(); // user id is likely not unique across all orgs.
+    return user;
+  }
+
+  // TODO add all the necessary contexts
+
+  // TODO define if it requires processors or not
+
+  /*
+   * Methods for scope copy
+   */
 
   public static SentryScope fromScope(
     System.type scopeType,
@@ -36,6 +54,10 @@ public virtual class SentryScope {
     this.processors.addAll(parentScope.processors);
     this.breadcrumbs.addAll(parentScope.breadcrumbs);
   }
+
+  /*
+   * Methods that can be used by orther scopes
+   */
 
   public void setUser(SentryUser user) {
     this.user = user;
@@ -68,7 +90,17 @@ public virtual class SentryScope {
   }
 
   public SentryEvent applyToEvent(SentryEvent event) {
-    // TODO, impelment the magic here
+    event.user = this.user;
+    for (String key : this.contexts.keySet()) {
+      System.debug('key=' + key );
+      System.debug('json=' + JSON.serialize(contexts));
+      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key)));
+      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).type));
+      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).getData()));
+
+      event.contexts.put(contexts.get(key).type, contexts.get(key).getData());
+    }
+
     return event;
   }
 

@@ -1,5 +1,8 @@
 public abstract class SentryContext {
-  public string type;
-  public SentryContext() {
+  public String type { get; protected set; }
+
+  public abstract ContextData getData();
+
+  public interface ContextData {
   }
 }
