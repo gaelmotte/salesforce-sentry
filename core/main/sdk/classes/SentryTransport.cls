@@ -1,9 +1,18 @@
 public with sharing class SentryTransport {
   private static Http http = new Http();
+  private static SentryConfigInterface config = SentryConfigFactory.getConfig();
+
   public static void proccess(List<Sentry_Event__e> pes) {
     List<SentryEvent> events = parsePlatformEvents(pes);
 
     // TODO Call before send events processors
+    /*
+# Things that will be populated by transport
+* Environement : Type of org
+* sdk : info about sentry sdk
+* server_name : Org Id
+* timestamp: from platform event crated date
+*/
 
     // save the payloads
     Set<Id> payloadIds = savePayloads(events);
@@ -62,7 +71,7 @@ public with sharing class SentryTransport {
 
   private static HttpRequest getStoreRequest(String payload) {
     HttpRequest request = new HttpRequest();
-    request.setEndpoint(SentryConfig.DSN.storeEndpoint.toExternalForm());
+    request.setEndpoint(config.getDSN().storeEndpoint.toExternalForm());
     request.setMethod('POST');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', SentryClientSDKInfo.getFullName());
@@ -72,7 +81,7 @@ public with sharing class SentryTransport {
       String.join(
         new List<String>{
           'sentry_version=7', // Sentry api version
-          'sentry_key=' + SentryConfig.DSN.publicKey,
+          'sentry_key=' + config.getDSN().publicKey,
           'sentry_client=' + SentryClientSDKInfo.getFullName()
         },
         ', '
