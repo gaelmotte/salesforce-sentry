@@ -3,6 +3,12 @@
     {
       "path": "core",
       "default": true
+    },
+    {
+      "path": "sentry-enduser"
+    },
+    {
+      "path": "sentry-isv"
     }
   ],
   "name": "salesforce-sentry",
