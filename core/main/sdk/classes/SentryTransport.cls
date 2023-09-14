@@ -11,7 +11,6 @@ public with sharing class SentryTransport {
 * Environement : Type of org
 * sdk : info about sentry sdk
 * server_name : Org Id
-* timestamp: from platform event crated date
 */
 
     // save the payloads

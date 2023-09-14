@@ -1,0 +1,3 @@
+[submodule "submodules/apex-json-serialization"]
+	path = submodules/apex-json-serialization
+	url = git@github.com:gaelmotte/apex-json-serialization.git

@@ -20,7 +20,7 @@ public with sharing class SentryEvent {
   public String transac; // naming trouble
   public List<SentryBreadcrumb> breadcrumbs;
   public Map<String, Object> contexts;
-  public List<Object> ex; // naming trouble
+  public List<SentryValueClass> ex; // naming trouble & type trouble. 
   public Map<String, Object> extra;
   public Map<String, String> tags;
   public Map<String, Object> request;
@@ -55,7 +55,7 @@ public with sharing class SentryEvent {
     this.contexts = (Map<String, Object>) JSON.deserializeUntyped(
       event.Contexts_Json__c
     );
-    this.ex = (List<Object>) JSON.deserializeUntyped(event.Exception_Json__c);
+    this.ex = (List<SentryValueClass>) JSONDeserializer.deserialize(event.Exception_Json__c, List<SentryValueClass>.class);
     this.extra = (Map<String, Object>) JSON.deserialize(
       event.Extra_Json__c,
       Map<String, Object>.class
