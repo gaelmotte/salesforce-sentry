@@ -4,6 +4,16 @@
 
 package.xml
 
+
+# Standard stuff
+**appMenu
+**appSwitcher
+**setting
+**/profiles/*
+**/emailservices/*
+**/README.md
+
+
 # LWC configuration files
 **/jsconfig.json
 **/.eslintrc.json
