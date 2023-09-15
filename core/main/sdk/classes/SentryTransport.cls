@@ -13,6 +13,9 @@ public with sharing class SentryTransport {
 * server_name : Org Id
 */
 
+    //TODO pass a inAppDiscriminator
+    (new SentryStacktraceDecorator()).decorate(events);
+
     // save the payloads
     Set<Id> payloadIds = savePayloads(events);
     send(payloadIds);
@@ -69,6 +72,9 @@ public with sharing class SentryTransport {
   }
 
   private static HttpRequest getStoreRequest(String payload) {
+    if (config.getDSN() == null) {
+      throw new SentryException('Sentry DSN is not Configured');
+    }
     HttpRequest request = new HttpRequest();
     request.setEndpoint(config.getDSN().storeEndpoint.toExternalForm());
     request.setMethod('POST');

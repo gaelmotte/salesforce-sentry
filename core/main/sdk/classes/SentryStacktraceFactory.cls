@@ -39,13 +39,11 @@ public class SentryStacktraceFactory {
     }
     for (SentryExceptionMechanismFormatter formatter : sortedFormatters) {
       System.debug(
-        'trying ' +
-          formatter.getExceptionType() +
-          ' and ' +
-          TypeInspector.getType(ex)
+        'trying ' + formatter.getExceptionType() + ' and ' + ex.getTypeName()
       );
       if (
-        formatter.getExceptionType().isAssignableFrom(TypeInspector.getType(ex))
+        formatter.getExceptionType()
+          .isAssignableFrom(Type.forName(ex.getTypeName()))
       ) {
         return formatter;
       }

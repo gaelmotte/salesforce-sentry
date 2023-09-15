@@ -12,14 +12,14 @@ public class SentryStacktraceParser {
   private SentryStacktraceParser() {
   }
 
-  public static List<Frame> parse(String stacktraceString) {
-    List<Frame> frames = new List<Frame>();
+  public static List<ApexFrame> parse(String stacktraceString) {
+    List<ApexFrame> frames = new List<ApexFrame>();
 
     List<String> frameStrings = stacktraceString.split('\n');
     for (String frameString : frameStrings) {
       Matcher matcher = CLASS_PATTERN.matcher(frameString);
       if (matcher.find()) {
-        Frame frame = new Frame();
+        ApexFrame frame = new ApexFrame();
         frame.namespace = matcher.group(1);
         frame.classname = matcher.group(2);
         frame.subclassname = matcher.group(3) != null
@@ -33,7 +33,7 @@ public class SentryStacktraceParser {
       }
       matcher = TRIGGER_PATTERN.matcher(frameString);
       if (matcher.find()) {
-        Frame frame = new Frame();
+        ApexFrame frame = new ApexFrame();
         frame.namespace = matcher.group(1);
         frame.classname = matcher.group(2);
         frame.subclassname = null;
@@ -45,7 +45,7 @@ public class SentryStacktraceParser {
       }
       matcher = DEFAULT_PATTERN.matcher(frameString);
       if (matcher.find()) {
-        Frame frame = new Frame();
+        ApexFrame frame = new ApexFrame();
         frame.namespace = null;
         frame.classname = matcher.group(1);
         frame.subclassname = null;
@@ -55,14 +55,14 @@ public class SentryStacktraceParser {
         frames.add(frame);
         continue;
       }
-      Frame frame = new Frame();
+      ApexFrame frame = new ApexFrame();
       frame.defaultPresentation = frameString;
       frames.add(frame);
     }
     return frames;
   }
 
-  public class Frame {
+  public class ApexFrame {
     public String namespace;
     public String classname;
     public String subclassname;
