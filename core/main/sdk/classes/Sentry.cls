@@ -1,7 +1,7 @@
 /**
  * https://develop.sentry.dev/sdk/unified-api/#static-api
  */
-public with sharing class Sentry {
+global with sharing class Sentry {
   private Sentry() {
   }
 

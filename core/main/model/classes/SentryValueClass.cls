@@ -38,47 +38,60 @@ public with sharing class SentryValueClass implements JSONDeserializer.Deseriali
     };
   }
 
-  public class Mechanism  implements JSONDeserializer.Deserializable {
+  public class Mechanism implements JSONDeserializer.Deserializable {
     public String type;
     public Map<String, Object> data;
 
-
-  public void setDeserializedField(String key, Object value) {
-    switch on key {
-      when 'data' {
-        this.data = (Map<String, Object>) value;
-      }
-      when 'type' {
-        this.type = (String) value;
-      }
-      when else {
-        throw new IllegalArgumentException(
-          'Key [' + key + '] is not supported'
-        );
+    public void setDeserializedField(String key, Object value) {
+      switch on key {
+        when 'data' {
+          this.data = (Map<String, Object>) value;
+        }
+        when 'type' {
+          this.type = (String) value;
+        }
+        when else {
+          throw new IllegalArgumentException(
+            'Key [' + key + '] is not supported'
+          );
+        }
       }
     }
-  }
-  public Map<String, System.Type> getDeserializableFields() {
-    return new Map<String, System.Type>{
-      'data' => Map<String, Object>.class,
-      'type' => String.class
-    };
-  }
-
+    public Map<String, System.Type> getDeserializableFields() {
+      return new Map<String, System.Type>{
+        'data' => Map<String, Object>.class,
+        'type' => String.class
+      };
+    }
   }
 
   public class Stacktrace {
     public List<Frame> frames;
+    public Stacktrace() {
+      this.frames = new List<Frame>();
+    }
   }
 
   public class Frame {
+    public Frame(SentryStacktraceParser.ApexFrame apexFrame) {
+      this.filename = apexFrame.classname;
+      this.module = apexFrame.subclassname != null
+        ? apexFrame.classname + '.' + apexFrame.subclassname
+        : apexFrame.classname;
+      this.function = apexFrame.function;
+      this.lineno = apexFrame.linenumber;
+      this.namespace = apexFrame.namespace;
+    }
+
     public String context_line;
-    public String filename;
+    public String filename; // classname
+    public String module; // classname or classname.subclassname
     public String function;
     public Boolean in_app;
     public Integer lineno;
-    // public String package; // namespace
+    public String namespace; // namespace TODO SERIALIZE THIS AS `PACKAGE`
     public List<String> post_context;
     public List<String> pre_context;
+    public String platform; // the api version the class is ran
   }
 }
