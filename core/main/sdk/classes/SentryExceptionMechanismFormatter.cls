@@ -6,7 +6,7 @@ public virtual class SentryExceptionMechanismFormatter implements Comparable {
   }
 
   public SentryExceptionMechanismFormatter() {
-    this.stacktraceStringKey = SentryStacktraceFactory.STACKTRACE_AS_STRING_KEY;
+    this.stacktraceStringKey = SentryStacktraceEventProcessor.STACKTRACE_AS_STRING_KEY;
   }
 
   public virtual System.Type getExceptionType() {
@@ -14,6 +14,7 @@ public virtual class SentryExceptionMechanismFormatter implements Comparable {
   }
 
   public virtual SentryValueClass.Mechanism getMechanism(Exception ex) {
+    System.debug('HERE==>'+ ex.getStackTraceString());
     Map<String, Object> data = new Map<String, Object>{
       stacktraceStringKey => ex.getStackTraceString() // will be used by transport to generate the SentryValueClass.Stacktrace
     };
