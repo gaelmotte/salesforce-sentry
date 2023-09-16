@@ -13,6 +13,7 @@ public with sharing class SentryHub {
   };
 
   private SentryHub() {
+    // TODO default scope should be defined in Config
     scopes = new List<SentryScope>{ SentryScope.getDefaultScope() };
     client = new SentryClient();
   }
@@ -39,10 +40,15 @@ public with sharing class SentryHub {
     );
   }
 
+  public void transportEvents(List<SentryEvent> events) {
+    client.transportEvent(events, scopes.get(scopes.size() - 1));
+  }
+
   public void addBreadcrumb(SentryBreadcrumb crumb) {
   }
 
   public String getLastEventId() {
+    // TODO implement this
     return 'todo';
   }
 

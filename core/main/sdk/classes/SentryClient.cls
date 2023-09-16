@@ -2,9 +2,11 @@
  * https://develop.sentry.dev/sdk/unified-api/#client
  */
 public with sharing class SentryClient {
+  /**
+   * This takes captured events, applies runtime transforms, and publishes to the event queue for later processing
+   */
   public void captureEvent(SentryEvent event, SentryScope scope) {
-    // TODO Prepare it for transport
-    SentryEvent preparedEvent = scope.applyToEvent(event);
+    SentryEvent preparedEvent = scope.applyToEvent(event, true);
     if (preparedEvent == null) {
       // the event was filtered by a processor;
       return;
@@ -15,6 +17,29 @@ public with sharing class SentryClient {
 
     System.debug('publishing:' + JSON.serialize(pe));
     EventBus.publish(pe);
+  }
+
+  /**
+   * this takes events from the event queues, applies costly transforms, then sends it to sentry
+   */
+  public void transportEvent(List<SentryEvent> events, SentryScope scope) {
+    List<SentryEvent> preparedEvents = new List<SentryEvent>();
+
+    for (SentryEvent event : events) {
+      SentryEvent preparedEvent = scope.applyToEvent(event, false);
+      if (preparedEvent == null) {
+        // the event was filtered by a processor;
+        continue;
+      }
+      preparedEvents.add(preparedEvent);
+    }
+
+    if (preparedEvents.size() == 0) {
+      return;
+    }
+
+    System.debug('sending:' + JSON.serialize(preparedEvents));
+    SentryTransport.send(preparedEvents);
   }
 
   /* These do not make sense here

@@ -2,7 +2,6 @@
  * https://develop.sentry.dev/sdk/unified-api/#scope
  */
 public virtual class SentryScope {
-  protected SentryUser user;
   protected Map<String, Object> extras = new Map<String, Object>();
   protected Map<String, String> tags = new Map<String, String>();
   protected Map<String, SentryContext> contexts = new Map<String, SentryContext>();
@@ -14,16 +13,11 @@ public virtual class SentryScope {
 
   public static SentryScope getDefaultScope() {
     SentryScope defaultScope = new SentryScope();
-    defaultScope.setUser(getUser());
+    // TODO : take this from config
     defaultScope.contexts.put(SentryOrgContext.TYPE, new SentryOrgContext());
-
+    defaultScope.processors.add(new SentryUserEventProcessor());
+    defaultScope.processors.add(new SentryStacktraceEventProcessor());
     return defaultScope;
-  }
-
-  private static SentryUser getUser() {
-    SentryUser user = new SentryUser();
-    user.id = UserInfo.getOrganizationId() + '/' + UserInfo.getUserId(); // user id is likely not unique across all orgs.
-    return user;
   }
 
   // TODO add all the necessary contexts
@@ -45,7 +39,6 @@ public virtual class SentryScope {
 
   private virtual void fromScope(SentryScope parentScope) {
     // copy over everything
-    this.user = parentScope.user.clone();
     this.tags.putAll(parentScope.tags);
     this.extras.putAll(parentScope.extras);
     for (String key : parentScope.contexts.keySet()) {
@@ -58,10 +51,6 @@ public virtual class SentryScope {
   /*
    * Methods that can be used by orther scopes
    */
-
-  public void setUser(SentryUser user) {
-    this.user = user;
-  }
 
   public void setTag(String key, String value) {
     tags.put(key, value);
@@ -89,16 +78,24 @@ public virtual class SentryScope {
     this.breadcrumbs.add(crumb);
   }
 
-  public SentryEvent applyToEvent(SentryEvent event) {
-    event.user = this.user;
+  public SentryEvent applyToEvent(SentryEvent event, Boolean atCapture) {
+    // event.user = this.user;
     for (String key : this.contexts.keySet()) {
-      System.debug('key=' + key );
+      System.debug('key=' + key);
       System.debug('json=' + JSON.serialize(contexts));
       System.debug('jsonDetail=' + JSON.serialize(contexts.get(key)));
       System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).type));
       System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).getData()));
 
       event.contexts.put(contexts.get(key).type, contexts.get(key).getData());
+    }
+
+    Integer i = 0;
+    while (event != null && i < processors.size()) {
+      event = atCapture
+        ? processors.get(i).processAtCapture(event)
+        : processors.get(i).processAtTransport(event);
+      i++;
     }
 
     return event;
