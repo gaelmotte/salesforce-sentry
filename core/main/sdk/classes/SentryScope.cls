@@ -71,6 +71,9 @@ public virtual class SentryScope {
     for (String key : this.contexts.keySet()) {
       event.contexts.put(contexts.get(key).type, contexts.get(key).getData());
     }
+    event.extra.putAll(this.extras);
+    event.tags.putAll(this.tags);
+    event.breadcrumbs.addAll(this.breadcrumbs);
 
     Integer i = 0;
     while (event != null && i < processors.size()) {
@@ -79,11 +82,6 @@ public virtual class SentryScope {
         : processors.get(i).processAtTransport(event);
       i++;
     }
-
-    event.extra = this.extras;
-    event.tags = this.tags;
-    event.breadcrumbs = this.breadcrumbs;
-
     return event;
   }
 
