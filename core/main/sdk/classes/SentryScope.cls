@@ -1,34 +1,13 @@
 /**
  * https://develop.sentry.dev/sdk/unified-api/#scope
+ * User is excluded from scope and reworked as an SentryUserEventProcessor
  */
 public virtual class SentryScope {
-  protected SentryUser user;
   protected Map<String, Object> extras = new Map<String, Object>();
   protected Map<String, String> tags = new Map<String, String>();
   protected Map<String, SentryContext> contexts = new Map<String, SentryContext>();
   protected List<SentryEventProcessor> processors = new List<SentryEventProcessor>();
   protected List<SentryBreadcrumb> breadcrumbs = new List<SentryBreadcrumb>();
-
-  private SentryScope() {
-  }
-
-  public static SentryScope getDefaultScope() {
-    SentryScope defaultScope = new SentryScope();
-    defaultScope.setUser(getUser());
-    defaultScope.contexts.put(SentryOrgContext.TYPE, new SentryOrgContext());
-
-    return defaultScope;
-  }
-
-  private static SentryUser getUser() {
-    SentryUser user = new SentryUser();
-    user.id = UserInfo.getOrganizationId() + '/' + UserInfo.getUserId(); // user id is likely not unique across all orgs.
-    return user;
-  }
-
-  // TODO add all the necessary contexts
-
-  // TODO define if it requires processors or not
 
   /*
    * Methods for scope copy
@@ -45,7 +24,6 @@ public virtual class SentryScope {
 
   private virtual void fromScope(SentryScope parentScope) {
     // copy over everything
-    this.user = parentScope.user.clone();
     this.tags.putAll(parentScope.tags);
     this.extras.putAll(parentScope.extras);
     for (String key : parentScope.contexts.keySet()) {
@@ -58,10 +36,6 @@ public virtual class SentryScope {
   /*
    * Methods that can be used by orther scopes
    */
-
-  public void setUser(SentryUser user) {
-    this.user = user;
-  }
 
   public void setTag(String key, String value) {
     tags.put(key, value);
@@ -89,17 +63,26 @@ public virtual class SentryScope {
     this.breadcrumbs.add(crumb);
   }
 
-  public SentryEvent applyToEvent(SentryEvent event) {
-    event.user = this.user;
-    for (String key : this.contexts.keySet()) {
-      System.debug('key=' + key );
-      System.debug('json=' + JSON.serialize(contexts));
-      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key)));
-      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).type));
-      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).getData()));
+  public void addProcessor(SentryEventProcessor processor) {
+    processors.add(processor);
+  }
 
+  public SentryEvent applyToEvent(SentryEvent event, Boolean atCapture) {
+    for (String key : this.contexts.keySet()) {
       event.contexts.put(contexts.get(key).type, contexts.get(key).getData());
     }
+
+    Integer i = 0;
+    while (event != null && i < processors.size()) {
+      event = atCapture
+        ? processors.get(i).processAtCapture(event)
+        : processors.get(i).processAtTransport(event);
+      i++;
+    }
+
+    event.extra = this.extras;
+    event.tags = this.tags;
+    event.breadcrumbs = this.breadcrumbs;
 
     return event;
   }

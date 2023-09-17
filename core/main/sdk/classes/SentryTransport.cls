@@ -1,36 +1,11 @@
 public with sharing class SentryTransport {
   private static Http http = new Http();
-  private static SentryConfigInterface config = SentryConfigFactory.getConfig();
+  private static ISentryConfig config = SentryConfigFactory.getConfig();
 
-  public static void proccess(List<Sentry_Event__e> pes) {
-    List<SentryEvent> events = parsePlatformEvents(pes);
-
-    // TODO Call before send events processors
-    /*
-# Things that will be populated by transport
-* Environement : Type of org
-* sdk : info about sentry sdk
-* server_name : Org Id
-*/
-
-    //TODO pass a inAppDiscriminator
-    (new SentryStacktraceDecorator()).decorate(events);
-
+  public static void send(List<SentryEvent> events) {
     // save the payloads
     Set<Id> payloadIds = savePayloads(events);
     send(payloadIds);
-  }
-
-  private static List<SentryEvent> parsePlatformEvents(
-    List<Sentry_Event__e> pes
-  ) {
-    List<SentryEvent> events = new List<SentryEvent>();
-
-    for (Sentry_Event__e pe : pes) {
-      events.add(new SentryEvent(pe));
-    }
-
-    return events;
   }
 
   private static Set<Id> savePayloads(List<SentryEvent> events) {
@@ -76,7 +51,7 @@ public with sharing class SentryTransport {
       throw new SentryException('Sentry DSN is not Configured');
     }
     HttpRequest request = new HttpRequest();
-    request.setEndpoint(config.getDSN().storeEndpoint.toExternalForm());
+    request.setEndpoint(config.getDSN().baseUri.toExternalForm() + '/store/');
     request.setMethod('POST');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', SentryClientSDKInfo.getFullName());

@@ -6,15 +6,20 @@ public with sharing class SentryHub {
   private static SentryHub mainHub;
   private List<SentryScope> scopes;
   private SentryClient client;
-
-  private List<SentryExceptionMechanismFormatter> mechanismFormatters = new List<SentryExceptionMechanismFormatter>{
-    new SentryDMLExceptionMechanismFormatter(),
-    new SentryExceptionMechanismFormatter()
-  };
+  private ISentryConfig config = SentryConfigFactory.getConfig();
 
   private SentryHub() {
-    scopes = new List<SentryScope>{ SentryScope.getDefaultScope() };
+    scopes = new List<SentryScope>{ new SentryScope() };
     client = new SentryClient();
+    configureDefaultScope();
+  }
+
+  private void configureDefaultScope() {
+    SentryScope scope = scopes.get(0);
+    for (ISentryIntegration integration : config.getIntegrations()) {
+      integration.applyToScope(scope);
+    }
+    // TODO add things we always want to add to scope and does not require config
   }
 
   public static SentryHub getMainHub() {
@@ -39,16 +44,21 @@ public with sharing class SentryHub {
     );
   }
 
+  public void transportEvents(List<SentryEvent> events) {
+    client.transportEvent(events, scopes.get(scopes.size() - 1));
+  }
+
   public void addBreadcrumb(SentryBreadcrumb crumb) {
   }
 
   public String getLastEventId() {
+    // TODO implement this
     return 'todo';
   }
 
   public void pushScope(
     System.Type scopeType,
-    SentryConfigureScopeCallback callback
+    ISentryConfigureScopeCallback callback
   ) {
     SentryScope scope = SentryScope.fromScope(scopeType, getCurrentScope());
     callback.configure(scope);

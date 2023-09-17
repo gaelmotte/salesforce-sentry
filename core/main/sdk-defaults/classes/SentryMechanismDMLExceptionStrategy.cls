@@ -1,4 +1,4 @@
-public with sharing class SentryDMLExceptionMechanismFormatter extends SentryExceptionMechanismFormatter {
+public virtual class SentryMechanismDMLExceptionStrategy extends SentryMechanismExceptionStrategy {
   public virtual override System.Type getExceptionType() {
     return DmlException.class;
   }

@@ -1,31 +1,34 @@
 public class SentryConfigFactory {
-  private static SentryConfigInterface config;
-  public static SentryConfigInterface getConfig() {
+  private static ISentryConfig config;
+  public static ISentryConfig getConfig() {
     if (config == null) {
-      config = (SentryConfigInterface) getConfigType().newInstance();
+      config = (ISentryConfig) getConfigType().newInstance();
     }
     return config;
   }
 
   private static System.Type getConfigType() {
-    System.Type configType = SentryConfigNoop.class;
-    Datetime lastModified = Datetime.newInstance(2000, 1, 1); // fake it for the SentryConfigNoop;
-    for (ApexTypeImplementor implementor : [
-      SELECT ClassName, ClassNamespacePrefix, ApexClass.LastModifiedDate
+    List<ApexTypeImplementor> implementors = [
+      SELECT ClassName, ClassNamespacePrefix
       FROM ApexTypeImplementor
       WHERE
-        InterfaceName = :SentryConfigInterface.class.getName()
+        InterfaceName = :ISentryConfig.class.getName()
         AND IsConcrete = TRUE
         AND ClassName != :SentryConfigNoop.class.getName()
-    ]) {
-      if (lastModified < implementor.ApexClass.LastModifiedDate) {
-        configType = System.Type.forName(
-          implementor.ClassNamespacePrefix,
-          implementor.ClassName
-        );
-        lastModified = implementor.ApexClass.LastModifiedDate;
-      }
+    ];
+    if (implementors.size() == 0) {
+      return SentryConfigNoop.class;
     }
-    return configType;
+    if (implementors.size() > 1) {
+      System.debug(
+        'You should have only 1 class that implements ISentryConfig'
+      );
+      return SentryConfigNoop.class;
+    }
+
+    return System.Type.forName(
+      implementors.get(0).ClassNamespacePrefix,
+      implementors.get(0).ClassName
+    );
   }
 }
