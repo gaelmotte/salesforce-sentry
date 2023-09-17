@@ -1,8 +1,8 @@
 public abstract class SentryContext {
   public String type { get; protected set; }
 
-  public abstract ContextData getData();
-
-  public interface ContextData {
-  }
+  /**
+   * Sentry does not handle nested maps. You need to flatten your data.
+   */
+  public abstract Map<String, Object> getData();
 }

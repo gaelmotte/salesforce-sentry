@@ -88,10 +88,7 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
         }
         frame.context_line = apexClassBodyLines.get(lineIndex);
         Slicer s = new Slicer(apexClassBodyLines);
-        frame.pre_context = s.slice(
-          lineIndex - frameContextLines - 1,
-          lineIndex - 1
-        );
+        frame.pre_context = s.slice(lineIndex - frameContextLines, lineIndex);
         frame.post_context = s.slice(
           lineIndex + 1,
           lineIndex + frameContextLines + 1
@@ -156,9 +153,8 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
 
     public list<String> slice(Integer x_begin, Integer x_end) {
       list<String> ret = new List<String>();
-      Integer maxIndex = olist.size();
       Integer i = Math.max(x_begin, 0);
-      while (i < maxIndex && i < x_end) {
+      while (i < olist.size() && i < x_end) {
         ret.add(olist[i]);
         i++;
       }
