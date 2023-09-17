@@ -41,7 +41,7 @@ public with sharing class SentryEvent {
 
   public SentryEvent() {
     this.eventId = EncodingUtil.convertToHex(Crypto.generateAesKey(128));
-    this.contexts = new Map<String, SentryContext.ContextData>();
+    this.contexts = new Map<String, Object>();
   }
 
   public SentryEvent(Exception ex) {
