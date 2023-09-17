@@ -9,12 +9,17 @@ public with sharing class SentryHub {
   private ISentryConfig config = SentryConfigFactory.getConfig();
 
   private SentryHub() {
-    SentryScope scope = new SentryScope();
+    scopes = new List<SentryScope>{ new SentryScope() };
+    client = new SentryClient();
+    configureDefaultScope();
+  }
+
+  private void configureDefaultScope() {
+    SentryScope scope = scopes.get(0);
     for (ISentryIntegration integration : config.getIntegrations()) {
       integration.applyToScope(scope);
     }
-    this.scopes = new List<SentryScope>{ scope };
-    client = new SentryClient();
+    // TODO add things we always want to add to scope and does not require config
   }
 
   public static SentryHub getMainHub() {
