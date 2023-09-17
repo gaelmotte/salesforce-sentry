@@ -15,12 +15,12 @@ public with sharing class SentryEvent {
    * exception that caused the event
    * Some processors might need it
    */
-  public Exception originException;
+  private Exception originException;
   /**
    * message that caused the event
    * Some processors might need it
    */
-  public String originMessage;
+  private String originMessage;
 
   // Fields that are part of the Sentry Payload
 
@@ -42,6 +42,9 @@ public with sharing class SentryEvent {
   public SentryEvent() {
     this.eventId = EncodingUtil.convertToHex(Crypto.generateAesKey(128));
     this.contexts = new Map<String, Object>();
+    this.tags = new Map<String, String>();
+    this.extra = new Map<String, Object>();
+    this.breadcrumbs = new List<SentryBreadcrumb>();
   }
 
   public SentryEvent(Exception ex) {
@@ -88,6 +91,14 @@ public with sharing class SentryEvent {
       event.User_Json__c,
       SentryUser.class
     );
+  }
+
+  public Exception getOriginException() {
+    return this.originException;
+  }
+
+  public String getOriginMessage() {
+    return this.originMessage;
   }
 
   public Sentry_Event__e toPlatformEvent() {
