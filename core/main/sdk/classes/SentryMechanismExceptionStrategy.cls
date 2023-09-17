@@ -1,12 +1,12 @@
-public virtual class SentryExceptionMechanismFormatter implements Comparable {
+public virtual class SentryMechanismExceptionStrategy implements Comparable {
   private string stacktraceStringKey;
 
-  public SentryExceptionMechanismFormatter(String stacktraceStringKey) {
+  public SentryMechanismExceptionStrategy(String stacktraceStringKey) {
     this.stacktraceStringKey = stacktraceStringKey;
   }
 
-  public SentryExceptionMechanismFormatter() {
-    this.stacktraceStringKey = SentryStacktraceEventProcessor.STACKTRACE_AS_STRING_KEY;
+  public SentryMechanismExceptionStrategy() {
+    this.stacktraceStringKey = SentryStacktraceIntegration.STACKTRACE_AS_STRING_KEY;
   }
 
   public virtual System.Type getExceptionType() {
@@ -25,8 +25,9 @@ public virtual class SentryExceptionMechanismFormatter implements Comparable {
     return mechanism;
   }
 
+  // sorts from most specific to least specific expcetion type
   public Integer compareTo(Object other) {
-    System.type otherType = ((SentryExceptionMechanismFormatter) other)
+    System.type otherType = ((SentryMechanismExceptionStrategy) other)
       .getExceptionType();
     if (getExceptionType().isAssignableFrom(otherType)) {
       return 1;

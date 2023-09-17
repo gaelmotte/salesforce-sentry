@@ -1,6 +1,6 @@
 public with sharing class SentryTransport {
   private static Http http = new Http();
-  private static SentryConfigInterface config = SentryConfigFactory.getConfig();
+  private static ISentryConfig config = SentryConfigFactory.getConfig();
 
   public static void send(List<SentryEvent> events) {
     // save the payloads
@@ -51,7 +51,7 @@ public with sharing class SentryTransport {
       throw new SentryException('Sentry DSN is not Configured');
     }
     HttpRequest request = new HttpRequest();
-    request.setEndpoint(config.getDSN().storeEndpoint.toExternalForm());
+    request.setEndpoint(config.getDSN().baseUri.toExternalForm() + '/store/');
     request.setMethod('POST');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', SentryClientSDKInfo.getFullName());

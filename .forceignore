@@ -20,3 +20,6 @@ package.xml
 
 # LWC Jest
 **/__tests__/**
+
+# This is never meant to be deployed
+sentry-isv/core/**

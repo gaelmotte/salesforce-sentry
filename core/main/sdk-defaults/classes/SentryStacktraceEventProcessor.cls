@@ -1,27 +1,21 @@
 public with sharing class SentryStacktraceEventProcessor extends SentryEventProcessor {
-  public static final String STACKTRACE_AS_STRING_KEY = 'stacktraceString';
-
-  private static final Integer MAX_PRE_CONTEXT_LINES = 5;
-  private static final Integer MAX_POST_CONTEXT_LINES = 5;
-
-  private static final List<SentryExceptionMechanismFormatter> DEFAULT_FORMATTERS = new List<SentryExceptionMechanismFormatter>{
-    new SentryExceptionMechanismFormatter(STACKTRACE_AS_STRING_KEY),
-    new SentryDMLExceptionMechanismFormatter()
-  };
-
-  private static List<SentryExceptionMechanismFormatter> sortedFormatters;
+  private Integer frameContextLines;
+  private SentryStacktraceIntegration.IInAppCallback inAppCallback;
+  private List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies;
 
   private Set<String> classnames;
   Map<ApexClass, List<String>> apexClassesAndBody;
 
-  public SentryStacktraceEventProcessor() {
-    //TODO : take a InAPiFrameDiscriminator
-    //TODO : take List<SentryExceptionMechanismFormatter>
+  public SentryStacktraceEventProcessor(
+    Integer frameContextLines,
+    SentryStacktraceIntegration.IInAppCallback inAppCallback,
+    List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies
+  ) {
+    this.frameContextLines = frameContextLines;
+    this.inAppCallback = inAppCallback;
+    this.mechanismExceptionStrategies = mechanismExceptionStrategies;
   }
 
-  /**
-   * formats exception in sentry format with formatters
-   */
   public override SentryEvent processAtCapture(SentryEvent event) {
     event.ex = fromException(event.originException);
     return event;
@@ -37,30 +31,25 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
     return values;
   }
 
-  private static SentryValueClass extract(Exception ex) {
+  private SentryValueClass extract(Exception ex) {
     SentryValueClass valueClass = new SentryValueClass();
 
     valueClass.type = ex.getTypeName();
     valueClass.value = ex.getMessage();
-    valueClass.mechanism = getFormatter(ex).getMechanism(ex);
+    valueClass.mechanism = getStrategy(ex).getMechanism(ex);
 
     return valueClass;
   }
 
-  private static SentryExceptionMechanismFormatter getFormatter(Exception ex) {
-    if (sortedFormatters == null) {
-      sortedFormatters = new List<SentryExceptionMechanismFormatter>{};
-      sortedFormatters.addAll(DEFAULT_FORMATTERS);
-      //TODO grab custom ones from config
-      sortedFormatters.sort();
-    }
-
-    for (SentryExceptionMechanismFormatter formatter : sortedFormatters) {
+  private SentryMechanismExceptionStrategy getStrategy(Exception ex) {
+    for (
+      SentryMechanismExceptionStrategy strategy : mechanismExceptionStrategies
+    ) {
       if (
-        formatter.getExceptionType()
+        strategy.getExceptionType()
           .isAssignableFrom(Type.forName(ex.getTypeName()))
       ) {
-        return formatter;
+        return strategy;
       }
     }
     return null;
@@ -85,7 +74,7 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
         if (apexClass == null) {
           continue;
         }
-        frame.in_app = true; // TODO : Take a inAppDiscriminator in constructor from config
+        frame.in_app = inAppCallback.isInApp(frame);
         frame.platform = apexclass.ApiVersion.format();
         Integer lineIndex = frame.lineno - 1;
         List<String> apexClassBodyLines = this.apexClassesAndBody.get(
@@ -100,12 +89,12 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
         frame.context_line = apexClassBodyLines.get(lineIndex);
         Slicer s = new Slicer(apexClassBodyLines);
         frame.pre_context = s.slice(
-          lineIndex - MAX_PRE_CONTEXT_LINES - 1,
+          lineIndex - frameContextLines - 1,
           lineIndex - 1
         );
         frame.post_context = s.slice(
           lineIndex + 1,
-          lineIndex + MAX_PRE_CONTEXT_LINES + 1
+          lineIndex + frameContextLines + 1
         );
       }
     }
@@ -116,7 +105,7 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
     this.classnames = new Set<String>();
     for (SentryValueClass valueClass : event.ex) {
       String stacktraceString = (string) valueClass.mechanism.data.get(
-        STACKTRACE_AS_STRING_KEY
+        SentryStacktraceIntegration.STACKTRACE_AS_STRING_KEY
       );
       List<SentryStacktraceParser.ApexFrame> apexFrames = SentryStacktraceParser.parse(
         stacktraceString
