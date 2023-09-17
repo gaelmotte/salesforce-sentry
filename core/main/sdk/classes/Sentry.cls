@@ -21,13 +21,9 @@ global with sharing class Sentry {
    * This is the recommended method when the framework is able to push scopes itself.
    * In the case of Salesforce, no hook is available, so scopes need to be pushed and popped by the caller
    */
-  //   public static void configureScope(ConfigureScopeCallback callback) {
-  //     // TODO, check sentry enabled = having DSN && user conscent
-  //     SentryHub.getMainHub().configureScope(callback);
-  //   }
   public static void pushScope(
     System.Type scopeType,
-    SentryConfigureScopeCallback callback
+    ISentryConfigureScopeCallback callback
   ) {
     // TODO check scopetype extends SentryScope
     // TODO check the callback can handle the ScopeType

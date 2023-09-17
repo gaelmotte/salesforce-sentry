@@ -12,6 +12,19 @@
  */
 public with sharing class SentryEvent {
   /**
+   * exception that caused the event
+   * Some processors might need it
+   */
+  public Exception originException;
+  /**
+   * message that caused the event
+   * Some processors might need it
+   */
+  public String originMessage;
+
+  // Fields that are part of the Sentry Payload
+
+  /**
    * 32 chars, a Uuid without dash = Crypto AES 128
    */
   public string eventId { get; private set; }
@@ -20,7 +33,7 @@ public with sharing class SentryEvent {
   public String transac; // naming trouble
   public List<SentryBreadcrumb> breadcrumbs;
   public Map<String, Object> contexts;
-  public List<SentryValueClass> ex; // naming trouble & type trouble. 
+  public List<SentryValueClass> ex; // naming trouble & type trouble.
   public Map<String, Object> extra;
   public Map<String, String> tags;
   public Map<String, Object> request;
@@ -33,12 +46,12 @@ public with sharing class SentryEvent {
 
   public SentryEvent(Exception ex) {
     this();
-    this.ex = SentryStacktraceFactory.fromException(ex);
+    this.originException = ex;
   }
 
   public SentryEvent(String message) {
     this();
-    this.logentry = new SentryLogEntry(message);
+    this.originMessage = message;
   }
 
   public SentryEvent(Sentry_Event__e event) {
@@ -55,7 +68,10 @@ public with sharing class SentryEvent {
     this.contexts = (Map<String, Object>) JSON.deserializeUntyped(
       event.Contexts_Json__c
     );
-    this.ex = (List<SentryValueClass>) JSONDeserializer.deserialize(event.Exception_Json__c, List<SentryValueClass>.class);
+    this.ex = (List<SentryValueClass>) JSONDeserializer.deserialize(
+      event.Exception_Json__c,
+      List<SentryValueClass>.class
+    );
     this.extra = (Map<String, Object>) JSON.deserialize(
       event.Extra_Json__c,
       Map<String, Object>.class

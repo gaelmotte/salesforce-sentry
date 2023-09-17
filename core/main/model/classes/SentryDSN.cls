@@ -8,7 +8,7 @@ public with sharing class SentryDSN {
   //   public String privateKey { get; private set; }
   public String publicKey { get; private set; }
   public String projectId { get; private set; }
-  public Url storeEndpoint { get; private set; }
+  public Url baseUri { get; private set; }
 
   /**
    * https://develop.sentry.dev/sdk/overview/#parsing-the-dsn
@@ -22,11 +22,11 @@ public with sharing class SentryDSN {
     this.publicKey = userInfo[0];
     // this.privateKey = userInfo.size() == 2 ? userInfo[1] : null;
 
-    this.storeEndpoint = new Url(
+    this.baseUri = new Url(
       this.dsn.getProtocol(),
       this.dsn.getHost(),
       this.dsn.getPort(),
-      '/api/' + this.projectId + '/store/'
+      '/api/' + this.projectId
     );
   }
 }
