@@ -82,7 +82,6 @@ public virtual class SentryScope {
         : processors.get(i).processAtTransport(event);
       i++;
     }
-
     return event;
   }
 

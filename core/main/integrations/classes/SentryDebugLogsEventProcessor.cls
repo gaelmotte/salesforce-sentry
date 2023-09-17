@@ -2,13 +2,13 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
   private static final String REQUEST_ID_TAG = 'RequestId';
   private static final String QUIDITTY_TAG = 'Quiddity';
   private static final Pattern LOGLINE_START_PATTERN = Pattern.compile(
-    '^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d{3}) \\((\\d{9})\\)\\|'
+    '^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d+) \\((\\d+)\\)\\|'
   );
   private static final Pattern LOGLINE_METHOD_STACK_PATTERN = Pattern.compile(
     '(METHOD_EXIT|METHOD_ENTRY)\\|\\[(\\d+)\\]\\|[^|]*\\|([^\\r\\n]*)?$'
   );
-  private static final Pattern LOGLINE_DEBUG_START = Pattern.compile(
-    '(USER_DEBUG)\\|\\[(\\d+)\\]\\|([^|]*)\\|([^\\r\\n]*)?$'
+  private static final Pattern LOGLINE_DEBUG_PATTERN = Pattern.compile(
+    'USER_DEBUG\\|\\[(\\d+)\\]\\|([^|]*)\\|([^\\r\\n]*)?$'
   );
   private static final Pattern LOGLINE_CALLOUT_RESPONSE_PATTERN = Pattern.compile(
     'CALLOUT_RESPONSE\\|\\[(\\d+)\\]\\|System.HttpResponse\\[Status=([^,]*), StatusCode=([^\\]]*)\\]$'
@@ -31,6 +31,7 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
     List<String> debugLogBodies = getDebugLogBody(event);
     if (debugLogBodies.size() == 0) {
       // TODO set debugLog should the user retry the request
+
       return event;
     }
     for (String debugLogBody : debugLogBodies) {
@@ -53,7 +54,7 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
       HttpRequest request = new HttpRequest();
       request.setEndpoint(
         Url.getSalesforceBaseUrl().toExternalForm() +
-          '/services/data/v35.0/tooling/sobjects/ApexLog/' +
+          '/services/data/v58.0/tooling/sobjects/ApexLog/' +
           log.id +
           '/Body'
       );
@@ -93,9 +94,11 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
         if (logBreadCrumb == null) {
           continue;
         }
-
         logBreadCrumb.message = logBreadCrumb.message + '\n' + logLine;
         continue;
+      } else if (logBreadCrumb != null) {
+        breadcrumbs.add(logBreadCrumb);
+        logBreadCrumb = null;
       }
       // parse Datetime
       Time timestampTime = Time.newInstance(
@@ -141,7 +144,7 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
         }
         continue;
       }
-      matcher = LOGLINE_DEBUG_START.matcher(logLine);
+      matcher = LOGLINE_DEBUG_PATTERN.matcher(logLine);
       if (matcher.find()) {
         logBreadCrumb = new LogBreadcrumb(
           logStack.get(logStack.size() - 1),
@@ -153,6 +156,7 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
         continue;
       }
     }
+
     return breadcrumbs;
   }
 
