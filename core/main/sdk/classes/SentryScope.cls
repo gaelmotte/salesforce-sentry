@@ -6,7 +6,6 @@ public virtual class SentryScope {
   protected Map<String, Object> extras = new Map<String, Object>();
   protected Map<String, String> tags = new Map<String, String>();
   protected Map<String, SentryContext> contexts = new Map<String, SentryContext>();
-  protected Map<String, Map<String, String>> untyppedContexts = new Map<String, Map<String, String>>();
   protected List<SentryEventProcessor> processors = new List<SentryEventProcessor>();
   protected List<SentryBreadcrumb> breadcrumbs = new List<SentryBreadcrumb>();
 
