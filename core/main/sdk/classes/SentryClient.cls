@@ -23,23 +23,38 @@ public with sharing class SentryClient {
    * this takes events from the event queues, applies costly transforms, then sends it to sentry
    */
   public void transportEvent(List<SentryEvent> events, SentryScope scope) {
-    List<SentryEvent> preparedEvents = new List<SentryEvent>();
+    System.enqueueJob(new QueueableTransportEvent(events, scope));
+  }
 
-    for (SentryEvent event : events) {
-      SentryEvent preparedEvent = scope.applyToEvent(event, false);
-      if (preparedEvent == null) {
-        // the event was filtered by a processor;
-        continue;
+  private class QueueableTransportEvent implements Queueable, Database.AllowsCallouts {
+    List<SentryEvent> events;
+    SentryScope scope;
+    public QueueableTransportEvent(
+      List<SentryEvent> events,
+      SentryScope scope
+    ) {
+      this.events = events;
+      this.scope = scope;
+    }
+    public void execute(QueueableContext context) {
+      List<SentryEvent> preparedEvents = new List<SentryEvent>();
+
+      for (SentryEvent event : events) {
+        SentryEvent preparedEvent = scope.applyToEvent(event, false);
+        if (preparedEvent == null) {
+          // the event was filtered by a processor;
+          continue;
+        }
+        preparedEvents.add(preparedEvent);
       }
-      preparedEvents.add(preparedEvent);
-    }
 
-    if (preparedEvents.size() == 0) {
-      return;
-    }
+      if (preparedEvents.size() == 0) {
+        return;
+      }
 
-    System.debug('sending:' + JSON.serialize(preparedEvents));
-    SentryTransport.send(preparedEvents);
+      System.debug('sending:' + JSON.serialize(preparedEvents));
+      SentryTransport.send(preparedEvents);
+    }
   }
 
   /* These do not make sense here

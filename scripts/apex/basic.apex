@@ -25,3 +25,15 @@ try {
   );
   Sentry.captureException(e);
 }
+
+HttpRequest request = new HttpRequest();
+request.setEndpoint(
+  Url.getSalesforceBaseUrl().toExternalForm() +
+  '/services/data/v35.0/tooling/sobjects/ApexLog/07L7Y00000Tr4J9UAJ/Body'
+);
+request.setMethod('GET');
+request.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
+
+Http http = new Http();
+HttpResponse response = http.send(request);
+System.debug('RESPONSE = '+response.getBody());
