@@ -3,6 +3,9 @@
     {
       "path": "core",
       "default": true
+    },
+    {
+      "path": "sentry-isv"
     }
   ],
   "name": "salesforce-sentry",

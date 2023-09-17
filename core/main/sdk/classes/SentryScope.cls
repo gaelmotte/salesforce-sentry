@@ -1,5 +1,6 @@
 /**
  * https://develop.sentry.dev/sdk/unified-api/#scope
+ * User is excluded from scope and reworked as an SentryUserEventProcessor
  */
 public virtual class SentryScope {
   protected Map<String, Object> extras = new Map<String, Object>();
@@ -7,22 +8,6 @@ public virtual class SentryScope {
   protected Map<String, SentryContext> contexts = new Map<String, SentryContext>();
   protected List<SentryEventProcessor> processors = new List<SentryEventProcessor>();
   protected List<SentryBreadcrumb> breadcrumbs = new List<SentryBreadcrumb>();
-
-  private SentryScope() {
-  }
-
-  public static SentryScope getDefaultScope() {
-    SentryScope defaultScope = new SentryScope();
-    // TODO : take this from config
-    defaultScope.contexts.put(SentryOrgContext.TYPE, new SentryOrgContext());
-    defaultScope.processors.add(new SentryUserEventProcessor());
-    defaultScope.processors.add(new SentryStacktraceEventProcessor());
-    return defaultScope;
-  }
-
-  // TODO add all the necessary contexts
-
-  // TODO define if it requires processors or not
 
   /*
    * Methods for scope copy
@@ -76,6 +61,10 @@ public virtual class SentryScope {
 
   public void addBreadcrumb(SentryBreadcrumb crumb) {
     this.breadcrumbs.add(crumb);
+  }
+
+  public void addProcessor(SentryEventProcessor processor) {
+    processors.add(processor);
   }
 
   public SentryEvent applyToEvent(SentryEvent event, Boolean atCapture) {

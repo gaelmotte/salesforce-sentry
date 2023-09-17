@@ -6,15 +6,14 @@ public with sharing class SentryHub {
   private static SentryHub mainHub;
   private List<SentryScope> scopes;
   private SentryClient client;
-
-  private List<SentryExceptionMechanismFormatter> mechanismFormatters = new List<SentryExceptionMechanismFormatter>{
-    new SentryDMLExceptionMechanismFormatter(),
-    new SentryExceptionMechanismFormatter()
-  };
+  private ISentryConfig config = SentryConfigFactory.getConfig();
 
   private SentryHub() {
-    // TODO default scope should be defined in Config
-    scopes = new List<SentryScope>{ SentryScope.getDefaultScope() };
+    SentryScope scope = new SentryScope();
+    for (ISentryIntegration integration : config.getIntegrations()) {
+      integration.applyToScope(scope);
+    }
+    this.scopes = new List<SentryScope>{ scope };
     client = new SentryClient();
   }
 
@@ -54,7 +53,7 @@ public with sharing class SentryHub {
 
   public void pushScope(
     System.Type scopeType,
-    SentryConfigureScopeCallback callback
+    ISentryConfigureScopeCallback callback
   ) {
     SentryScope scope = SentryScope.fromScope(scopeType, getCurrentScope());
     callback.configure(scope);
