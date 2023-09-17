@@ -4,11 +4,9 @@ public class SentryOrgContext extends SentryContext {
     this.type = TYPE;
   }
 
-  public override SentryContext.ContextData getData() {
-    return new ContextData();
-  }
-
-  private class ContextData implements SentryContext.ContextData{
-    public String organizationId = UserInfo.getOrganizationId();
+  public override Map<String, Object> getData() {
+    return new Map<String, Object>{
+      'organizationId' => UserInfo.getOrganizationId()
+    };
   }
 }
