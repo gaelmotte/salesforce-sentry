@@ -54,20 +54,15 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
       //TODO grab custom ones from config
       sortedFormatters.sort();
     }
-    System.debug('a');
+
     for (SentryExceptionMechanismFormatter formatter : sortedFormatters) {
-      System.debug(
-        'trying ' + formatter.getExceptionType() + ' and ' + ex.getTypeName()
-      );
       if (
         formatter.getExceptionType()
           .isAssignableFrom(Type.forName(ex.getTypeName()))
       ) {
-        System.debug('gormatter = ' + formatter.getExceptionType());
         return formatter;
       }
     }
-    System.debug('gormatter = NULL');
     return null;
   }
 
@@ -81,7 +76,6 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
   }
 
   private SentryEvent decorateFramesWithDetails(SentryEvent event) {
-    System.debug(JSON.serialize(event));
     for (SentryValueClass valueClass : event.ex) {
       for (SentryValueClass.Frame frame : valueClass.stacktrace.frames) {
         ApexClass apexClass = findMatchingClass(
@@ -89,9 +83,6 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
           frame.namespace
         );
         if (apexClass == null) {
-          System.debug(
-            'Failed to find the class ' + frame.namespace + '_' + frame.filename
-          );
           continue;
         }
         frame.in_app = true; // TODO : Take a inAppDiscriminator in constructor from config
@@ -104,14 +95,6 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
           apexClassBodyLines == null ||
           apexClassBodyLines.size() < lineIndex
         ) {
-          System.debug(
-            'Failed to get class ' +
-              frame.namespace +
-              '_' +
-              frame.filename +
-              ' body at line ' +
-              frame.lineno
-          );
           continue;
         }
         frame.context_line = apexClassBodyLines.get(lineIndex);
@@ -156,7 +139,6 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
       FROM ApexClass
       WHERE Name IN :classnames
     ]) {
-      System.debug(JSON.serialize(apexClass));
       this.apexClassesAndBody.put(
         apexClass,
         apexClass.Body != null ? apexClass.Body.split('\n') : null

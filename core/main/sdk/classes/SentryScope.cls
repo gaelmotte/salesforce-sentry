@@ -79,14 +79,7 @@ public virtual class SentryScope {
   }
 
   public SentryEvent applyToEvent(SentryEvent event, Boolean atCapture) {
-    // event.user = this.user;
     for (String key : this.contexts.keySet()) {
-      System.debug('key=' + key);
-      System.debug('json=' + JSON.serialize(contexts));
-      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key)));
-      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).type));
-      System.debug('jsonDetail=' + JSON.serialize(contexts.get(key).getData()));
-
       event.contexts.put(contexts.get(key).type, contexts.get(key).getData());
     }
 
@@ -97,6 +90,10 @@ public virtual class SentryScope {
         : processors.get(i).processAtTransport(event);
       i++;
     }
+
+    event.extra = this.extras;
+    event.tags = this.tags;
+    event.breadcrumbs = this.breadcrumbs;
 
     return event;
   }

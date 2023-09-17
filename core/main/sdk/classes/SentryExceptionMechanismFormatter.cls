@@ -14,7 +14,6 @@ public virtual class SentryExceptionMechanismFormatter implements Comparable {
   }
 
   public virtual SentryValueClass.Mechanism getMechanism(Exception ex) {
-    System.debug('HERE==>'+ ex.getStackTraceString());
     Map<String, Object> data = new Map<String, Object>{
       stacktraceStringKey => ex.getStackTraceString() // will be used by transport to generate the SentryValueClass.Stacktrace
     };
@@ -29,9 +28,6 @@ public virtual class SentryExceptionMechanismFormatter implements Comparable {
   public Integer compareTo(Object other) {
     System.type otherType = ((SentryExceptionMechanismFormatter) other)
       .getExceptionType();
-    System.debug(
-      'comapring ' + getExceptionType().getName() + 'and' + otherType.getName()
-    );
     if (getExceptionType().isAssignableFrom(otherType)) {
       return 1;
     }
