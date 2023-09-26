@@ -2,19 +2,7 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
   private static final String REQUEST_ID_TAG = 'RequestId';
   private static final String QUIDITTY_TAG = 'Quiddity';
   private static final Pattern LOGLINE_START_PATTERN = Pattern.compile(
-    '^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d+) \\((\\d+)\\)\\|'
-  );
-  private static final Pattern LOGLINE_METHOD_STACK_PATTERN = Pattern.compile(
-    '(METHOD_EXIT|METHOD_ENTRY)\\|\\[(\\d+)\\]\\|[^|]*\\|([^\\r\\n]*)?$'
-  );
-  private static final Pattern LOGLINE_DEBUG_PATTERN = Pattern.compile(
-    'USER_DEBUG\\|\\[(\\d+)\\]\\|([^|]*)\\|([^\\r\\n]*)?$'
-  );
-  private static final Pattern LOGLINE_CALLOUT_RESPONSE_PATTERN = Pattern.compile(
-    'CALLOUT_RESPONSE\\|\\[(\\d+)\\]\\|System.HttpResponse\\[Status=([^,]*), StatusCode=([^\\]]*)\\]$'
-  );
-  private static final Pattern LOGLINE_CALLOUT_REQUEST_PATTERN = Pattern.compile(
-    'CALLOUT_REQUEST\\|\\[(\\d+)\\]\\|System.HttpRequest\\[Endpoint=([^,]*), Method=([^\\]]*)\\]$'
+    '^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d+) \\(\\d+\\)\\|([^|]*)\\|(.*)$'
   );
 
   public SentryDebugLogsEventProcessor() {
@@ -79,117 +67,79 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
   }
 
   private List<SentryBreadcrumb> parseLogBody(String debugLogBody) {
-    List<SentryBreadcrumb> breadcrumbs = new List<SentryBreadcrumb>();
-
     List<String> logLines = debugLogBody.split('\n');
+    logLines.remove(0); //first line is a summary of log levels
 
-    List<String> logStack = new List<String>();
-    String multilineContent;
+    List<String> callStack = new List<String>();
+    List<SentryBreadcrumb> breadcrumbs = new List<SentryBreadcrumb>();
+    // TODO find all the strategies
+    List<IDebugLogEntryStrategy> logEntryStrategies = new List<IDebugLogEntryStrategy>{
+      new SentryDebugLogUserDebugStrategy(),
+      new SentryDebugLogMethodStrategy(),
+      new SentryDebugLogCalloutStrategy()
+    };
+
     Matcher matcher;
-    HttpBreadcrumb httpBreadcrumb = null;
-    LogBreadcrumb logBreadCrumb = null;
+    // HttpBreadcrumb httpBreadcrumb = null;
+    DebugLogEntry currentDebugLogEntry = null;
     for (String logLine : logLines) {
       matcher = LOGLINE_START_PATTERN.matcher(logLine);
+      System.debug('LOGLINE:' + logLine);
+      if (logLine.length() == 0) {
+        continue;
+      }
       if (!matcher.find()) {
-        if (logBreadCrumb == null) {
-          continue;
+        System.debug('no match');
+        if (currentDebugLogEntry == null) {
+          continue; // start of log file gibberish
         }
-        logBreadCrumb.message = logBreadCrumb.message + '\n' + logLine;
+        currentDebugLogEntry.content += '\n' + logLine; // multiline content
         continue;
-      } else if (logBreadCrumb != null) {
-        breadcrumbs.add(logBreadCrumb);
-        logBreadCrumb = null;
       }
-      // parse Datetime
-      Time timestampTime = Time.newInstance(
-        Integer.valueOf(matcher.group(1)),
-        Integer.valueOf(matcher.group(2)),
-        Integer.valueOf(matcher.group(3)),
-        Integer.valueOf(matcher.group(4))
+
+      // starting an new entryType, so let the strategies handle the current one;
+      if (currentDebugLogEntry != null) {
+        for (IDebugLogEntryStrategy currentStrategy : logEntryStrategies) {
+          currentStrategy.process(currentDebugLogEntry, callStack, breadcrumbs);
+        }
+      }
+
+      System.debug('match');
+      // new entry
+      currentDebugLogEntry = new DebugLogEntry(
+        Datetime.newInstance(
+          Date.today(),
+          Time.newInstance(
+            Integer.valueOf(matcher.group(1)),
+            Integer.valueOf(matcher.group(2)),
+            Integer.valueOf(matcher.group(3)),
+            Integer.valueOf(matcher.group(4))
+          )
+        ),
+        matcher.group(5),
+        matcher.group(6)
       );
-      Datetime timestamp = Datetime.newInstance(Date.today(), timestampTime);
-      matcher = LOGLINE_METHOD_STACK_PATTERN.matcher(logLine);
-      if (matcher.find()) {
-        if (matcher.group(1) == 'METHOD_ENTRY') {
-          logStack.add(matcher.group(3));
-          continue;
-        }
-        if (matcher.group(1) == 'METHOD_EXIT') {
-          logStack.remove(logStack.size() - 1);
-          continue;
-        }
-      }
-      matcher = LOGLINE_CALLOUT_REQUEST_PATTERN.matcher(logLine);
-      if (matcher.find()) {
-        httpBreadcrumb = new httpBreadcrumb(
-          logStack.get(logStack.size() - 1),
-          timestamp,
-          matcher.group(1),
-          matcher.group(2),
-          matcher.group(3)
-        );
-        continue;
-      }
-      matcher = LOGLINE_CALLOUT_RESPONSE_PATTERN.matcher(logLine);
-      if (matcher.find()) {
-        if (httpBreadcrumb != null) {
-          httpBreadcrumb.data.putAll(
-            new Map<String, Object>{
-              'status_code' => matcher.group(3),
-              'reason' => matcher.group(2)
-            }
-          );
-          breadcrumbs.add(httpBreadcrumb);
-          httpBreadcrumb = null;
-        }
-        continue;
-      }
-      matcher = LOGLINE_DEBUG_PATTERN.matcher(logLine);
-      if (matcher.find()) {
-        logBreadCrumb = new LogBreadcrumb(
-          logStack.get(logStack.size() - 1),
-          timestamp,
-          matcher.group(1),
-          matcher.group(3),
-          matcher.group(2)
-        );
-        continue;
-      }
     }
 
     return breadcrumbs;
   }
 
-  private class LogBreadcrumb extends SentryBreadcrumb {
-    public LogBreadcrumb(
-      String category,
-      Datetime timestamp,
-      String lineNumber,
-      String message,
-      String level
-    ) {
-      super(level);
-      this.type = 'debug';
-      this.category = category + '.lineno' + lineNumber;
-      this.message = message;
+  public class DebugLogEntry {
+    public DebugLogEntry(Datetime timestamp, String type, String content) {
       this.timestamp = timestamp;
+      this.type = type;
+      this.content = content;
     }
+    public Datetime timestamp;
+    public String type;
+    public String content;
   }
 
-  public class HttpBreadcrumb extends SentryBreadcrumb {
-    public HttpBreadcrumb(
-      String category,
-      Datetime timestamp,
-      String lineNumber,
-      String url,
-      String method
-    ) {
-      this.type = 'http';
-      this.category = category + '.lineno' + lineNumber;
-      this.message = message;
-      this.timestamp = timestamp;
-
-      this.data = new Map<String, Object>{ 'url' => url, 'method' => method };
-    }
+  public interface IDebugLogEntryStrategy {
+    void process(
+      DebugLogEntry entry,
+      List<String> callStack,
+      List<SentryBreadcrumb> breadcrumbs
+    );
   }
 }
