@@ -31,6 +31,8 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
     List<String> debugLogBodies = getDebugLogBody(event);
     if (debugLogBodies.size() == 0) {
       // TODO set debugLog should the user retry the request
+      // May be worth checking for debuglogs for the entity and the user.
+      //Not retrieving a file can mean something else;
 
       return event;
     }
@@ -53,13 +55,11 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
     ]) {
       HttpRequest request = new HttpRequest();
       request.setEndpoint(
-        Url.getSalesforceBaseUrl().toExternalForm() +
-          '/services/data/v58.0/tooling/sobjects/ApexLog/' +
+        'callout:Sentry_SDK_Tooling_Api_Credential/services/data/v58.0/tooling/sobjects/ApexLog/' +
           log.id +
           '/Body'
       );
       request.setMethod('GET');
-      request.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
 
       HttpResponse response = http.send(request);
       if (response.getStatusCode() != 200) {
