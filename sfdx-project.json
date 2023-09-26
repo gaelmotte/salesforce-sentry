@@ -5,7 +5,7 @@
       "default": true
     },
     {
-      "path": "sentry-isv"
+      "path": "sentry-enduser"
     }
   ],
   "name": "salesforce-sentry",

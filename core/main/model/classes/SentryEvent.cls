@@ -130,7 +130,8 @@ public with sharing class SentryEvent {
       'extra' => extra,
       'tags' => tags,
       'request' => request,
-      'user' => user
+      'user' => user,
+      'platform' => 'other'
     };
     // clear null fields
     for (String key : payloadMap.keySet()) {
