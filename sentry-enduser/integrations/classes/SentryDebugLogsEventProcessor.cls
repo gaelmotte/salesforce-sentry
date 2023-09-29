@@ -5,10 +5,23 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
     '^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d+) \\(\\d+\\)\\|([^|]*)\\|(.*)$'
   );
 
+  // the more EventTypes we handle the finer these levels should get
+  /* use this payload to upsert the debug log level */
+  private static final Map<String, Object> DEBUG_LEVEL = new Map<String, Object>{
+    'ApexCode' => 'FINEST',
+    'ApexProfiling' => 'FINEST',
+    'Database' => 'FINEST',
+    'System' => 'FINE',
+    'Validation' => 'INFO',
+    'DeveloperName' => 'Sentry_Debug_Level',
+    'MasterLabel' => 'Sentry_Debug_Level'
+  };
+
   public SentryDebugLogsEventProcessor() {
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
+    // Request id must me present since we use it to retrieve the debug logs
     event.tags.put(REQUEST_ID_TAG, Request.getCurrent().getRequestId());
     event.tags.put(QUIDITTY_TAG, Request.getCurrent().getQuiddity().name());
 
@@ -16,12 +29,10 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
   }
 
   public override SentryEvent processAtTransport(SentryEvent event) {
+    setTraceFlag(event);
+
     List<String> debugLogBodies = getDebugLogBody(event);
     if (debugLogBodies.size() == 0) {
-      // TODO set debugLog should the user retry the request
-      // May be worth checking for debuglogs for the entity and the user.
-      //Not retrieving a file can mean something else;
-
       return event;
     }
     for (String debugLogBody : debugLogBodies) {
@@ -29,6 +40,41 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
       event.breadcrumbs.addAll(logBreadcrumbs);
     }
     return event;
+  }
+
+  private void setTraceFlag(SentryEvent event) {
+    Id userId = (Id) event.user.userId;
+
+    Id debugLevelId = SentryToolingCallout.ensure(
+      'DebugLevel',
+      new Map<String, String>{
+        'DeveloperName' => (String) DEBUG_LEVEL.get('DeveloperName')
+      },
+      DEBUG_LEVEL
+    );
+
+    Map<String, Object> TRACE_FLAG_PATCH = new Map<String, Object>{
+      'StartDate' => null,
+      'ExpirationDate' => Datetime.now().addDays(1)
+    };
+
+    Map<String, Object> TRACE_FLAG_POST = new Map<String, Object>{
+      'TracedEntityId' => userId,
+      'StartDate' => null,
+      'ExpirationDate' => Datetime.now().addDays(1),
+      'LogType' => 'USER_DEBUG',
+      'DebugLevelId' => debugLevelId
+    };
+
+    SentryToolingCallout.ensure(
+      'TraceFlag',
+      new Map<String, String>{
+        'TracedEntityId' => userId,
+        'DebugLevelId' => debugLevelId
+      },
+      TRACE_FLAG_POST,
+      TRACE_FLAG_PATCH
+    );
   }
 
   private List<String> getDebugLogBody(SentryEvent event) {
@@ -41,26 +87,12 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
       FROM ApexLog
       WHERE RequestIdentifier = :requestId
     ]) {
-      HttpRequest request = new HttpRequest();
-      request.setEndpoint(
-        'callout:Sentry_SDK_Tooling_Api_Credential/services/data/v58.0/tooling/sobjects/ApexLog/' +
-          log.id +
-          '/Body'
+      // actually does a callout, but does not require the complex setup
+      PageReference pageRef = new PageReference(
+        '/servlet/servlet.FileDownload?file=' + log.Id
       );
-      request.setMethod('GET');
 
-      HttpResponse response = http.send(request);
-      if (response.getStatusCode() != 200) {
-        System.debug(
-          'Failed to retrieve debug log : [' +
-            response.getStatusCode() +
-            '] ' +
-            response.getBody()
-        );
-        // TODO implement error fields on event to catch those cases
-        continue;
-      }
-      bodies.add(response.getBody());
+      bodies.add(pageRef.getContent().toString());
     }
 
     return bodies;
@@ -80,16 +112,13 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
     };
 
     Matcher matcher;
-    // HttpBreadcrumb httpBreadcrumb = null;
     DebugLogEntry currentDebugLogEntry = null;
     for (String logLine : logLines) {
       matcher = LOGLINE_START_PATTERN.matcher(logLine);
-      System.debug('LOGLINE:' + logLine);
       if (logLine.length() == 0) {
         continue;
       }
       if (!matcher.find()) {
-        System.debug('no match');
         if (currentDebugLogEntry == null) {
           continue; // start of log file gibberish
         }
@@ -104,7 +133,6 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
         }
       }
 
-      System.debug('match');
       // new entry
       currentDebugLogEntry = new DebugLogEntry(
         Datetime.newInstance(
