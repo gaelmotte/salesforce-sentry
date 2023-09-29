@@ -6,8 +6,8 @@ package.xml
 
 
 # Standard stuff
-**appMenu
-**appSwitcher
+**AppMenu
+**AppSwitcher
 **setting
 **/profiles/*
 **/emailservices/*
@@ -23,3 +23,9 @@ package.xml
 
 # This is never meant to be deployed
 sentry-isv/core/**
+sentry-enduser/core/**
+
+# Things that are subscriber config
+**/connectedapps/**
+**/authproviders/**
+**/namedcredentials/**

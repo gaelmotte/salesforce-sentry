@@ -1,12 +1,13 @@
 /**
  * https://develop.sentry.dev/sdk/unified-api/#hub
  * Will not support multiple hub, at least for now
+ * This could be usefull should we add Sentry logging on Sentry SDK issues in a managed package
  */
 public with sharing class SentryHub {
   private static SentryHub mainHub;
   private List<SentryScope> scopes;
   private SentryClient client;
-  private ISentryConfig config = SentryConfigFactory.getConfig();
+  private ISentryConfig config = SentryConfigFactory.getConfig(); // consider passing a hub name to allow for different config per hubs
 
   private SentryHub() {
     scopes = new List<SentryScope>{ new SentryScope() };

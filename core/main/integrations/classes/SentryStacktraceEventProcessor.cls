@@ -75,7 +75,8 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
           continue;
         }
         frame.in_app = inAppCallback.isInApp(frame);
-        frame.platform = apexclass.ApiVersion.format();
+        // frame.platform does not support arbitrary values, only a few values are tolerated
+        // frame.platform = 'salesforce'+apexclass.ApiVersion.format();
         Integer lineIndex = frame.lineno - 1;
         List<String> apexClassBodyLines = this.apexClassesAndBody.get(
           apexClass
