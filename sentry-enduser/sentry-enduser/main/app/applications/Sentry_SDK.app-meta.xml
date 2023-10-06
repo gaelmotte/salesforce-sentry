@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#362D59</headerColor>
+        <logo>sentrywordmarkdark400x88</logo>
+        <logoVersion>1</logoVersion>
+        <shouldOverrideOrgTheme>true</shouldOverrideOrgTheme>
+    </brand>
+    <description
+  >Log execution issues to Sentry to help troubleshooting</description>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>true</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>true</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <label>Sentry SDK</label>
+    <navType>Standard</navType>
+    <setupExperience>all</setupExperience>
+    <tabs>Sentry_Config</tabs>
+    <tabs>Sentry_Payload__c</tabs>
+    <uiType>Lightning</uiType>
+    <utilityBar>Sentry_SDK_UtilityBar</utilityBar>
+</CustomApplication>

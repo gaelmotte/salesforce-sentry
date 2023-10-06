@@ -43,3 +43,8 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
+
+
+# sentry-core/core/deps/apex-json-serialization
+# sentry-enduser-sample/force-app/sentry-sdk
+# sentry-enduser/sentry-enduser/core

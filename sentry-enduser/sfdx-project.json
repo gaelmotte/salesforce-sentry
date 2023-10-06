@@ -1,0 +1,15 @@
+{
+  "packageDirectories": [
+    {
+      "path": "sentry-enduser",
+      "default": true
+    },
+    {
+      "path": "../sentry-core/core"
+    }
+  ],
+  "name": "sentry-enduser",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "58.0"
+}

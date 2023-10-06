@@ -5,5 +5,11 @@
     "**/.sfdx": true
   },
   "salesforcedx-vscode-core.push-or-deploy-on-save.enabled": true,
-  "salesforcedx-vscode-core.experimental.enableSourceTrackingForDeployAndRetrieve": false
+  "salesforcedx-vscode-core.experimental.enableSourceTrackingForDeployAndRetrieve": false,
+  "editor.defaultFormatter": "salesforce.salesforcedx-vscode-apex",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "prettier.requireConfig": false,
+  "salesforcedx-vscode-apex.enable-semantic-errors": true,
+  "salesforcedx-vscode-core.retrieve-test-code-coverage": true
 }
