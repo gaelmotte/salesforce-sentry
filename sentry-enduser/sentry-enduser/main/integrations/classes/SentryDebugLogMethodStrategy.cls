@@ -15,9 +15,7 @@ public with sharing class SentryDebugLogMethodStrategy implements SentryDebugLog
       return;
     }
 
-    Matcher matcher = LOGLINE_METHOD_STACK_PATTERN.matcher(
-      entry.content
-    );
+    Matcher matcher = LOGLINE_METHOD_STACK_PATTERN.matcher(entry.content);
     if (!matcher.find()) {
       System.debug(LoggingLevel.ERROR, 'Failed to match');
       return;

@@ -117,8 +117,8 @@ public with sharing class SentryToolingCallout {
       'select id from ' +
         sobjectType +
         ' where ' +
-        String.join(criteriaList, ' and ')
-        + ' limit 1'
+        String.join(criteriaList, ' and ') +
+        ' limit 1'
     );
     if (queryResult.size == 1) {
       // update it

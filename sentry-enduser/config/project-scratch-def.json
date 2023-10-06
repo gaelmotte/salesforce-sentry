@@ -1,10 +1,7 @@
 {
   "orgName": "gaelmotte company",
   "edition": "Developer",
-  "features": [
-    "EnableSetPasswordInApi",
-    "EventLogFile"
-  ],
+  "features": ["EnableSetPasswordInApi", "EventLogFile"],
   "settings": {
     "lightningExperienceSettings": {
       "enableS1DesktopEnabled": true

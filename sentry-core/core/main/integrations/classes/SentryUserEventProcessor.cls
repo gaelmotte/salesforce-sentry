@@ -38,7 +38,7 @@ public with sharing class SentryUserEventProcessor extends SentryEventProcessor 
       LIMIT 1
     ];
 
-    if(captureUserPII){
+    if (captureUserPII) {
       event.user.country = user.Country;
       event.user.email = user.Email;
       event.user.isActive = user.IsActive;
@@ -46,9 +46,11 @@ public with sharing class SentryUserEventProcessor extends SentryEventProcessor 
       event.user.lastName = user.LastName;
       event.user.firstName = user.FirstName;
       event.user.username = user.Username;
-
     }
-    event.contexts.put(SentryPermissionsContext.TYPE, new SentryPermissionsContext(user).getData());
+    event.contexts.put(
+      SentryPermissionsContext.TYPE,
+      new SentryPermissionsContext(user).getData()
+    );
     return event;
   }
 }

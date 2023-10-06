@@ -127,11 +127,7 @@ private class ConvertLeadsInvocableTest {
 
   @isTest
   static void test_convert_lead_toexisting_records() {
-    Lead ld = new Lead(
-      firstName = 'M',
-      lastName = 'B',
-      company = 'Salesforce'
-    );
+    Lead ld = new Lead(firstName = 'M', lastName = 'B', company = 'Salesforce');
     insert ld;
 
     Account account = new Account(Name = 'Salesforce');
@@ -153,7 +149,11 @@ private class ConvertLeadsInvocableTest {
     );
     insert Opportunity;
 
-    ld = [select id, Name, Status, ConvertedContactId from Lead where Id = :ld.Id];
+    ld = [
+      SELECT id, Name, Status, ConvertedContactId
+      FROM Lead
+      WHERE Id = :ld.Id
+    ];
 
     Test.startTest();
 
