@@ -16,7 +16,7 @@ Here is the list of the features we can expect from a Sentry SDK : https://devel
 - Background Sending : ✅ The event is first published to pubsub and processed asynchronously
 - Uncaught Exception Handler :
   - ❌ Salesforce does not provide any kind of hook for that. Heck tere even are exception no one ca catch. However, i aim to provide examples on how to captures exceptions from any runtimecontext https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_enum_System_Quiddity.htm
-  - It is however possible to poll EventLogFiles. Much less details, but can help with uncatchable exception (limits for instance) and provide help on where to add `Sentry.captureException()` calls where possible
+  - ⏳ It is however possible to poll EventLogFiles (requires salesforce shield or Event Moniroting addon). Much less details can be retrieved this way, but can help with uncatchable exceptions (limits for instance) and provide help on where to add `Sentry.captureException()` calls where possible
 - Scopes : 🟠 You'll need to push them yourself.
 - Automatic Context Data : ✅ User and permissions are automatically sent (PII retrieval is enabled by integration)
 - Breadcrumbs : ✅ Manual breadcrumb should work.
@@ -115,7 +115,7 @@ create a scratch org for each
 
 ## Design
 
-To make sure we are able to process events even if transaction is rolled back, `Sentry.captureException` does the following :
+To make sure we are able to process events even if transaction is rolled back, `Sentry.captureException()` does the following :
 
 - capture runtime contexts (such as the user and eventual breadcrumbs)
 - publishes an internal Pubsub Event.
