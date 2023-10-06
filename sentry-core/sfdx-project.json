@@ -1,0 +1,15 @@
+{
+  "packageDirectories": [
+    {
+      "path": "core",
+      "default": true
+    },
+    {
+      "path": "node_modules/@guimini/apex-json-serialization"
+    }
+  ],
+  "name": "core",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "58.0"
+}

@@ -1,0 +1,18 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true
+    },
+    {
+      "path": "../sentry-enduser/sentry-enduser"
+    },
+    {
+      "path": "../sentry-core/core"
+    }
+  ],
+  "name": "sentry-enduser-sample",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "58.0"
+}

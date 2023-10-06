@@ -1,0 +1,23 @@
+{
+  "orgName": "gaelmotte company",
+  "edition": "Developer",
+  "features": ["EnableSetPasswordInApi", "EventLogFile"],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    },
+    "eventSettings": {
+      "enableEventLogGeneration": true,
+      "enableTransactionSecurityPolicies": true,
+      "enableDeleteMonitoringData": true,
+      "enableLoginForensics": true,
+      "enableStreamingApi": true,
+      "enableTerminateOldestSession": true,
+      "enableDynamicStreamingChannel": false,
+      "bypassMeteringBlock": false
+    }
+  }
+}

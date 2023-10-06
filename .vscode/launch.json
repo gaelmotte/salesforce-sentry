@@ -11,6 +11,7 @@
       "logFile": "${command:AskForLogFileName}",
       "stopOnEntry": true,
       "trace": true
+      
     }
   ]
 }
