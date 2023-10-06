@@ -3,6 +3,9 @@
     {
       "path": "core",
       "default": true
+    },
+    {
+      "path": "node_modules/@guimini/apex-json-serialization"
     }
   ],
   "name": "core",

@@ -66,7 +66,7 @@ To setup Sentry, you must expose a `public class <WHATEVER> implements ISentryCo
 
 Each of these are an SFDX project within this repo. You might want to open several vscode instances to make sure salesforce extensions work as expected
 
-### core
+### sentry-core
 
 This is the core SDK. It should not be used as standalone. If you do, i'd love to know why :)
 See the two other package directories, that provide features specific to the two use cases of ISV projects and Salesforce customer org.
@@ -82,7 +82,13 @@ We have no way to remotely update the Sentry DSN anyway (bar some callout shenan
 
 Ideally, i would like to discribute this over NPM, for it does not make sense for an ISV project to depend on another package (complex installs) nor do i want you to copy over the code (losing all possibility for dependency updates)
 
-### sentry enduser
+### sentry-isv-sample
+
+TODO
+
+Sample managaged package showcasing how an ISV would use the sentry-isv version
+
+### sentry-enduser
 
 This includes many more metadata to help a customer Setup Sentry :
 
@@ -90,7 +96,7 @@ This includes many more metadata to help a customer Setup Sentry :
 - Tab for payloads sent to sentry for review
   This needs to be packaged as a managed package. But the 0% test coverage yet makes me think it is not quite for now XD
 
-### Sentry enduser sample
+### sentry-enduser-sample
 
 This is sample on how a Salesforce customer might use the enduser version of the SDK
 For now, it imports the enduser sdk with a symlink, but as soon as it is packaged, this should be changed
@@ -99,8 +105,11 @@ For now, it imports the enduser sdk with a symlink, but as soon as it is package
 
 ### NPM deps
 
-for each sfdx project
+install npm deps at root
 `npm install .`
+
+for each sfdx project
+`npm install . --prefix sentry-XXX`
 
 ### Git submodules
 
