@@ -5,10 +5,9 @@ public with sharing class SentryTransport {
   public static void send(List<SentryEvent> events) {
     // save the payloads
     Set<Id> payloadIds = savePayloads(events);
-    if(config.isEnabled()){
-
+    if (config.isEnabled()) {
       send(payloadIds);
-    } 
+    }
   }
 
   private static Set<Id> savePayloads(List<SentryEvent> events) {
