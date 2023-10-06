@@ -1,8 +1,8 @@
 {
-  "name": "salesforce-sentry",
+  "name": "salesforce-app",
   "private": true,
   "version": "1.0.0",
-  "description": "Sentry SDK for the Salesforce Platform",
+  "description": "Salesforce App",
   "scripts": {
     "lint": "eslint **/{aura,lwc}/**",
     "test": "npm run test:unit",
