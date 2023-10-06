@@ -113,6 +113,10 @@ These are made available as a git submodule
 open each sfdx project in a separate vscode instance
 create a scratch org for each
 
+### leads on how to make it more dev freadly
+
+- move to lerna to manage dev setup ?
+
 ## Design
 
 To make sure we are able to process events even if transaction is rolled back, `Sentry.captureException()` does the following :
