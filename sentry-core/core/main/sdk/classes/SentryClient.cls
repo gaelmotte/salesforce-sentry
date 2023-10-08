@@ -2,6 +2,12 @@
  * https://develop.sentry.dev/sdk/unified-api/#client
  */
 public with sharing class SentryClient {
+  SentryTransport transport;
+
+  public SentryClient(SentryTransport transport) {
+    this.transport = transport;
+  }
+
   /**
    * This takes captured events, applies runtime transforms, and publishes to the event queue for later processing
    */
@@ -22,21 +28,28 @@ public with sharing class SentryClient {
   /**
    * this takes events from the event queues, applies costly transforms, then sends it to sentry
    */
-  public void transportEvent(List<SentryEvent> events, SentryScope scope) {
-    System.enqueueJob(new QueueableTransportEvent(events, scope));
+  public void transportEvents(List<SentryEvent> events, SentryScope scope) {
+    SentryTestSafeQueueable.enqueueJob(
+      new QueueableTransportEvent(events, scope, transport)
+    );
   }
 
   private class QueueableTransportEvent implements Queueable, Database.AllowsCallouts {
     List<SentryEvent> events;
     SentryScope scope;
+    SentryTransport transport;
     public QueueableTransportEvent(
       List<SentryEvent> events,
-      SentryScope scope
+      SentryScope scope,
+      SentryTransport transport
     ) {
       this.events = events;
       this.scope = scope;
+      this.transport = transport;
     }
     public void execute(QueueableContext context) {
+      System.Quiddity quiddity = System.Request.getCurrent().getQuiddity();
+      System.debug('q = ' + quiddity);
       List<SentryEvent> preparedEvents = new List<SentryEvent>();
 
       for (SentryEvent event : events) {
@@ -53,7 +66,8 @@ public with sharing class SentryClient {
       }
 
       System.debug('sending:' + JSON.serialize(preparedEvents));
-      SentryTransport.send(preparedEvents);
+
+      transport.send(preparedEvents);
     }
   }
 

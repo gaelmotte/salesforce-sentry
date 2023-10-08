@@ -7,17 +7,19 @@ public with sharing class SentryHub {
   private static SentryHub mainHub;
   private List<SentryScope> scopes;
   private SentryClient client;
-  private ISentryConfig config = SentryConfigFactory.getConfig(); // consider passing a hub name to allow for different config per hubs
+  private SentryConfig config = SentryConfigFactory.getConfig(); // consider passing a hub name to allow for different config per hubs
+  private SentryTransport transport;
 
   private SentryHub() {
     scopes = new List<SentryScope>{ new SentryScope() };
-    client = new SentryClient();
+    transport = new SentryTransport(config);
+    client = new SentryClient(transport);
     configureDefaultScope();
   }
 
   private void configureDefaultScope() {
     SentryScope scope = scopes.get(0);
-    for (ISentryIntegration integration : config.getIntegrations()) {
+    for (ISentryIntegration integration : config.integrations) {
       integration.applyToScope(scope);
     }
     // TODO add things we always want to add to scope and does not require config
@@ -30,6 +32,10 @@ public with sharing class SentryHub {
     return mainHub;
   }
 
+  /**
+   * We currently support a unique hub
+   * It could make sense to check if caller is Sentry SDK itself, give it a separate hub and config to bring exception in sendtry SDK to our own sentry project
+   */
   public static SentryHub getCurrentHub() {
     return getMainHub();
   }
@@ -46,7 +52,7 @@ public with sharing class SentryHub {
   }
 
   public void transportEvents(List<SentryEvent> events) {
-    client.transportEvent(events, scopes.get(scopes.size() - 1));
+    client.transportEvents(events, scopes.get(scopes.size() - 1));
   }
 
   // public void addBreadcrumb(SentryBreadcrumb crumb) {
