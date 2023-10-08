@@ -84,7 +84,7 @@ public with sharing class SentryClientTest {
     );
 
     Test.startTest();
-    client.captureEvent(new SentryEvent(), scope);
+    client.captureEvent(new SentryEvent(new SentryException()), scope);
     Test.stopTest();
 
     Assert.areEqual(
@@ -98,7 +98,7 @@ public with sharing class SentryClientTest {
   public static void capturesEventsAndPublishesPlatformEvent() {
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
     mdt.Enabled__c = true;
-    mdt.ApexClass__c = SentryConfig.class.getName();
+    mdt.ApexClass__c = SentryConfig.Recommended.class.getName();
     mdt.DSN__c = 'https://public@sentry.example.com/1';
     SentryConfigFactory.getInstance()
       .mdtProvider = new SentryConfigFactory.SentryConfigMdtProvider(
@@ -114,7 +114,7 @@ public with sharing class SentryClientTest {
     );
 
     Test.startTest();
-    client.captureEvent(new SentryEvent(), scope);
+    client.captureEvent(new SentryEvent(new SentryException()), scope);
     Test.stopTest();
 
     Assert.areEqual(
@@ -136,7 +136,10 @@ public with sharing class SentryClientTest {
     );
 
     Test.startTest();
-    client.transportEvents(new List<SentryEvent>{ new SentryEvent() }, scope);
+    client.transportEvents(
+      new List<SentryEvent>{ new SentryEvent(new SentryException()) },
+      scope
+    );
     Test.stopTest();
 
     Assert.areEqual(
@@ -148,11 +151,13 @@ public with sharing class SentryClientTest {
 
   @IsTest
   public static void transportsEvents() {
-    List<SentryEvent> events = new List<SentryEvent>{ new SentryEvent() };
+    List<SentryEvent> events = new List<SentryEvent>{
+      new SentryEvent(new SentryException())
+    };
 
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
     mdt.Enabled__c = true;
-    mdt.ApexClass__c = SentryConfig.class.getName();
+    mdt.ApexClass__c = SentryConfig.Recommended.class.getName();
     mdt.DSN__c = 'https://public@sentry.example.com/1';
     SentryConfigFactory.getInstance()
       .mdtProvider = new SentryConfigFactory.SentryConfigMdtProvider(

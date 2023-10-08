@@ -14,12 +14,12 @@ public with sharing class SentryHub {
     scopes = new List<SentryScope>{ new SentryScope() };
     transport = new SentryTransport(config);
     client = new SentryClient(transport);
-    configureDefaultScope();
+    configureDefaultScope(config);
   }
 
-  private void configureDefaultScope() {
+  private void configureDefaultScope(SentryConfig config) {
     SentryScope scope = scopes.get(0);
-    for (ISentryIntegration integration : config.integrations) {
+    for (ISentryIntegration integration : config.getIntegrations()) {
       integration.applyToScope(scope);
     }
     // TODO add things we always want to add to scope and does not require config

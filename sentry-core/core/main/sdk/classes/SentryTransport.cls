@@ -20,9 +20,6 @@ public with sharing class SentryTransport {
     }
 
     public void execute(QueueableContext context) {
-      System.Quiddity quiddity = System.Request.getCurrent().getQuiddity();
-      System.debug('q = ' + quiddity);
-
       List<Sentry_Payload__c> payloads = new List<Sentry_Payload__c>();
       for (SentryEvent event : events) {
         payloads.add(doSend(event));
@@ -33,7 +30,7 @@ public with sharing class SentryTransport {
     private Sentry_Payload__c doSend(SentryEvent event) {
       Sentry_Payload__c payload = new Sentry_Payload__c();
       payload.Name = event.eventId;
-      if (!config.enabled) {
+      if (!config.ready) {
         event.errors.add(
           new SentryEventProcessingError('sentry', 'sentry-not-enabled', null)
         );

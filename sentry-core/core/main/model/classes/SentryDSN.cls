@@ -9,27 +9,33 @@ public with sharing class SentryDSN {
   public String publicKey { get; private set; }
   public String projectId { get; private set; }
   public Url baseUri { get; private set; }
+  public Boolean valid { get; private set; }
 
   /**
    * https://develop.sentry.dev/sdk/overview/#parsing-the-dsn
    */
   public SentryDSN(String dsn) {
+    valid = false;
     if (dsn == null) {
       return;
     }
-    this.dsn = new Url(dsn);
+    try {
+      this.dsn = new Url(dsn);
 
-    this.projectId = this.dsn.getFile().replace('/', '');
+      this.projectId = this.dsn.getFile().replace('/', '');
 
-    List<String> userInfo = this.dsn.getUserInfo().split(':');
-    this.publicKey = userInfo[0];
-    // this.privateKey = userInfo.size() == 2 ? userInfo[1] : null;
+      List<String> userInfo = this.dsn.getUserInfo().split(':');
+      this.publicKey = userInfo[0];
 
-    this.baseUri = new Url(
-      this.dsn.getProtocol(),
-      this.dsn.getHost(),
-      this.dsn.getPort(),
-      '/api/' + this.projectId
-    );
+      this.baseUri = new Url(
+        this.dsn.getProtocol(),
+        this.dsn.getHost(),
+        this.dsn.getPort(),
+        '/api/' + this.projectId
+      );
+      valid = true;
+    } catch (Exception e) {
+      System.debug('Invalid DSN provided');
+    }
   }
 }

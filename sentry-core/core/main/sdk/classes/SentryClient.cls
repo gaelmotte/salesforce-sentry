@@ -21,7 +21,6 @@ public with sharing class SentryClient {
     // publish a platform event with the event processed.
     Sentry_Event__e pe = event.toPlatformEvent();
 
-    System.debug('publishing:' + JSON.serialize(pe));
     EventBus.publish(pe);
   }
 
@@ -48,8 +47,6 @@ public with sharing class SentryClient {
       this.transport = transport;
     }
     public void execute(QueueableContext context) {
-      System.Quiddity quiddity = System.Request.getCurrent().getQuiddity();
-      System.debug('q = ' + quiddity);
       List<SentryEvent> preparedEvents = new List<SentryEvent>();
 
       for (SentryEvent event : events) {
@@ -64,8 +61,6 @@ public with sharing class SentryClient {
       if (preparedEvents.size() == 0) {
         return;
       }
-
-      System.debug('sending:' + JSON.serialize(preparedEvents));
 
       transport.send(preparedEvents);
     }
