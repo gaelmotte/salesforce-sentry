@@ -3,8 +3,9 @@ global with sharing class SentryStacktraceIntegration implements ISentryIntegrat
 
   public static final String STACKTRACE_AS_STRING_KEY = 'stacktraceString';
   private static final List<SentryMechanismExceptionStrategy> STANDARD_MECANISM_STRATEGIES = new List<SentryMechanismExceptionStrategy>{
-    new SentryMechanismExceptionStrategy(STACKTRACE_AS_STRING_KEY),
-    new SentryMechanismDMLExceptionStrategy()
+    new SentryMechanismExceptionStrategy(),
+    new SentryMechanismDMLExceptionStrategy(),
+    new SentryMechanismQueryExceptionStrategy()
   };
 
   public SentryStacktraceIntegration(Options options) {
