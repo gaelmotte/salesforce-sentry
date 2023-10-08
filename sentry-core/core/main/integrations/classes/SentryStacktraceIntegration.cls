@@ -25,7 +25,26 @@ global with sharing class SentryStacktraceIntegration implements ISentryIntegrat
   }
 
   public class Options {
+    public Integer frameContextLines;
+    public IInAppCallback inAppCallback;
+    public List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies;
+
     public Options() {
+      this(5);
+    }
+
+    public Options(Integer frameContextLines) {
+      this(frameContextLines, STANDARD_MECANISM_STRATEGIES);
+    }
+    public Options(
+      Integer frameContextLines,
+      List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies
+    ) {
+      this(
+        frameContextLines,
+        mechanismExceptionStrategies,
+        new FakeInAppCallback()
+      );
     }
     public Options(
       Integer frameContextLines,
@@ -36,25 +55,6 @@ global with sharing class SentryStacktraceIntegration implements ISentryIntegrat
       this.inAppCallback = inAppCallback;
       this.mechanismExceptionStrategies = mechanismExceptionStrategies;
     }
-
-    public Options(
-      Integer frameContextLines,
-      List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies
-    ) {
-      this.frameContextLines = frameContextLines;
-      this.inAppCallback = new FakeInAppCallback();
-      this.mechanismExceptionStrategies = mechanismExceptionStrategies;
-    }
-
-    public Options(Integer frameContextLines) {
-      this.frameContextLines = frameContextLines;
-      this.inAppCallback = new FakeInAppCallback();
-      this.mechanismExceptionStrategies = new List<SentryMechanismExceptionStrategy>();
-    }
-
-    public Integer frameContextLines = 5;
-    public IInAppCallback inAppCallback = new FakeInAppCallback();
-    public List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies = new List<SentryMechanismExceptionStrategy>();
   }
 
   public interface IInAppCallback {
