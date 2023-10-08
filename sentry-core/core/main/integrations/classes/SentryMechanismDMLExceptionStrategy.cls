@@ -5,24 +5,19 @@ public virtual class SentryMechanismDMLExceptionStrategy extends SentryMechanism
   public virtual override SentryValueClassMechanism getMechanism(Exception ex) {
     SentryValueClassMechanism mechanism = super.getMechanism(ex);
 
-    Map<String, Object> details = new Map<String, Object>();
     for (Integer i = 0; i < Math.min(ex.getNumDml(), 5); i++) {
-      details.putAll(
-        new Map<String, Object>{
-          'dmlFieldNames' + i => ex.getDmlFieldNames(i),
-          'dmlId' + i => ex.getDmlId(i),
-          'dmlIndex' + i => ex.getDmlIndex(i),
-          'dmlMessage' + i => ex.getDmlMessage(i),
-          'dmlStatusCode' + i => ex.getDmlStatusCode(i),
-          'dmlType' + i => ex.getDmlType(i)
-        }
-      );
+      mechanism.data.put('dmlFieldNames' + i, ex.getDmlFieldNames(i));
+      mechanism.data.put('dmlId' + i, ex.getDmlId(i));
+      mechanism.data.put('dmlIndex' + i, ex.getDmlIndex(i));
+      mechanism.data.put('dmlMessage' + i, ex.getDmlMessage(i));
+      mechanism.data.put('dmlStatusCode' + i, ex.getDmlStatusCode(i));
+      mechanism.data.put('dmlType' + i, ex.getDmlType(i));
     }
 
     mechanism.data.put('numDml', ex.getNumDml());
-    mechanism.data.putAll(details);
 
     mechanism.type = getExceptionType().getName();
+    System.debug(JSON.serialize(mechanism.data));
 
     return mechanism;
   }
