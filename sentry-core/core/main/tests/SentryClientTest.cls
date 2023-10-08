@@ -105,7 +105,7 @@ public with sharing class SentryClientTest {
       new List<Sentry_Config__mdt>{ mdt }
     );
 
-    SentryScope scope = new SentryScope();
+    SentryScope scope = SentryHub.getCurrentHub().getCurrentScope();
     SentryClient client = new SentryClient(
       (SentryTransport) Test.createStub(
         SentryTransport.class,
@@ -157,15 +157,14 @@ public with sharing class SentryClientTest {
 
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
     mdt.Enabled__c = true;
-    mdt.ApexClass__c = SentryConfig.Recommended.class.getName();
+    mdt.ApexClass__c = SentryConfig.class.getName();
     mdt.DSN__c = 'https://public@sentry.example.com/1';
     SentryConfigFactory.getInstance()
       .mdtProvider = new SentryConfigFactory.SentryConfigMdtProvider(
       new List<Sentry_Config__mdt>{ mdt }
     );
 
-    SentryScope scope = new SentryScope();
-    scope.addProcessor(new SkipTransportedEventProcessor());
+    SentryScope scope = SentryHub.getCurrentHub().getCurrentScope();
     SentryClient client = new SentryClient(
       (SentryTransport) Test.createStub(
         SentryTransport.class,

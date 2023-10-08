@@ -14,9 +14,9 @@ public virtual with sharing class SentryConfig {
   public class Recommended extends SentryConfig {
     public override List<ISentryIntegration> getIntegrations() {
       return new List<ISentryIntegration>{
-        new SentryUserIntegration(false), // do not capture user PII
+        new SentryUserIntegration(), // do not capture user PII is default
         new SentryStacktraceIntegration(
-          new SentryStacktraceIntegration.Options(5)
+          new SentryStacktraceIntegration.Options() // All the defaults
         )
       };
     }

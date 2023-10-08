@@ -11,18 +11,19 @@ public with sharing class SentryHub {
   private SentryTransport transport;
 
   private SentryHub() {
-    scopes = new List<SentryScope>{ new SentryScope() };
+    scopes = new List<SentryScope>{ configureDefaultScope(config) };
     transport = new SentryTransport(config);
     client = new SentryClient(transport);
-    configureDefaultScope(config);
   }
 
-  private void configureDefaultScope(SentryConfig config) {
-    SentryScope scope = scopes.get(0);
+  @testVisible
+  private SentryScope configureDefaultScope(SentryConfig config) {
+    SentryScope scope = new SentryScope();
     for (ISentryIntegration integration : config.getIntegrations()) {
       integration.applyToScope(scope);
     }
     // TODO add things we always want to add to scope and does not require config
+    return scope;
   }
 
   public static SentryHub getMainHub() {
@@ -80,6 +81,7 @@ public with sharing class SentryHub {
     return client;
   }
 
+  @testVisible
   private SentryScope getCurrentScope() {
     return scopes.get(scopes.size() - 1);
   }
