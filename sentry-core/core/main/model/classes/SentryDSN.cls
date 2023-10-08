@@ -14,6 +14,9 @@ public with sharing class SentryDSN {
    * https://develop.sentry.dev/sdk/overview/#parsing-the-dsn
    */
   public SentryDSN(String dsn) {
+    if (dsn == null) {
+      return;
+    }
     this.dsn = new Url(dsn);
 
     this.projectId = this.dsn.getFile().replace('/', '');

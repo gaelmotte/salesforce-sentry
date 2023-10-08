@@ -37,8 +37,9 @@ public with sharing class SentryTest {
   }
 
   @IsTest
-  public static void handlesException() {
+  public static void handlesExceptionAndEnqueuesTransportEventJob() {
     // Test.setMock(HttpCalloutMock.class, new SentryIngestMock());
+
     Test.startTest();
     try {
       System.debug('How much makes 42 divived by 0 ? ' + (42 / 0));
@@ -46,5 +47,24 @@ public with sharing class SentryTest {
       Sentry.captureException(e);
     }
     Test.stopTest();
+    AsyncApexJob job = [SELECT id, ApexClass.Name FROM AsyncApexJob LIMIT 1];
+    System.debug('job:' + json.serialize(job));
+    Assert.isNotNull(job, 'shoudl have enqued a QueueableTransportEvent');
+    Assert.areEqual(SentryClient.class.getName(), job.ApexClass.Name);
+  }
+
+  @isTest
+  public static void throwsWhenInstanciated() {
+    Boolean threw = false;
+    try {
+      new Sentry();
+    } catch (Exception e) {
+      System.Assert.isTrue(
+        e.getMessage().contains('is not meant to be instanciated')
+      );
+      threw = true;
+    } finally {
+      System.Assert.isTrue(threw);
+    }
   }
 }

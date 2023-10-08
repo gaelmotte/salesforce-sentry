@@ -38,6 +38,7 @@ public with sharing class SentryEvent {
   public Map<String, String> tags;
   public Map<String, Object> request;
   public SentryUser user;
+  public List<SentryEventProcessingError> errors;
 
   public SentryEvent() {
     this.eventId = EncodingUtil.convertToHex(Crypto.generateAesKey(128));
@@ -45,6 +46,7 @@ public with sharing class SentryEvent {
     this.tags = new Map<String, String>();
     this.extra = new Map<String, Object>();
     this.breadcrumbs = new List<SentryBreadcrumb>();
+    this.errors = new List<SentryEventProcessingError>();
   }
 
   public SentryEvent(Exception ex) {
@@ -131,7 +133,8 @@ public with sharing class SentryEvent {
       'tags' => tags,
       'request' => request,
       'user' => user,
-      'platform' => 'other'
+      'platform' => 'other',
+      'errors' => errors
     };
     // clear null fields
     for (String key : payloadMap.keySet()) {
