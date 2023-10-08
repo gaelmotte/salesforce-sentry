@@ -52,7 +52,7 @@ public with sharing class SentryMechanismDMLExceptionStrategyTest {
         mech.data.get('dmlFieldNames0'),
         '1st error on Stored_By_Sentry__c'
       );
-      Assert.areEqual(1, mech.data.get('dmlIndex0'), '1st record should fail');
+      Assert.areEqual(0, mech.data.get('dmlIndex0'), '1st record should fail');
     }
 
   }
