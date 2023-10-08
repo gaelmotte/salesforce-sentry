@@ -6,7 +6,10 @@ public virtual class SentryMechanismDMLExceptionStrategy extends SentryMechanism
     SentryValueClassMechanism mechanism = super.getMechanism(ex);
 
     for (Integer i = 0; i < Math.min(ex.getNumDml(), 5); i++) {
-      mechanism.data.put('dmlFieldNames' + i, ex.getDmlFieldNames(i));
+      mechanism.data.put(
+        'dmlFieldNames' + i,
+        String.join(ex.getDmlFieldNames(i), ', ')
+      );
       mechanism.data.put('dmlId' + i, ex.getDmlId(i));
       mechanism.data.put('dmlIndex' + i, ex.getDmlIndex(i));
       mechanism.data.put('dmlMessage' + i, ex.getDmlMessage(i));
