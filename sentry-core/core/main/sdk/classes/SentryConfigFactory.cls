@@ -48,8 +48,7 @@ public class SentryConfigFactory {
         instance.config = (SentryConfig) apexClass.newInstance();
       }
       instance.config.dsn = new SentryDSN(instance.customMetadata.DSN__c);
-      instance.config.enabled =
-        instance.customMetadata.Enabled__c && instance.config.dsn != null;
+      instance.config.enabled = instance.customMetadata.Enabled__c;
     }
     return instance.config;
   }

@@ -11,7 +11,11 @@ public with sharing class TestUserBuilder {
   }
 
   public TestUserBuilder() {
-    Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User'];
+    Profile p = [
+      SELECT Id
+      FROM Profile
+      WHERE Name = 'Minimum Access - Salesforce'
+    ];
     Blob b = Crypto.GenerateAESKey(128);
     String h = EncodingUtil.ConvertTohex(b);
     String username = h + '@example.com';
@@ -30,7 +34,6 @@ public with sharing class TestUserBuilder {
 
   // TODO ?
   //   public TestUserBuilder withPermissionSet(String permsetDevName){
-
   //   }
 
   public TestUserBuilder withObjectAccess(
