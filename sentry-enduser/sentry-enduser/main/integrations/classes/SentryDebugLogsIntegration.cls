@@ -17,6 +17,8 @@ public with sharing class SentryDebugLogsIntegration implements ISentryIntegrati
   }
 
   public void applyToScope(SentryScope scope) {
+    // we only need the userId and OrgID
+    scope.addProcessor(new SentryUserEventProcessor(false, false));
     scope.addProcessor(
       new SentryDebugLogsEventProcessor(autoAddUserDebugFlag, namedCredDevName)
     );

@@ -1,4 +1,4 @@
-public with sharing class SentryDebugLogCalloutStrategy implements SentryDebugLogsEventProcessor.IDebugLogEntryStrategy {
+public with sharing class SentryDebugLogCalloutStrategy implements SentryDebugLogParser.IDebugLogEntryStrategy {
   private static final Pattern LOGLINE_CALLOUT_RESPONSE_PATTERN = Pattern.compile(
     '\\[(\\d+)\\]\\|System.HttpResponse\\[Status=([^,]*), StatusCode=([^\\]]*)\\]$'
   );
@@ -11,7 +11,7 @@ public with sharing class SentryDebugLogCalloutStrategy implements SentryDebugLo
   private HttpBreadcrumb currentBreadCrumb;
 
   public void process(
-    SentryDebugLogsEventProcessor.DebugLogEntry entry,
+    SentryDebugLogParser.DebugLogEntry entry,
     List<String> callStack,
     List<SentryBreadcrumb> breadcrumbs
   ) {

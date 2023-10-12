@@ -1,4 +1,4 @@
-public with sharing class SentryDebugLogMethodStrategy implements SentryDebugLogsEventProcessor.IDebugLogEntryStrategy {
+public with sharing class SentryDebugLogMethodStrategy implements SentryDebugLogParser.IDebugLogEntryStrategy {
   private static final Pattern LOGLINE_METHOD_STACK_PATTERN = Pattern.compile(
     '\\[(\\d+)\\]\\|[^|]*\\|(.*)?$'
   );
@@ -7,7 +7,7 @@ public with sharing class SentryDebugLogMethodStrategy implements SentryDebugLog
   }
 
   public void process(
-    SentryDebugLogsEventProcessor.DebugLogEntry entry,
+    SentryDebugLogParser.DebugLogEntry entry,
     List<String> callStack,
     List<SentryBreadcrumb> breadcrumbs
   ) {
