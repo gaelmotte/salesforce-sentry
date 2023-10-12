@@ -13,3 +13,7 @@
 
 coverage/
 submodules/**
+
+
+# crashes prettier
+sentry-enduser/sentry-enduser/main/tests/SentryDebugLogParserTest.cls
