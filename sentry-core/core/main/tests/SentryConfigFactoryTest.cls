@@ -11,7 +11,7 @@ public with sharing class SentryConfigFactoryTest {
       SentryConfig.class,
       'should be of type SentryConfig, the virtual class'
     );
-    Assert.isFalse(config.enabled, 'should not be enabled');
+    Assert.isFalse(config.ready, 'should not be ready');
   }
 
   @isTest
@@ -79,8 +79,8 @@ public with sharing class SentryConfigFactoryTest {
       'should be of type SentryConfig, the virtual class'
     );
     Assert.isFalse(
-      config.enabled,
-      'The packaged CMDT record is enabled but does not provide a DSN, so config is not enabled'
+      config.ready,
+      'The packaged CMDT record is enabled but does not provide a DSN, so config is not ready'
     );
   }
 
