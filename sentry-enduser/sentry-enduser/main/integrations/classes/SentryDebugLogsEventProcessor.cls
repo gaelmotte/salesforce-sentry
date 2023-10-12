@@ -17,7 +17,15 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
     'MasterLabel' => 'Sentry_Debug_Level'
   };
 
-  public SentryDebugLogsEventProcessor() {
+  private SentryToolingApiClient toolingApiClient;
+  private Boolean autoAddUserDebugFlag;
+
+  public SentryDebugLogsEventProcessor(
+    Boolean autoAddUserDebugFlag,
+    String namedCredDevName
+  ) {
+    this.toolingApiClient = new SentryToolingApiClient(namedCredDevName);
+    this.autoAddUserDebugFlag = autoAddUserDebugFlag;
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
@@ -43,9 +51,13 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
   }
 
   private void setTraceFlag(SentryEvent event) {
+    if (!autoAddUserDebugFlag) {
+      return;
+    }
+
     Id userId = (Id) event.user.userId;
 
-    Id debugLevelId = SentryToolingCallout.ensure(
+    Id debugLevelId = toolingApiClient.ensure(
       'DebugLevel',
       new Map<String, String>{
         'DeveloperName' => (String) DEBUG_LEVEL.get('DeveloperName')
@@ -66,7 +78,7 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
       'DebugLevelId' => debugLevelId
     };
 
-    SentryToolingCallout.ensure(
+    toolingApiClient.ensure(
       'TraceFlag',
       new Map<String, String>{
         'TracedEntityId' => userId,
