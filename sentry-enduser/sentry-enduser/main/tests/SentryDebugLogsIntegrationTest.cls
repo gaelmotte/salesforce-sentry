@@ -2,7 +2,7 @@
 public with sharing class SentryDebugLogsIntegrationTest {
   @IsTest
   public static void addsRequestIdAndQuiddityOnlyByDefaultOnEvent() {
-    SentryScope scope = SentryHub.getCurrentHub().getCurrentScope();
+    SentryScope scope = new SentryScope();
     SentryDebugLogsIntegration integration = new SentryDebugLogsIntegration();
     integration.applyToScope(scope);
     SentryEvent event = new SentryEvent(new SentryException());

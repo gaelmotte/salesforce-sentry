@@ -115,6 +115,7 @@ for each sfdx project
 ### Start working
 
 open each sfdx project in a separate vscode instance
+`npm run start` in each or at the root (this maintains files in sync)
 create a scratch org for each
 
 ### leads on how to make it more dev freadly
