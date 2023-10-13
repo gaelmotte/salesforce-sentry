@@ -1,11 +1,11 @@
 {
   "packageDirectories": [
     {
-      "path": "core",
-      "default": true
+      "path": "node_modules/@guimini/apex-json-serialization/force-app"
     },
     {
-      "path": "node_modules/@guimini/apex-json-serialization"
+      "path": "core",
+      "default": true
     }
   ],
   "name": "core",

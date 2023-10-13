@@ -1,36 +1,89 @@
 public class SentryConfigFactory {
-  private static ISentryConfig config;
-  public static ISentryConfig getConfig() {
-    if (config == null) {
-      config = Test.isRunningTest()
-        ? new SentryConfigNoop()
-        : (ISentryConfig) getConfigType().newInstance();
+  private static SentryConfigFactory instance;
+  private SentryConfig config;
+
+  @testVisible
+  private static SentryConfigFactory getInstance() {
+    if (instance == null) {
+      instance = new SentryConfigFactory();
     }
-    return config;
+    return instance;
   }
 
-  private static System.Type getConfigType() {
-    List<ApexTypeImplementor> implementors = [
-      SELECT ClassName, ClassNamespacePrefix
-      FROM ApexTypeImplementor
-      WHERE
-        InterfaceName = :ISentryConfig.class.getName()
-        AND IsConcrete = TRUE
-        AND ClassName != :SentryConfigNoop.class.getName()
-    ];
-    if (implementors.size() == 0) {
-      return SentryConfigNoop.class;
+  private SentryConfigFactory() {
+    this.mdtProvider = new SentryConfigMdtProvider();
+  }
+
+  @testVisible
+  private SentryConfigMdtProvider mdtProvider;
+
+  Sentry_Config__mdt customMetadata {
+    get {
+      if (customMetadata == null) {
+        try {
+          customMetadata = mdtProvider.getActiveConfig();
+        } catch (Exception e) {
+          customMetadata = new Sentry_Config__mdt();
+          customMetadata.Enabled__c = false;
+          customMetadata.ApexClass__c = SentryConfig.class.getName();
+
+          System.debug(e.getMessage());
+        }
+      }
+      return customMetadata;
     }
-    if (implementors.size() > 1) {
-      System.debug(
-        'You should have only 1 class that implements ISentryConfig'
+    set;
+  }
+
+  public static SentryConfig getConfig() {
+    SentryConfigFactory instance = getInstance();
+    if (instance.config == null) {
+      System.Type apexClass = System.Type.forName(
+        instance.customMetadata.ApexClass__c
       );
-      return SentryConfigNoop.class;
+      if (!SentryConfig.class.isAssignableFrom(apexClass)) {
+        System.debug('The class must extend SentryConfig');
+        instance.config = new SentryConfig();
+      } else {
+        instance.config = (SentryConfig) apexClass.newInstance();
+      }
+      instance.config.dsn = new SentryDSN(instance.customMetadata.DSN__c);
+      instance.config.enabled = instance.customMetadata.Enabled__c;
+    }
+    return instance.config;
+  }
+
+  private class NoActiveConfigException extends Exception {
+  }
+  private class TooManyActiveConfigException extends Exception {
+  }
+
+  public class SentryConfigMdtProvider {
+    List<Sentry_Config__mdt> configs;
+
+    public SentryConfigMdtProvider() {
+      this(
+        [
+          SELECT ApexClass__c, DSN__c, Enabled__c
+          FROM Sentry_Config__mdt
+          WHERE Enabled__c = TRUE
+        ]
+      );
     }
 
-    return System.Type.forName(
-      implementors.get(0).ClassNamespacePrefix,
-      implementors.get(0).ClassName
-    );
+    @testVisible
+    private SentryConfigMdtProvider(List<Sentry_Config__mdt> configs) {
+      this.configs = configs;
+    }
+
+    public Sentry_Config__mdt getActiveConfig() {
+      if (configs.size() == 1) {
+        return configs[0];
+      }
+      if (configs.size() == 0) {
+        throw new NoActiveConfigException('No active Sentry config');
+      }
+      throw new TooManyActiveConfigException('Too many Sentry active config');
+    }
   }
 }

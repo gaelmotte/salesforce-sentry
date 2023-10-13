@@ -1,9 +1,14 @@
 public with sharing class SentryUserEventProcessor extends SentryEventProcessor {
   private Boolean captureUserPII;
+  private Boolean captureUserPermissions;
 
-  public SentryUserEventProcessor(Boolean captureUserPII) {
+  public SentryUserEventProcessor(
+    Boolean captureUserPermissions,
+    Boolean captureUserPII
+  ) {
+    this.captureUserPermissions = captureUserPermissions;
     this.captureUserPII = captureUserPII;
-    // TODO take an optional namespace to filter permissions
+    // TODO take an optional namespace to filter permissions ?
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
@@ -47,10 +52,12 @@ public with sharing class SentryUserEventProcessor extends SentryEventProcessor 
       event.user.firstName = user.FirstName;
       event.user.username = user.Username;
     }
-    event.contexts.put(
-      SentryPermissionsContext.TYPE,
-      new SentryPermissionsContext(user).getData()
-    );
+    if (captureUserPermissions) {
+      event.contexts.put(
+        SentryPermissionsContext.TYPE,
+        new SentryPermissionsContext(user).getData()
+      );
+    }
     return event;
   }
 }

@@ -45,6 +45,7 @@ Here is the list of the features we can expect from a Sentry SDK : https://devel
 - Polling for unhandled exceptions in EventLogFile https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_eventlogfile_apexunexpectedexception.htm It will not allow for on the fly capture, but could help identify if a class throws in a context that is NOT caught
 - LWC SentryBoundary Mixin
 - Flow Action SentryCaptureFlowException
+- Trigger on PlatformStatusAlertEvent, maybe the global hook we were looking for ? https://developer.salesforce.com/docs/atlas.en-us.platform_events.meta/platform_events/sforce_api_objects_platformstatusalertevent.htm
 
 ## Options
 
@@ -109,13 +110,7 @@ install npm deps at root
 `npm install .`
 
 for each sfdx project
-`npm install . --prefix sentry-XXX`
-
-### Git submodules
-
-the SDK depends on custom deserialization classes.
-These are made available as a git submodule
-`git submodule update --init --recursive`
+`npm install . --prefix sentry-(core|enduser|enuser-sample|isv|isv|sample)`
 
 ### Start working
 
