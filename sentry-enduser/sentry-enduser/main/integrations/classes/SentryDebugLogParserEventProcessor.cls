@@ -1,18 +1,9 @@
-public with sharing class SentryDebugLogsEventProcessor extends SentryEventProcessor {
+public with sharing class SentryDebugLogParserEventProcessor extends SentryEventProcessor {
   private static final String REQUEST_ID_TAG = 'RequestId';
   private static final String QUIDITTY_TAG = 'Quiddity';
 
-  private Boolean autoAddUserDebugFlag;
-
-  private SentryDebugLogsTraceFlagSetter traceFlagSetter;
   private SentryDebugLogParser logParser;
-
-  public SentryDebugLogsEventProcessor(
-    Boolean autoAddUserDebugFlag,
-    String namedCredDevName
-  ) {
-    this.traceFlagSetter = new SentryDebugLogsTraceFlagSetter(namedCredDevName);
-    this.autoAddUserDebugFlag = autoAddUserDebugFlag;
+  public SentryDebugLogParserEventProcessor() {
     this.logParser = new SentryDebugLogParser();
   }
 
@@ -25,10 +16,6 @@ public with sharing class SentryDebugLogsEventProcessor extends SentryEventProce
   }
 
   public override SentryEvent processAtTransport(SentryEvent event) {
-    if (autoAddUserDebugFlag) {
-      traceFlagSetter.setTraceFlag(event);
-    }
-
     List<String> debugLogBodies = getDebugLogBody(event);
     if (debugLogBodies.size() == 0) {
       return event;

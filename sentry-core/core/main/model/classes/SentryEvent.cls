@@ -93,6 +93,7 @@ public with sharing class SentryEvent {
       event.User_Json__c,
       SentryUser.class
     );
+    this.errors = new List<SentryEventProcessingError>();
   }
 
   public Exception getOriginException() {

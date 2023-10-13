@@ -17,9 +17,7 @@ public with sharing class SentryDebugLogsTraceFlagSetter {
     'MasterLabel' => 'Sentry_Debug_Level'
   };
 
-  public void setTraceFlag(SentryEvent event) {
-    Id userId = (Id) event.user.userId;
-
+  public void setTraceFlag(Id userId) {
     Id debugLevelId = toolingApiClient.ensure(
       'DebugLevel',
       new Map<String, String>{
