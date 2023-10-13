@@ -1,5 +1,4 @@
 public with sharing class SentryTransport {
-  private static Http http = new Http();
   private SentryConfig config;
 
   public SentryTransport(SentryConfig config) {
@@ -28,11 +27,12 @@ public with sharing class SentryTransport {
     }
 
     private Sentry_Payload__c doSend(SentryEvent event) {
+      Http http = new Http();
       Sentry_Payload__c payload = new Sentry_Payload__c();
       payload.Name = event.eventId;
       if (!config.ready) {
         event.errors.add(
-          new SentryEventProcessingError('sentry', 'sentry-not-enabled', null)
+          new SentryEventProcessingError('sentry', 'sentry-not-enabled', config)
         );
       } else {
         try {

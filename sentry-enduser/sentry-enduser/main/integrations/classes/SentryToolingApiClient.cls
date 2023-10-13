@@ -32,7 +32,6 @@ public with sharing class SentryToolingApiClient {
     public List<Object> infos;
   }
 
-  private Http http = new Http();
   private String calloutNamedCred;
 
   public SentryToolingApiClient(String namedCredDevName) {
@@ -47,7 +46,7 @@ public with sharing class SentryToolingApiClient {
         EncodingUtil.urlEncode(soql, 'UTF-8')
     );
     request.setMethod('GET');
-    HttpResponse response = http.send(request);
+    HttpResponse response = (new Http()).send(request);
     return new ToolingQueryResult(JSON.deserializeUntyped(response.getBody()));
   }
 
@@ -66,7 +65,7 @@ public with sharing class SentryToolingApiClient {
     request.setBody(JSON.serialize(payload));
     request.setHeader('Content-Type', 'application/json');
 
-    HttpResponse response = http.send(request);
+    HttpResponse response = (new Http()).send(request);
     if (response.getStatusCode() != 204) {
       throw new ToolingApiCalloutException(
         'Failed to patch record [' +
@@ -93,7 +92,7 @@ public with sharing class SentryToolingApiClient {
     request.setBody(JSON.serialize(payload));
     request.setHeader('Content-Type', 'application/json');
 
-    HttpResponse response = http.send(request);
+    HttpResponse response = (new Http()).send(request);
     return new ToolingCreateResult(JSON.deserializeUntyped(response.getBody()));
   }
 

@@ -2,7 +2,7 @@
 public with sharing class SentryUserIntegrationTest {
   @IsTest
   public static void addsUserIdAndNoPiiByDefaultOnEvent() {
-    SentryScope scope = SentryHub.getCurrentHub().getCurrentScope();
+    SentryScope scope = new SentryScope();
     SentryUserIntegration integration = new SentryUserIntegration();
     integration.applyToScope(scope);
     SentryEvent event = new SentryEvent(new SentryException());
@@ -21,7 +21,7 @@ public with sharing class SentryUserIntegrationTest {
 
   @IsTest
   public static void addsUserIdAndPermissionsByDefaultOnEvent() {
-    SentryScope scope = SentryHub.getCurrentHub().getCurrentScope();
+    SentryScope scope = new SentryScope();
     SentryUserIntegration integration = new SentryUserIntegration();
     integration.applyToScope(scope);
     SentryEvent event = new SentryEvent(new SentryException());
@@ -45,7 +45,7 @@ public with sharing class SentryUserIntegrationTest {
 
   @IsTest
   public static void addsUserIdAndPiiGatedOnEvent() {
-    SentryScope scope = SentryHub.getCurrentHub().getCurrentScope();
+    SentryScope scope = new SentryScope();
     SentryUserIntegration integration = new SentryUserIntegration(false, true);
     integration.applyToScope(scope);
     SentryEvent event = new SentryEvent(new SentryException());

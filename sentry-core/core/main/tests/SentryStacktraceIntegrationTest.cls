@@ -2,7 +2,7 @@
 public with sharing class SentryStacktraceIntegrationTest {
   @IsTest
   public static void addsStacktraceDetailsByDefaultOnEvent() {
-    SentryScope scope = SentryHub.getCurrentHub().getCurrentScope();
+    SentryScope scope = new SentryScope();
     SentryStacktraceIntegration integration = new SentryStacktraceIntegration();
     integration.applyToScope(scope);
     SentryEvent event = new SentryEvent(new SentryException());
