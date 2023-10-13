@@ -3,9 +3,6 @@
     {
       "path": "sentry-enduser",
       "default": true
-    },
-    {
-      "path": "../sentry-core/core"
     }
   ],
   "name": "sentry-enduser",
