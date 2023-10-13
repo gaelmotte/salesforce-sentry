@@ -44,7 +44,3 @@ $RECYCLE.BIN/
 **/.venv/
 **/venv/
 
-
-# deps 
-core/deps
-!core/deps/README.md

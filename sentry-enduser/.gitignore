@@ -45,5 +45,3 @@ $RECYCLE.BIN/
 **/venv/
 
 
-# deps 
-sentry-enduser/core
