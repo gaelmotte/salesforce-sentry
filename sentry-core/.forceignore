@@ -21,4 +21,3 @@ package.xml
 # LWC Jest
 **/__tests__/**
 
-apex-json-serialization

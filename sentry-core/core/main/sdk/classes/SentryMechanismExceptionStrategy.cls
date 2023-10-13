@@ -1,10 +1,6 @@
 public virtual class SentryMechanismExceptionStrategy implements Comparable {
   private string stacktraceStringKey;
 
-  public SentryMechanismExceptionStrategy(String stacktraceStringKey) {
-    this.stacktraceStringKey = stacktraceStringKey;
-  }
-
   public SentryMechanismExceptionStrategy() {
     this.stacktraceStringKey = SentryStacktraceIntegration.STACKTRACE_AS_STRING_KEY;
   }

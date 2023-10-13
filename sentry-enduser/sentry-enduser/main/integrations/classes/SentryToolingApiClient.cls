@@ -1,4 +1,4 @@
-public with sharing class SentryToolingCallout {
+public with sharing class SentryToolingApiClient {
   private class ToolingApiCalloutException extends Exception {
   }
   private class ToolingQueryResult {
@@ -31,31 +31,31 @@ public with sharing class SentryToolingCallout {
     public List<Object> warnings;
     public List<Object> infos;
   }
-  public SentryToolingCallout() {
+
+  private String calloutNamedCred;
+
+  public SentryToolingApiClient(String namedCredDevName) {
+    this.calloutNamedCred = 'callout:' + namedCredDevName;
   }
 
-  private static final Http http = new Http();
-
-  public static ToolingQueryResult query(String soql) {
+  public ToolingQueryResult query(String soql) {
     HttpRequest request = new HttpRequest();
     request.setEndpoint(
-      'callout:Sentry_SDK_Tooling_Api_Credential/services/data/v58.0/tooling/query/?q=' +
-      EncodingUtil.urlEncode(soql, 'UTF-8')
+      this.calloutNamedCred +
+        '/services/data/v58.0/tooling/query/?q=' +
+        EncodingUtil.urlEncode(soql, 'UTF-8')
     );
     request.setMethod('GET');
-    HttpResponse response = http.send(request);
+    HttpResponse response = (new Http()).send(request);
     return new ToolingQueryResult(JSON.deserializeUntyped(response.getBody()));
   }
 
-  public static void patch(
-    String sobjectType,
-    Id id,
-    Map<String, Object> payload
-  ) {
+  public void patch(String sobjectType, Id id, Map<String, Object> payload) {
     HttpRequest request = new HttpRequest();
 
     request.setEndpoint(
-      'callout:Sentry_SDK_Tooling_Api_Credential/services/data/v58.0/tooling/sobjects/' +
+      this.calloutNamedCred +
+        '/services/data/v58.0/tooling/sobjects/' +
         sobjectType +
         '/' +
         id
@@ -65,7 +65,7 @@ public with sharing class SentryToolingCallout {
     request.setBody(JSON.serialize(payload));
     request.setHeader('Content-Type', 'application/json');
 
-    HttpResponse response = http.send(request);
+    HttpResponse response = (new Http()).send(request);
     if (response.getStatusCode() != 204) {
       throw new ToolingApiCalloutException(
         'Failed to patch record [' +
@@ -76,26 +76,27 @@ public with sharing class SentryToolingCallout {
     }
   }
 
-  public static ToolingCreateResult post(
+  public ToolingCreateResult post(
     String sobjectType,
     Map<String, Object> payload
   ) {
     HttpRequest request = new HttpRequest();
 
     request.setEndpoint(
-      'callout:Sentry_SDK_Tooling_Api_Credential/services/data/v58.0/tooling/sobjects/' +
-      sobjectType
+      this.calloutNamedCred +
+        '/services/data/v58.0/tooling/sobjects/' +
+        sobjectType
     );
     request.setMethod('POST');
 
     request.setBody(JSON.serialize(payload));
     request.setHeader('Content-Type', 'application/json');
 
-    HttpResponse response = http.send(request);
+    HttpResponse response = (new Http()).send(request);
     return new ToolingCreateResult(JSON.deserializeUntyped(response.getBody()));
   }
 
-  public static Id ensure(
+  public Id ensure(
     String sobjectType,
     Map<String, String> criteriaMap,
     Map<String, Object> postPayload
@@ -103,7 +104,7 @@ public with sharing class SentryToolingCallout {
     return ensure(sobjectType, criteriaMap, postPayload, postPayload);
   }
 
-  public static Id ensure(
+  public Id ensure(
     String sobjectType,
     Map<String, String> criteriaMap,
     Map<String, Object> postPayload,
