@@ -165,13 +165,14 @@ public with sharing class ConvertLeadsInvocable {
     List<Database.LeadConvert> convertRequests,
     Boolean allOrNone
   ) {
-    System.debug(getLimits());
+    // suppose this sets the externalId on the lead
+    System.debug('Lead.ExternalId__c=' + getExternalId());
     // convert the leads
     System.debug('Converting leads : ' + convertRequests.size());
     return Database.convertLead(convertRequests, allOrNone);
   }
 
-  private static String getLimits() {
+  private static String getExternalId() {
     Http http = new Http();
     HttpRequest request = new HttpRequest();
     request.setEndpoint(
@@ -182,7 +183,10 @@ public with sharing class ConvertLeadsInvocable {
     request.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
 
     HttpResponse response = http.send(request);
-    return response.getBody();
+    if (response.getStatusCode() == 200) {
+      return response.getBody();
+    }
+    return null;
   }
 
   // --------------------------------------------------------------------------------
