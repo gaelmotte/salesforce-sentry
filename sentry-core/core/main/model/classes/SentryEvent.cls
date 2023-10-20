@@ -7,10 +7,8 @@
  * 4. Enriched with more data that take time to retrieve
  * 5. Transformed to a payload sentry api does recognize
  *
- * To prevent issues with deserialization when it involves polymorphic members (contexts for instance),
- * we will stick to plain old datatypes when polymorphism is used.
  */
-public with sharing class SentryEvent {
+public with sharing class SentryEvent implements JSONDeserializer.Deserializable {
   /**
    * exception that caused the event
    * Some processors might need it
@@ -40,6 +38,65 @@ public with sharing class SentryEvent {
   public SentryUser user;
   public List<SentryEventProcessingError> errors;
 
+  public void setDeserializedField(String key, Object value) {
+    switch on key {
+      when 'event_id' {
+        this.eventId = (String) value;
+      }
+      when 'logentry' {
+        this.logentry = (SentryLogEntry) value;
+      }
+      when 'transaction' {
+        this.transac = (String) value;
+      }
+      when 'breadcrumbs' {
+        this.breadcrumbs = (List<SentryBreadcrumb>) value;
+      }
+      when 'contexts' {
+        this.contexts = (Map<String, Object>) value;
+      }
+      when 'exception' {
+        this.ex = (List<SentryValueClass>) value;
+      }
+      when 'extra' {
+        this.extra = (Map<String, Object>) value;
+      }
+      when 'tags' {
+        this.tags = (Map<String, String>) value;
+      }
+      when 'request' {
+        this.request = (Map<String, Object>) value;
+      }
+      when 'user' {
+        this.user = (SentryUser) value;
+      }
+      when 'errors' {
+        this.errors = (List<SentryEventProcessingError>) value;
+      }
+      when else {
+        throw new IllegalArgumentException(
+          'Key [' + key + '] is not supported'
+        );
+      }
+    }
+  }
+  public Map<String, System.Type> getDeserializableFields() {
+    return new Map<String, System.Type>{
+      'eventId' => String.class,
+      'logentry' => SentryLogEntry.class,
+      'release' => String.class,
+      'trasaction' => String.class,
+      'breadcrumbs' => List<SentryBreadcrumb>.class,
+      'contexts' => Map<String, Object>.class,
+      'exception' => List<SentryValueClass>.class,
+      'extra' => Map<String, Object>.class,
+      'tags' => Map<String, String>.class,
+      'request' => Map<String, Object>.class,
+      'user' => SentryUser.class,
+      'errors' => List<SentryEventProcessingError>.class
+    };
+  }
+
   public SentryEvent() {
     this.eventId = EncodingUtil.convertToHex(Crypto.generateAesKey(128));
     this.contexts = new Map<String, Object>();
@@ -59,41 +116,8 @@ public with sharing class SentryEvent {
     this.originMessage = message;
   }
 
-  public SentryEvent(Sentry_Event__e event) {
-    this.eventId = event.Event_Id__c;
-    this.logentry = event.Formatted_LogEntry__c != null
-      ? new SentryLogEntry(event.Formatted_LogEntry__c)
-      : null;
-    this.release = event.Release__c;
-    this.transac = event.Transaction__c;
-    this.breadcrumbs = (List<SentryBreadcrumb>) JSON.deserialize(
-      event.Breadcrumbs_Json__c,
-      List<SentryBreadcrumb>.class
-    );
-    this.contexts = (Map<String, Object>) JSON.deserializeUntyped(
-      event.Contexts_Json__c
-    );
-    this.ex = (List<SentryValueClass>) JSONDeserializer.deserialize(
-      event.Exception_Json__c,
-      List<SentryValueClass>.class
-    );
-    this.extra = (Map<String, Object>) JSON.deserialize(
-      event.Extra_Json__c,
-      Map<String, Object>.class
-    );
-    this.request = (Map<String, Object>) JSON.deserialize(
-      event.Request_Json__c,
-      Map<String, Object>.class
-    );
-    this.tags = (Map<String, String>) JSON.deserialize(
-      event.Tags_Json__c,
-      Map<String, String>.class
-    );
-    this.user = (SentryUser) JSON.deserialize(
-      event.User_Json__c,
-      SentryUser.class
-    );
-    this.errors = new List<SentryEventProcessingError>();
+  public static SentryEvent fromPlatformEvent(Sentry_Event__e event) {
+    return deserialize(event.SentryEventJson__c);
   }
 
   public Exception getOriginException() {
@@ -105,23 +129,20 @@ public with sharing class SentryEvent {
   }
 
   public Sentry_Event__e toPlatformEvent() {
-    Sentry_Event__e event = new Sentry_Event__e();
-    event.Event_Id__c = this.eventId;
-    event.Formatted_LogEntry__c = this.logentry?.message.formatted;
-    event.Release__c = this.release;
-    event.Transaction__c = this.transac;
-    event.Breadcrumbs_Json__c = JSON.serialize(this.breadcrumbs);
-    event.Contexts_Json__c = JSON.serialize(this.contexts);
-    event.Exception_Json__c = JSON.serialize(this.ex);
-    event.Extra_Json__c = JSON.serialize(this.extra);
-    event.Request_Json__c = JSON.serialize(this.request);
-    event.Tags_Json__c = JSON.serialize(this.tags);
-    event.User_Json__c = JSON.serialize(this.user);
-
-    return event;
+    return new Sentry_Event__e(
+      SentryEventJson__c = serialize(),
+      Event_Id__c = eventId
+    );
   }
 
-  public String toJsonPayload() {
+  private static SentryEvent deserialize(String jsonString) {
+    return (SentryEvent) JSONDeserializer.deserialize(
+      jsonString,
+      SentryEvent.class
+    );
+  }
+
+  public String serialize() {
     Map<String, Object> payloadMap = new Map<String, Object>{
       'event_id' => eventId,
       'logentry' => logentry,

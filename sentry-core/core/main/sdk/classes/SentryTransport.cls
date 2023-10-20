@@ -60,7 +60,7 @@ public with sharing class SentryTransport {
         }
       }
       payload.Error__c = JSON.serialize(event.errors);
-      payload.Payload__c = event.toJsonPayload();
+      payload.Payload__c = event.serialize();
       return payload;
     }
 
@@ -82,7 +82,7 @@ public with sharing class SentryTransport {
           ', '
         )
       );
-      request.setBody(event.toJsonPayload());
+      request.setBody(event.serialize());
 
       return request;
     }
