@@ -26,7 +26,7 @@ public class SentryConfigFactory {
           customMetadata = new Sentry_Config__mdt();
           customMetadata.Enabled__c = false;
           customMetadata.ApexClass__c = SentryConfig.class.getName();
-
+          customMetadata.Sampling__c = 1;
           System.debug(e.getMessage());
         }
       }
@@ -49,6 +49,7 @@ public class SentryConfigFactory {
       }
       instance.config.dsn = new SentryDSN(instance.customMetadata.DSN__c);
       instance.config.enabled = instance.customMetadata.Enabled__c;
+      instance.config.sampling = instance.customMetadata.Sampling__c;
     }
     return instance.config;
   }

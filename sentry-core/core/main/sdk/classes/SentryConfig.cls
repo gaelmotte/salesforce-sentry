@@ -1,5 +1,6 @@
 public virtual with sharing class SentryConfig {
   public SentryDSN dsn;
+  public Double sampling;
   public Boolean enabled;
   public Boolean ready {
     get {

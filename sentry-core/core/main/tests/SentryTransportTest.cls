@@ -8,6 +8,7 @@ public with sharing class SentryTransportTest {
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
     mdt.Enabled__c = false;
     mdt.ApexClass__c = NoopConfig.class.getName();
+    mdt.Sampling__c = 1;
     SentryConfigFactory.getInstance()
       .mdtProvider = new SentryConfigFactory.SentryConfigMdtProvider(
       new List<Sentry_Config__mdt>{ mdt }
@@ -59,6 +60,7 @@ public with sharing class SentryTransportTest {
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
     mdt.Enabled__c = true;
     mdt.ApexClass__c = SentryConfig.class.getName();
+    mdt.Sampling__c = 1;
     // sample dsn from their documentation https://docs.sentry.io/product/sentry-basics/concepts/dsn-explainer/
     mdt.DSN__c = 'https://public@sentry.example.com/1';
     SentryConfigFactory.getInstance()
@@ -113,6 +115,7 @@ public with sharing class SentryTransportTest {
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
     mdt.Enabled__c = true;
     mdt.ApexClass__c = SentryConfig.class.getName();
+    mdt.Sampling__c = 1;
     // sample dsn from their documentation https://docs.sentry.io/product/sentry-basics/concepts/dsn-explainer/
     mdt.DSN__c = 'https://public@sentry.example.com/1';
     SentryConfigFactory.getInstance()
@@ -187,6 +190,7 @@ public with sharing class SentryTransportTest {
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
     mdt.Enabled__c = true;
     mdt.ApexClass__c = FilterHalfSentryConfig.class.getName();
+    mdt.Sampling__c = 1;
     // sample dsn from their documentation https://docs.sentry.io/product/sentry-basics/concepts/dsn-explainer/
     mdt.DSN__c = 'https://public@sentry.example.com/1';
     SentryConfigFactory.getInstance()
@@ -230,5 +234,42 @@ public with sharing class SentryTransportTest {
       deserializedEvent.breadcrumbs.size(),
       'should have half as many breadcrumbs'
     );
+  }
+
+  @isTest
+  public static void appliesSampling() {
+    Sentry_Config__mdt mdt = new Sentry_Config__mdt();
+    mdt.Enabled__c = true;
+    mdt.ApexClass__c = SentryConfig.class.getName();
+    mdt.Sampling__c = 0;
+    // sample dsn from their documentation https://docs.sentry.io/product/sentry-basics/concepts/dsn-explainer/
+    mdt.DSN__c = 'https://public@sentry.example.com/1';
+    SentryConfigFactory.getInstance()
+      .mdtProvider = new SentryConfigFactory.SentryConfigMdtProvider(
+      new List<Sentry_Config__mdt>{ mdt }
+    );
+
+    SentryTransport transport = new SentryTransport(
+      SentryConfigFactory.getConfig()
+    );
+
+    SentryEvent event = new SentryEvent();
+    SentryEvent filteredEvent = new SentryEvent();
+
+    Test.setMock(HttpCalloutMock.class, new SentryStoreMock(event));
+    Test.startTest();
+    transport.send(new List<SentryEvent>{ event });
+    Test.stopTest();
+
+    List<Sentry_Payload__c> payloads = [
+      SELECT id, Error__c, Stored_By_Sentry__c, Payload__c
+      FROM Sentry_Payload__c
+    ];
+    Assert.areEqual(1, payloads.size(), 'should only persist one payload');
+    Assert.isFalse(
+      payloads[0].Stored_By_Sentry__c,
+      'Event should not have been sampled'
+    );
+    Assert.isTrue(payloads[0].Error__c.contains('sampling'));
   }
 }

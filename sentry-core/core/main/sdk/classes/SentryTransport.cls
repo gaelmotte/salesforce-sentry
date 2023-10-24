@@ -50,7 +50,23 @@ public with sharing class SentryTransport {
     public void execute(QueueableContext context) {
       List<Sentry_Payload__c> payloads = new List<Sentry_Payload__c>();
       for (SentryEvent event : events) {
-        payloads.add(doSend(event));
+        if (shouldSampleEvent()) {
+          payloads.add(doSend(event));
+        } else {
+          event.errors.add(
+            new SentryEventProcessingError(
+              'sentry',
+              'sampling',
+              'Event not sent to sentry due to Sampling rate'
+            )
+          );
+          payloads.add(
+            new Sentry_Payload__c(
+              Payload__c = event.serialize(),
+              Error__c = JSON.serialize(event.errors)
+            )
+          );
+        }
       }
       insert payloads;
     }
@@ -91,6 +107,13 @@ public with sharing class SentryTransport {
       payload.Error__c = JSON.serialize(event.errors);
       payload.Payload__c = event.serialize();
       return payload;
+    }
+
+    private Boolean shouldSampleEvent() {
+      if (Math.random() < config.sampling) {
+        return true;
+      }
+      return false;
     }
 
     private HttpRequest getStoreRequest(SentryEvent event) {
