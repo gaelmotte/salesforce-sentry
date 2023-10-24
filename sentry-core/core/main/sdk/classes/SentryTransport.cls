@@ -6,7 +6,36 @@ public with sharing class SentryTransport {
   }
 
   public void send(List<SentryEvent> events) {
-    SentryTestSafeQueueable.enqueueJob(new QueueableSendEvents(events, config));
+    SentryTestSafeQueueable.enqueueJob(
+      new QueueableSendEvents(applyHooks(events), config)
+    );
+  }
+
+  private List<SentryEvent> applyHooks(List<SentryEvent> events) {
+    List<SentryEvent> preparedEvents = new List<SentryEvent>();
+    for (SentryEvent event : events) {
+      SentryEvent preparedEvent = config.getBeforeSendCallback() != null
+        ? config.getBeforeSendCallback().process(event)
+        : event;
+      if (preparedEvent == null) {
+        continue;
+      }
+      List<SentryBreadcrumb> preparedBreadcrumbs = new List<SentryBreadcrumb>();
+      for (SentryBreadcrumb breadcrumb : preparedEvent.breadcrumbs) {
+        SentryBreadcrumb preparedBreadcrumb = config.getBeforeBreadcrumbCallback() !=
+          null
+          ? config.getBeforeBreadcrumbCallback().process(breadcrumb)
+          : breadcrumb;
+
+        if (preparedBreadcrumb == null) {
+          continue;
+        }
+        preparedBreadcrumbs.add(preparedBreadcrumb);
+      }
+      preparedEvent.breadcrumbs = preparedBreadcrumbs;
+      preparedEvents.add(preparedEvent);
+    }
+    return preparedEvents;
   }
 
   private class QueueableSendEvents implements Queueable, Database.AllowsCallouts {

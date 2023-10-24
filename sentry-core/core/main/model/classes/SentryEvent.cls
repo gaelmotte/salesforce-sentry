@@ -135,7 +135,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     );
   }
 
-  private static SentryEvent deserialize(String jsonString) {
+  public static SentryEvent deserialize(String jsonString) {
     return (SentryEvent) JSONDeserializer.deserialize(
       jsonString,
       SentryEvent.class
