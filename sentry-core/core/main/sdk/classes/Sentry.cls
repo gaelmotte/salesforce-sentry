@@ -9,7 +9,24 @@ global with sharing class Sentry {
 
   public static void captureException(Exception ex) {
     SentryHub.getCurrentHub().captureException(ex);
-  }
+  }  
+  
+  /**
+  * @description Entry method for Flow's Exception
+  * @param inputParameters Input parameter with the Interview GUID
+  */
+  @InvocableMethod(label='Sentry - Flow exception' callout=true description='Send the flow exception to Sentry' iconName='slds:custom:custom34')
+  public static void captureFlowFault(List<SentryFlowInputParameters> inputParameters) {    
+    // Check input parameters is valid
+    for(SentryFlowInputParameters inputParam : inputParameters) {
+      String flowInterviewGUID = inputParam.interviewGUID;
+      String flowFaultMessage = inputParam.faultMessage;
+      if(String.isBlank(flowInterviewGUID) && String.isBlank(flowFaultMessage)) {                
+          throw new SentryException('Input parameters invalid');
+      }
+      SentryHub.getCurrentHub().captureFlowFault(flowInterviewGUID, flowFaultMessage);
+    }
+  }  
 
   // public static void captureMessage(String message) {
   //   SentryHub.getCurrentHub().captureMessage(message);
