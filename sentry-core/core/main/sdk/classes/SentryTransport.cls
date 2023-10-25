@@ -1,4 +1,11 @@
 public with sharing class SentryTransport {
+  // see https://develop.sentry.dev/sdk/rate-limiting/#definitions
+  private static final List<String> SUPPORTED_RATE_LIMITS = new List<String>{
+    'all', // we are not allowed to send anything to sentry
+    'default', // messages of default type
+    'error' // errors
+  };
+
   private SentryConfig config;
 
   public SentryTransport(SentryConfig config) {
@@ -50,9 +57,7 @@ public with sharing class SentryTransport {
     public void execute(QueueableContext context) {
       List<Sentry_Payload__c> payloads = new List<Sentry_Payload__c>();
       for (SentryEvent event : events) {
-        if (shouldSampleEvent()) {
-          payloads.add(doSend(event));
-        } else {
+        if (!shouldSampleEvent()) {
           event.errors.add(
             new SentryEventProcessingError(
               'sentry',
@@ -66,7 +71,25 @@ public with sharing class SentryTransport {
               Error__c = JSON.serialize(event.errors)
             )
           );
+          continue;
         }
+        if (isRateLimited(event)) {
+          event.errors.add(
+            new SentryEventProcessingError(
+              'sentry',
+              'rateLimiting',
+              'Event not sent to sentry due to rate limiting'
+            )
+          );
+          payloads.add(
+            new Sentry_Payload__c(
+              Payload__c = event.serialize(),
+              Error__c = JSON.serialize(event.errors)
+            )
+          );
+          continue;
+        }
+        payloads.add(doSend(event));
       }
       insert payloads;
     }
@@ -112,6 +135,28 @@ public with sharing class SentryTransport {
     private Boolean shouldSampleEvent() {
       if (Math.random() < config.sampling) {
         return true;
+      }
+      return false;
+    }
+
+    /**
+     * Flags certain messages as not to be sent because sentry told us to wait
+     * https://develop.sentry.dev/sdk/rate-limiting/
+     */
+    private Boolean isRateLimited(SentryEvent event) {
+      Map<String, Sentry_Rate_Limits__c> rateLimits = Sentry_Rate_Limits__c.getAll();
+      for (Sentry_Rate_Limits__c rateLimit : rateLimits.values()) {
+        if (rateLimit.DSN__c != config.dsn.rawDsn) {
+          continue;
+        }
+        if (!SUPPORTED_RATE_LIMITS.contains(rateLimit.Category__c)) {
+          continue; // something went wrong here. we saved a rate limit we cannot handle
+        }
+        // Once we support other message types, we would need to suclass SentryEvent and pick the right limit.
+        // for the moment, all 3 supported apply to the messages we send
+        if (Datetime.now() < rateLimit.Until__c) {
+          return true;
+        }
       }
       return false;
     }

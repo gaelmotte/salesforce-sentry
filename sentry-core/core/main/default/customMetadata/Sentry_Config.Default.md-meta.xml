@@ -18,4 +18,8 @@
         <field>Enabled__c</field>
         <value xsi:type="xsd:boolean">false</value>
     </values>
+    <values>
+        <field>Sampling__c</field>
+        <value xsi:type="xsd:double">100.0</value>
+    </values>
 </CustomMetadata>

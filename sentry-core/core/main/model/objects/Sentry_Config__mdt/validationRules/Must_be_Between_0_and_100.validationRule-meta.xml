@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Must_be_Between_0_and_100</fullName>
+    <active>true</active>
+    <errorConditionFormula
+  >Sampling__c &gt; 100 ||  Sampling__c &lt; 0</errorConditionFormula>
+    <errorDisplayField>Sampling__c</errorDisplayField>
+    <errorMessage>The Sampling rate must be between 0 and 100 %.</errorMessage>
+</ValidationRule>
