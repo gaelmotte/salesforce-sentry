@@ -107,6 +107,7 @@ public with sharing class SentryTransport {
           HttpRequest request = getStoreRequest(event);
           if (request != null) {
             HttpResponse response = http.send(request);
+            rememberRateLimit(response);
             if (response.getStatusCode() != 200) {
               throw new CalloutException(
                 'Sentry rejected the event [' +
@@ -130,6 +131,52 @@ public with sharing class SentryTransport {
       payload.Error__c = JSON.serialize(event.errors);
       payload.Payload__c = event.serialize();
       return payload;
+    }
+
+    private void rememberRateLimit(HttpResponse response) {
+      String rateLimitsHeaderValue = response.getHeader('X-Sentry-Rate-Limits');
+      if (rateLimitsHeaderValue == null) {
+        return;
+      }
+      List<Sentry_Rate_Limits__c> rateLimits = new List<Sentry_Rate_Limits__c>();
+      Pattern rateLimitPattern = Pattern.compile('(\\d+):([^:]*):.*');
+      for (String rateLimit : rateLimitsHeaderValue.split(', ')) {
+        Matcher matcher = rateLimitPattern.matcher(rateLimit);
+        if (!matcher.find()) {
+          continue;
+        }
+        if (matcher.group(2) == '') {
+          rateLimits.add(
+            getRateLimitRecord('all', Integer.valueOf(matcher.group(1)))
+          );
+        } else {
+          for (String category : matcher.group(2).split(';')) {
+            rateLimits.add(
+              getRateLimitRecord(category, Integer.valueOf(matcher.group(1)))
+            );
+          }
+        }
+      }
+
+      upsert rateLimits Name;
+    }
+
+    private Sentry_Rate_Limits__c getRateLimitRecord(
+      String category,
+      Integer delay
+    ) {
+      return new Sentry_Rate_Limits__c(
+        Name = getRateLimitHash(category),
+        Category__c = category,
+        DSN__c = config.dsn.rawDsn,
+        Until__c = Datetime.now().addSeconds(delay)
+      );
+    }
+
+    private String getRateLimitHash(String category) {
+      return EncodingUtil.convertToHex(
+        Crypto.generateDigest('MD5', Blob.valueOf(config.dsn.rawDsn + category))
+      );
     }
 
     private Boolean shouldSampleEvent() {
