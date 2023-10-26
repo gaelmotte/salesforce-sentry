@@ -1,5 +1,5 @@
 public with sharing class SentryDSN {
-  private Url dsn;
+  public string rawDsn;
   /**
    * Note The secret part of the DSN is optional and effectively deprecated at this point.
    * While clients are still supposed to honor it if supplied future versions of Sentry will entirely ignore it.
@@ -15,22 +15,23 @@ public with sharing class SentryDSN {
    * https://develop.sentry.dev/sdk/overview/#parsing-the-dsn
    */
   public SentryDSN(String dsn) {
+    rawDsn = dsn;
     valid = false;
     if (dsn == null) {
       return;
     }
     try {
-      this.dsn = new Url(dsn);
+      Url dsnUrl = new Url(dsn);
 
-      this.projectId = this.dsn.getFile().replace('/', '');
+      this.projectId = dsnUrl.getFile().replace('/', '');
 
-      List<String> userInfo = this.dsn.getUserInfo().split(':');
+      List<String> userInfo = dsnUrl.getUserInfo().split(':');
       this.publicKey = userInfo[0];
 
       this.baseUri = new Url(
-        this.dsn.getProtocol(),
-        this.dsn.getHost(),
-        this.dsn.getPort(),
+        dsnUrl.getProtocol(),
+        dsnUrl.getHost(),
+        dsnUrl.getPort(),
         '/api/' + this.projectId
       );
       valid = true;
