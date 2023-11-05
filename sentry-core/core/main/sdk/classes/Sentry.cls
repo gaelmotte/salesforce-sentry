@@ -58,4 +58,12 @@ global with sharing class Sentry {
   // }
 
   // notion of session does not make sense for Salesforce
+
+  // Internal class for Invocable flow method
+  public class SentryFlowInputParameters {
+    @InvocableVariable(label='Flow Interview GUID' required = true )
+    public String interviewGUID;
+    @InvocableVariable(label='Flow Fault Message' required = true )
+    public String faultMessage;
+  }
 }

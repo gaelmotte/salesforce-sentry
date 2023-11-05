@@ -23,7 +23,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
    * flowInterviewGUID that caused the event
    * Some processors might need it
    */
-  private String flowInterviewGUID;
+  private SentryFlowError originFlowError;
 
   // Fields that are part of the Sentry Payload
 
@@ -80,7 +80,9 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
       }
       when else {
         throw new IllegalArgumentException(
-          'Key [' + key + '] is not supported'
+          'Key [' +
+          key +
+          '] is not supported'
         );
       }
     }
@@ -123,8 +125,10 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
 
   public SentryEvent(String flowInterviewGUID, String flowFaultMessage) {
     this();
-    this.flowInterviewGUID = flowInterviewGUID;
-    this.originMessage = flowFaultMessage;
+    this.originFlowError = new SentryFlowError(
+      flowInterviewGUID,
+      flowFaultMessage
+    );
   }
 
   public static SentryEvent fromPlatformEvent(Sentry_Event__e event) {
@@ -139,8 +143,8 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     return this.originMessage;
   }
 
-  public String getFlowInterviewGUID() {
-    return this.flowInterviewGUID;
+  public SentryFlowError getOriginFlowError() {
+    return this.originFlowError;
   }
 
   public Sentry_Event__e toPlatformEvent() {
