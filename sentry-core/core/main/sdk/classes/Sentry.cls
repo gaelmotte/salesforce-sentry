@@ -15,7 +15,7 @@ global with sharing class Sentry {
   * @description Entry method for Flow's Exception
   * @param inputParameters Input parameter with the Interview GUID
   */
-  @InvocableMethod(label='Sentry - Flow exception' callout=true description='Send the flow exception to Sentry' iconName='slds:custom:custom34')
+  @InvocableMethod(label='Sentry - Flow exception' callout=true description='Send the flow exception to Sentry' iconName='resource:sentryLogo:logo')
   public static void captureFlowFault(List<SentryFlowInputParameters> inputParameters) {    
     // Check input parameters is valid
     for(SentryFlowInputParameters inputParam : inputParameters) {
