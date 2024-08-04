@@ -15,9 +15,9 @@
       "enableDeleteMonitoringData": true,
       "enableLoginForensics": true,
       "enableStreamingApi": true,
-      "enableTerminateOldestSession": true,
       "enableDynamicStreamingChannel": false,
-      "bypassMeteringBlock": false
+      "bypassMeteringBlock": false,
+      "eventLogRetentionDuration": 30
     }
   }
 }
