@@ -14,6 +14,11 @@
       "filename": "force-app/main/default/remoteSiteSettings/Sentry.remoteSite-meta.xml",
       "stringToReplace": "SENTRY_REMOTE_SITE",
       "replaceWithEnv": "SENTRY_REMOTE_SITE"
+    },
+    {
+      "filename": "force-app/main/default/customMetadata/Sentry_Config.Default.md-meta.xml",
+      "stringToReplace": "SENTRY_DSN",
+      "replaceWithEnv": "SENTRY_DSN"
     }
   ]
 }

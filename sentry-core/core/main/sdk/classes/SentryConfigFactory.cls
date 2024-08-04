@@ -65,7 +65,7 @@ public class SentryConfigFactory {
     public SentryConfigMdtProvider() {
       this(
         [
-          SELECT ApexClass__c, DSN__c, Enabled__c
+          SELECT ApexClass__c, DSN__c, Enabled__c, Sampling__c
           FROM Sentry_Config__mdt
           WHERE Enabled__c = TRUE
         ]
