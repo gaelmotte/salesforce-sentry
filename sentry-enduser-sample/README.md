@@ -63,5 +63,4 @@ TODO
 
 - Implement the uses cases in both this repo and the SDK
 - Package the SDK
-- Remove Git submodule, and install the package
 - Tests ?
