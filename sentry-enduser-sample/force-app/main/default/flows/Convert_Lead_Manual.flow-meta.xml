@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
+        <name>Capture_Flow_Error</name>
+        <label>Capture Flow Error</label>
+        <locationX>440</locationX>
+        <locationY>350</locationY>
+        <actionName>Sentry</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Error_Screen</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>faultMessage</name>
+            <value>
+                <elementReference>$Flow.FaultMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>interviewGUID</name>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Sentry</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
         <name>Convert_Lead</name>
         <label>Convert Lead</label>
         <locationX>176</locationX>
         <locationY>242</locationY>
         <actionName>ConvertLeadsInvocable</actionName>
         <actionType>apex</actionType>
+        <faultConnector>
+            <targetReference>Capture_Flow_Error</targetReference>
+        </faultConnector>
         <flowTransactionModel>Automatic</flowTransactionModel>
         <inputParameters>
             <name>convertedStatus</name>
@@ -79,6 +108,23 @@
         <object>Lead</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <screens>
+        <name>Error_Screen</name>
+        <label>Error Screen</label>
+        <locationX>440</locationX>
+        <locationY>458</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>ErrorDisplay</name>
+            <fieldText
+      >&lt;p&gt;An Error occured. We&apos;re on it&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>

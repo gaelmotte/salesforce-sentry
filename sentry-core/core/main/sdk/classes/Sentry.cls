@@ -7,26 +7,35 @@ global with sharing class Sentry {
     throw new TypeException('JSONDeserializer is not meant to be instanciated');
   }
 
-  public static void captureException(Exception ex) {
+  global static void captureException(Exception ex) {
     SentryHub.getCurrentHub().captureException(ex);
-  }  
-  
+  }
+
   /**
-  * @description Entry method for Flow's Exception
-  * @param inputParameters Input parameter with the Interview GUID
-  */
-  @InvocableMethod(label='Sentry - Flow exception' callout=true description='Send the flow exception to Sentry' iconName='resource:sentryLogo:logo')
-  public static void captureFlowFault(List<SentryFlowInputParameters> inputParameters) {    
+   * @description Entry method for Flow's Exception
+   * @param inputParameters Input parameter with the Interview GUID
+   */
+  @InvocableMethod(
+    label='Sentry - Flow exception'
+    description='Send the flow exception to Sentry'
+    iconName='resource:sentryLogo:logo'
+  )
+  global static void captureFlowFault(
+    List<SentryFlowInputParameters> inputParameters
+  ) {
     // Check input parameters is valid
-    for(SentryFlowInputParameters inputParam : inputParameters) {
+    for (SentryFlowInputParameters inputParam : inputParameters) {
       String flowInterviewGUID = inputParam.interviewGUID;
       String flowFaultMessage = inputParam.faultMessage;
-      if(String.isBlank(flowInterviewGUID) && String.isBlank(flowFaultMessage)) {                
-          throw new SentryException('Input parameters invalid');
+      if (
+        String.isBlank(flowInterviewGUID) && String.isBlank(flowFaultMessage)
+      ) {
+        throw new SentryException('Input parameters invalid');
       }
-      SentryHub.getCurrentHub().captureFlowFault(flowInterviewGUID, flowFaultMessage);
+      SentryHub.getCurrentHub()
+        .captureFlowFault(flowInterviewGUID, flowFaultMessage);
     }
-  }  
+  }
 
   // public static void captureMessage(String message) {
   //   SentryHub.getCurrentHub().captureMessage(message);
@@ -60,10 +69,10 @@ global with sharing class Sentry {
   // notion of session does not make sense for Salesforce
 
   // Internal class for Invocable flow method
-  public class SentryFlowInputParameters {
-    @InvocableVariable(label='Flow Interview GUID' required = true )
+  global class SentryFlowInputParameters {
+    @InvocableVariable(label='Flow Interview GUID' required=true)
     public String interviewGUID;
-    @InvocableVariable(label='Flow Fault Message' required = true )
+    @InvocableVariable(label='Flow Fault Message' required=true)
     public String faultMessage;
   }
 }

@@ -8,15 +8,15 @@
     <protected>false</protected>
     <values>
         <field>ApexClass__c</field>
-        <value xsi:type="xsd:string">SentryConfig</value>
+        <value xsi:type="xsd:string">SentryEnduserDefaultConfig</value>
     </values>
     <values>
         <field>DSN__c</field>
-        <value xsi:nil="true" />
+        <value xsi:type="xsd:string">SENTRY_DSN</value>
     </values>
     <values>
         <field>Enabled__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>Sampling__c</field>

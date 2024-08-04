@@ -44,3 +44,6 @@ $RECYCLE.BIN/
 **/.venv/
 **/venv/
 
+
+# unpackaged files from enduser package
+force-app/packaged/

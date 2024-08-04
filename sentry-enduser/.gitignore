@@ -45,3 +45,5 @@ $RECYCLE.BIN/
 **/venv/
 
 
+# unpackaged files from core package
+sentry-enduser/core

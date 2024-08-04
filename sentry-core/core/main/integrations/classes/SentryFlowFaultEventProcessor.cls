@@ -7,8 +7,12 @@ public with sharing class SentryFlowFaultEventProcessor extends SentryEventProce
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
+    System.debug('HEREEE');
+
     // Ignore if no exception (avoir error)
     if (event.getOriginFlowError() != null) {
+      System.debug('PROCESSING MESSAGE');
+      System.debug(JSON.serialize(event.getOriginFlowError()));
       SentryFlowError flowErrorObj = event.getOriginFlowError();
       flowException = new SentrySyntheticFlowException(
         flowErrorObj.flowIntervieuwGuid,
@@ -40,9 +44,9 @@ public with sharing class SentryFlowFaultEventProcessor extends SentryEventProce
   }
 
   public override SentryEvent processAtTransport(SentryEvent event) {
-    if (event.ex != null) {
-      // Get Flow details
+    if (event.ex != null && event.extra.containsKey('FlowInterviewGUID')) {
       String flowInterviewGUID = (String) event.extra.get('FlowInterviewGUID');
+      // Get Flow details
       flowException = new SentrySyntheticFlowException(flowInterviewGUID, null);
       fetchFlowInterviewLog(event);
       // Add contexts and mechanisms

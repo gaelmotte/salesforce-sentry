@@ -7,7 +7,8 @@ global with sharing class SentryStacktraceIntegration implements ISentryIntegrat
   private static final List<SentryMechanismExceptionStrategy> STANDARD_MECANISM_STRATEGIES = new List<SentryMechanismExceptionStrategy>{
     new SentryMechanismExceptionStrategy(),
     new SentryMechanismDMLExceptionStrategy(),
-    new SentryMechanismQueryExceptionStrategy()
+    new SentryMechanismQueryExceptionStrategy(),
+    new SentryMechanismSyntheticFlowExStrategy()
   };
 
   public SentryStacktraceIntegration() {
