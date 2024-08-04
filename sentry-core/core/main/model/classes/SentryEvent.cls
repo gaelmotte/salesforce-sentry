@@ -19,6 +19,11 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
    * Some processors might need it
    */
   private String originMessage;
+  /**
+   * flowInterviewGUID that caused the event
+   * Some processors might need it
+   */
+  private SentryFlowError originFlowError;
 
   // Fields that are part of the Sentry Payload
 
@@ -85,7 +90,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
       'eventId' => String.class,
       'logentry' => SentryLogEntry.class,
       'release' => String.class,
-      'trasaction' => String.class,
+      'transaction' => String.class,
       'breadcrumbs' => List<SentryBreadcrumb>.class,
       'contexts' => Map<String, Object>.class,
       'exception' => List<SentryValueClass>.class,
@@ -116,6 +121,14 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     this.originMessage = message;
   }
 
+  public SentryEvent(String flowInterviewGUID, String flowFaultMessage) {
+    this();
+    this.originFlowError = new SentryFlowError(
+      flowInterviewGUID,
+      flowFaultMessage
+    );
+  }
+
   public static SentryEvent fromPlatformEvent(Sentry_Event__e event) {
     return deserialize(event.SentryEventJson__c);
   }
@@ -126,6 +139,10 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
 
   public String getOriginMessage() {
     return this.originMessage;
+  }
+
+  public SentryFlowError getOriginFlowError() {
+    return this.originFlowError;
   }
 
   public Sentry_Event__e toPlatformEvent() {

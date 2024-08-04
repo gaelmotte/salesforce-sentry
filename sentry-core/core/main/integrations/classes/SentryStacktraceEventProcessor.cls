@@ -17,7 +17,10 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
-    event.ex = fromException(event.getOriginException());
+    // Ignore if no exception (avoir error)
+    if (event.getOriginException() != null) {
+      event.ex = fromException(event.getOriginException());
+    }
     return event;
   }
 
@@ -59,41 +62,47 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
    * Add code context
    */
   public override SentryEvent processAtTransport(SentryEvent event) {
-    parseStacktraceStrings(event);
-    fetchApexClasses();
-    return decorateFramesWithDetails(event);
+    if (event.ex != null) {
+      parseStacktraceStrings(event);
+      fetchApexClasses();
+      event = decorateFramesWithDetails(event);
+    }
+    return event;
   }
 
   private SentryEvent decorateFramesWithDetails(SentryEvent event) {
     for (SentryValueClass valueClass : event.ex) {
-      for (SentryValueClass.Frame frame : valueClass.stacktrace.frames) {
-        ApexClass apexClass = findMatchingClass(
-          frame.filename,
-          frame.namespace
-        );
-        if (apexClass == null) {
-          continue;
+      // Ignore Exception coming from Flow
+      if (SentrySyntheticFlowException.class.getName() != valueClass.type) {
+        for (SentryValueClass.Frame frame : valueClass.stacktrace.frames) {
+          ApexClass apexClass = findMatchingClass(
+            frame.filename,
+            frame.namespace
+          );
+          if (apexClass == null) {
+            continue;
+          }
+          frame.in_app = inAppCallback.isInApp(frame);
+          // frame.platform does not support arbitrary values, only a few values are tolerated
+          // frame.platform = 'salesforce'+apexclass.ApiVersion.format();
+          Integer lineIndex = frame.lineno - 1;
+          List<String> apexClassBodyLines = this.apexClassesAndBody.get(
+            apexClass
+          );
+          if (
+            apexClassBodyLines == null ||
+            apexClassBodyLines.size() < lineIndex
+          ) {
+            continue;
+          }
+          frame.context_line = apexClassBodyLines.get(lineIndex);
+          Slicer s = new Slicer(apexClassBodyLines);
+          frame.pre_context = s.slice(lineIndex - frameContextLines, lineIndex);
+          frame.post_context = s.slice(
+            lineIndex + 1,
+            lineIndex + frameContextLines + 1
+          );
         }
-        frame.in_app = inAppCallback.isInApp(frame);
-        // frame.platform does not support arbitrary values, only a few values are tolerated
-        // frame.platform = 'salesforce'+apexclass.ApiVersion.format();
-        Integer lineIndex = frame.lineno - 1;
-        List<String> apexClassBodyLines = this.apexClassesAndBody.get(
-          apexClass
-        );
-        if (
-          apexClassBodyLines == null ||
-          apexClassBodyLines.size() < lineIndex
-        ) {
-          continue;
-        }
-        frame.context_line = apexClassBodyLines.get(lineIndex);
-        Slicer s = new Slicer(apexClassBodyLines);
-        frame.pre_context = s.slice(lineIndex - frameContextLines, lineIndex);
-        frame.post_context = s.slice(
-          lineIndex + 1,
-          lineIndex + frameContextLines + 1
-        );
       }
     }
     return event;
@@ -102,19 +111,26 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
   private void parseStacktraceStrings(SentryEvent event) {
     this.classnames = new Set<String>();
     for (SentryValueClass valueClass : event.ex) {
-      String stacktraceString = (string) valueClass.mechanism.data.get(
-        SentryStacktraceIntegration.STACKTRACE_AS_STRING_KEY
-      );
-      List<SentryStacktraceParser.ApexFrame> apexFrames = SentryStacktraceParser.parse(
-        stacktraceString
-      );
-      valueClass.stacktrace = new SentryValueClass.Stacktrace();
-      // Sentry needs it reversed
-      // for (SentryStacktraceParser.ApexFrame apexFrame : apexFrames) {
-      for (Integer i = apexFrames.size() - 1; i >= 0; i--) {
-        SentryStacktraceParser.ApexFrame apexFrame = apexFrames.get(i);
-        classnames.add(apexFrame.classname);
-        valueClass.stacktrace.frames.add(new SentryValueClass.Frame(apexFrame));
+      // Ignore Exception coming from Flow
+      if (SentrySyntheticFlowException.class.getName() != valueClass.type) {
+        String stacktraceString = (String) valueClass.mechanism
+          ?.data
+          ?.get(SentryStacktraceIntegration.STACKTRACE_AS_STRING_KEY);
+        if (String.isNotBlank(stacktraceString)) {
+          List<SentryStacktraceParser.ApexFrame> apexFrames = SentryStacktraceParser.parse(
+            stacktraceString
+          );
+          valueClass.stacktrace = new SentryValueClass.Stacktrace();
+          // Sentry needs it reversed
+          // for (SentryStacktraceParser.ApexFrame apexFrame : apexFrames) {
+          for (Integer i = apexFrames.size() - 1; i >= 0; i--) {
+            SentryStacktraceParser.ApexFrame apexFrame = apexFrames.get(i);
+            classnames.add(apexFrame.classname);
+            valueClass.stacktrace.frames.add(
+              new SentryValueClass.Frame(apexFrame)
+            );
+          }
+        }
       }
     }
   }

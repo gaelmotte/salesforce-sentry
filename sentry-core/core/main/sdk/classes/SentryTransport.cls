@@ -180,7 +180,7 @@ public with sharing class SentryTransport {
     }
 
     private Boolean shouldSampleEvent() {
-      if (Math.random() < config.sampling) {
+      if (Math.random() <= config.sampling) {
         return true;
       }
       return false;

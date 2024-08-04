@@ -71,4 +71,9 @@ public class SentryStacktraceParser {
     public Integer colnumber;
     public String defaultPresentation;
   }
+
+  public class FlowFrame {
+    public String namespace;
+    public String flowDeveloperName;
+  }
 }

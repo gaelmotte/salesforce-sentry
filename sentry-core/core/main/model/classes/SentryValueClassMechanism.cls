@@ -1,5 +1,6 @@
 public with sharing class SentryValueClassMechanism implements JSONDeserializer.Deserializable {
   public String type;
+  public Boolean synthetic;
   public Map<String, Object> data;
 
   public void setDeserializedField(String key, Object value) {
@@ -9,6 +10,9 @@ public with sharing class SentryValueClassMechanism implements JSONDeserializer.
       }
       when 'type' {
         this.type = (String) value;
+      }
+      when 'synthetic' {
+        this.synthetic = (Boolean) value;
       }
       when else {
         throw new IllegalArgumentException(
@@ -20,7 +24,8 @@ public with sharing class SentryValueClassMechanism implements JSONDeserializer.
   public Map<String, System.Type> getDeserializableFields() {
     return new Map<String, System.Type>{
       'data' => Map<String, Object>.class,
-      'type' => String.class
+      'type' => String.class,
+      'synthetic' => Boolean.class
     };
   }
 }

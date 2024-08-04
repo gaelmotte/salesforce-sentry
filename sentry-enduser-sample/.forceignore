@@ -17,7 +17,6 @@ package.xml
 **/profiles/**
 
 # Custom metadata that may contain a secret
-**/Sentry_Config.Default.md-meta.xml 
 **/tsconfig.json
 
 **/*.ts

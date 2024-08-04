@@ -21,6 +21,15 @@ public virtual class SentryMechanismExceptionStrategy implements Comparable {
     return mechanism;
   }
 
+  public virtual SentryValueClassMechanism getMechanism(
+    SentrySyntheticFlowException ex
+  ) {
+    SentryValueClassMechanism mechanism = new SentryValueClassMechanism();
+    mechanism.type = getExceptionType().getName();
+
+    return mechanism;
+  }
+
   // sorts from most specific to least specific expcetion type
   public Integer compareTo(Object other) {
     System.type otherType = ((SentryMechanismExceptionStrategy) other)
