@@ -8,5 +8,12 @@
   "name": "sentry-enduser-sample",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "58.0"
+  "sourceApiVersion": "58.0",
+  "replacements": [
+    {
+      "filename": "force-app/main/default/remoteSiteSettings/Sentry.remoteSite-meta.xml",
+      "stringToReplace": "SENTRY_REMOTE_SITE",
+      "replaceWithEnv": "SENTRY_REMOTE_SITE"
+    }
+  ]
 }
