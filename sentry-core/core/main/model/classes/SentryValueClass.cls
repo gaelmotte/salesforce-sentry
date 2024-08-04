@@ -46,6 +46,8 @@ public with sharing class SentryValueClass implements JSONDeserializer.Deseriali
   }
 
   public class Frame {
+
+    // Constructor for APEX Exception
     public Frame(SentryStacktraceParser.ApexFrame apexFrame) {
       this.filename = apexFrame.classname;
       this.module = apexFrame.subclassname != null
@@ -54,6 +56,12 @@ public with sharing class SentryValueClass implements JSONDeserializer.Deseriali
       this.function = apexFrame.function;
       this.lineno = apexFrame.linenumber;
       this.namespace = apexFrame.namespace;
+    }
+
+    // Construction for Flow Synthetic Exception
+    public Frame(SentryStacktraceParser.FlowFrame flowFrame) {
+      this.filename = flowFrame.flowDeveloperName;
+      this.namespace = flowFrame.namespace;
     }
 
     public String context_line;
