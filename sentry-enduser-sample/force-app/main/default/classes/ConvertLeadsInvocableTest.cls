@@ -127,7 +127,12 @@ private class ConvertLeadsInvocableTest {
 
   @isTest
   static void test_convert_lead_toexisting_records() {
-    Lead ld = new Lead(firstName = 'M', lastName = 'B', company = 'Salesforce');
+    Lead ld = new Lead(
+      firstName = 'M',
+      lastName = 'B',
+      company = 'Salesforce',
+      ExternalId__c = UUID.randomUUID().toString()
+    );
     insert ld;
 
     Account account = new Account(Name = 'Salesforce');
@@ -145,9 +150,10 @@ private class ConvertLeadsInvocableTest {
       AccountId = Account.Id,
       Name = 'Some Opportunity',
       StageName = stageNameValues[0].getValue(),
-      CloseDate = Date.today()
+      CloseDate = Date.today(),
+      ExternalId__c = ld.ExternalId__c
     );
-    insert Opportunity;
+    insert opportunity;
 
     ld = [
       SELECT id, Name, Status, ConvertedContactId
@@ -191,5 +197,49 @@ private class ConvertLeadsInvocableTest {
     System.assertEquals(ld.ConvertedAccountId, result.accountId);
     System.assertEquals(ld.ConvertedContactId, result.contactId);
     System.assertEquals(ld.ConvertedOpportunityId, result.opportunityId);
+  }
+
+  @isTest
+  static void test_convert_lead_wrongExternalId() {
+    Lead ld = new Lead(
+      firstName = 'Marc',
+      lastName = 'Benioff',
+      company = 'Salesforce',
+      ExternalId__c = '42'
+    );
+
+    insert ld;
+
+    ConvertLeadsInvocable.LeadConvertRequest request = new ConvertLeadsInvocable.LeadConvertRequest();
+    request.leadId = ld.id;
+    request.convertedStatus = [
+      SELECT id, masterLabel
+      FROM LeadStatus
+      WHERE isConverted = TRUE
+      LIMIT 1
+    ]
+    .masterLabel;
+    request.createOpportunity = true;
+    request.opportunityName = 'Test Opportunity';
+    request.ownerId = UserInfo.getUserId();
+    request.sendEmailToOwner = true;
+
+    Test.startTest();
+    Exception thrown = null;
+
+    try {
+      List<ConvertLeadsInvocable.LeadConvertResult> results = ConvertLeadsInvocable.convertLeads(
+        new List<ConvertLeadsInvocable.LeadConvertRequest>{ request }
+      );
+    } catch (Exception e) {
+      thrown = e;
+    }
+
+    Test.stopTest();
+    Assert.isInstanceOfType(
+      thrown,
+      DmlException.class,
+      'Expected a DML Exception'
+    );
   }
 }
