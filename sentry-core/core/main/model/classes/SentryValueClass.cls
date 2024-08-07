@@ -46,7 +46,6 @@ public with sharing class SentryValueClass implements JSONDeserializer.Deseriali
   }
 
   public class Frame {
-
     // Constructor for APEX Exception
     public Frame(SentryStacktraceParser.ApexFrame apexFrame) {
       this.filename = apexFrame.classname;

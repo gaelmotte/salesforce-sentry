@@ -1,9 +1,9 @@
 public with sharing class SentrySyntheticFlowException extends SentrySyntheticException {
   private List<SentryFlowDetails> interviewLogs;
 
-  public SentrySyntheticFlowException(String guid, String faultMessage){    
+  public SentrySyntheticFlowException(String guid, String faultMessage) {
     setMessage(faultMessage); // Define the exception message with the flow fault message
-    setGuid(guid); 
+    setGuid(guid);
     this.interviewLogs = new List<SentryFlowDetails>();
   }
 
@@ -14,5 +14,4 @@ public with sharing class SentrySyntheticFlowException extends SentrySyntheticEx
   public List<SentryFlowDetails> getInterviewLogs() {
     return this.interviewLogs;
   }
-
 }

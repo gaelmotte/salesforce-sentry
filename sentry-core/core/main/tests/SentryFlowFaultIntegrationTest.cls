@@ -13,7 +13,7 @@ public with sharing class SentryFlowFaultIntegrationTest {
       event.ex,
       'exception (ex because of reserved keywork) should be added'
     );
-    Assert.areEqual(1, event.ex.size()); 
+    Assert.areEqual(1, event.ex.size());
     Assert.areEqual(
       (new SentryMechanismSyntheticFlowExStrategy())
         .getExceptionType()

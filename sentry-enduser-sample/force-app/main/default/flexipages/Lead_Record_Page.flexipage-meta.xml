@@ -9,6 +9,9 @@
                         <valueListItems>
                             <value>Lead.Custom_Conversion</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Lead.Set_an_ExternalId</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

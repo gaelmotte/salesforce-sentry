@@ -46,14 +46,17 @@ public with sharing class SentryHub {
   }
 
   /**
-  * @description Entry method of the Sentry Hub for Flow Exception
-  * @param interviewGUID Interview GUID of the Flow
-  * @param faultMessage Fault Message of the Flow
-  */
+   * @description Entry method of the Sentry Hub for Flow Exception
+   * @param interviewGUID Interview GUID of the Flow
+   * @param faultMessage Fault Message of the Flow
+   */
   public void captureFlowFault(String interviewGUID, String faultMessage) {
     // TODO Capture Details vie SOQL on FlowInterview Object ? Capture error of this object and save in message variable
     // TODO : To avoid multiple constructor for SentryEvent, user Builder Pattern ?
-    client.captureEvent(new SentryEvent(interviewGUID, faultMessage), scopes.get(scopes.size() - 1));
+    client.captureEvent(
+      new SentryEvent(interviewGUID, faultMessage),
+      scopes.get(scopes.size() - 1)
+    );
   }
 
   public void captureMessage(String message) {

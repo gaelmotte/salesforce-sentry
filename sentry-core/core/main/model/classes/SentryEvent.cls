@@ -80,9 +80,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
       }
       when else {
         throw new IllegalArgumentException(
-          'Key [' +
-          key +
-          '] is not supported'
+          'Key [' + key + '] is not supported'
         );
       }
     }

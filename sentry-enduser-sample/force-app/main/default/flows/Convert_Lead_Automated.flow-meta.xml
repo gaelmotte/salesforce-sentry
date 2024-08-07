@@ -1,12 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
+        <name>Capture_Error</name>
+        <label>Capture Error</label>
+        <locationX>440</locationX>
+        <locationY>647</locationY>
+        <actionName>Sentry</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>faultMessage</name>
+            <value>
+                <elementReference>$Flow.FaultMessage</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>interviewGUID</name>
+            <value>
+                <elementReference>$Flow.InterviewGuid</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Sentry</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
         <name>Convert_Lead</name>
         <label>Convert Lead</label>
         <locationX>176</locationX>
-        <locationY>323</locationY>
+        <locationY>539</locationY>
         <actionName>ConvertLeadsInvocable</actionName>
         <actionType>apex</actionType>
+        <faultConnector>
+            <targetReference>Capture_Error</targetReference>
+        </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>convertedStatus</name>
@@ -27,6 +53,21 @@
             </value>
         </inputParameters>
         <nameSegment>ConvertLeadsInvocable</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>get_Uuid</name>
+        <label>get Uuid</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <actionName>GenerateUuidInvocable</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Set_Uuid</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>GenerateUuidInvocable</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
         <versionSegment>1</versionSegment>
     </actionCalls>
@@ -54,11 +95,31 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Set_Uuid</name>
+        <label>Set Uuid</label>
+        <locationX>176</locationX>
+        <locationY>431</locationY>
+        <connector>
+            <targetReference>Convert_Lead</targetReference>
+        </connector>
+        <faultConnector>
+            <isGoTo>true</isGoTo>
+            <targetReference>Capture_Error</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>ExternalId__c</field>
+            <value>
+                <stringValue>42</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Convert_Lead</targetReference>
+            <targetReference>get_Uuid</targetReference>
         </connector>
         <doesRequireRecordChangedToMeetCriteria
     >true</doesRequireRecordChangedToMeetCriteria>

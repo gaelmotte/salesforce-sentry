@@ -1,5 +1,5 @@
 public with sharing class SentryValueClassMechanism implements JSONDeserializer.Deserializable {
-  public String type;  
+  public String type;
   public Boolean synthetic;
   public Map<String, Object> data;
 

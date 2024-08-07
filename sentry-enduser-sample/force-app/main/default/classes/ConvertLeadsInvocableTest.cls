@@ -127,7 +127,12 @@ private class ConvertLeadsInvocableTest {
 
   @isTest
   static void test_convert_lead_toexisting_records() {
-    Lead ld = new Lead(firstName = 'M', lastName = 'B', company = 'Salesforce');
+    Lead ld = new Lead(
+      firstName = 'M',
+      lastName = 'B',
+      company = 'Salesforce',
+      ExternalId__c = UUID.randomUUID().toString()
+    );
     insert ld;
 
     Account account = new Account(Name = 'Salesforce');
@@ -145,9 +150,10 @@ private class ConvertLeadsInvocableTest {
       AccountId = Account.Id,
       Name = 'Some Opportunity',
       StageName = stageNameValues[0].getValue(),
-      CloseDate = Date.today()
+      CloseDate = Date.today(),
+      ExternalId__c = ld.ExternalId__c
     );
-    insert Opportunity;
+    insert opportunity;
 
     ld = [
       SELECT id, Name, Status, ConvertedContactId

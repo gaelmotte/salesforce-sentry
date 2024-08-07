@@ -100,9 +100,7 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
           frame.pre_context = s.slice(lineIndex - frameContextLines, lineIndex);
           frame.post_context = s.slice(
             lineIndex + 1,
-            lineIndex +
-            frameContextLines +
-            1
+            lineIndex + frameContextLines + 1
           );
         }
       }

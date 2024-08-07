@@ -21,7 +21,7 @@ public with sharing class SentryTest {
     AsyncApexJob job = [SELECT id, ApexClass.Name FROM AsyncApexJob LIMIT 1];
     Assert.isNotNull(job, 'shoudl have enqued a QueueableTransportEvent');
     Assert.areEqual(SentryClient.class.getName(), job.ApexClass.Name);
-  } 
+  }
 
   @isTest
   public static void handlesSyntheticFlowExceptionAndEnqueuesTransportEventJob() {

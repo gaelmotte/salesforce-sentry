@@ -133,6 +133,8 @@ public with sharing class ConvertLeadsInvocable {
     List<LeadConvertRequest> requests
   ) {
     try {
+      System.debug(JSON.serialize(requests));
+
       // transform the invocable request to database convert request
       List<Database.LeadConvert> convertRequests = new List<Database.LeadConvert>();
       for (LeadConvertRequest request : requests) {
@@ -152,7 +154,7 @@ public with sharing class ConvertLeadsInvocable {
         results.add(transform(convertResult));
       }
 
-      System.debug(JSON.serialize(requests.get(requests.size())));
+      System.debug(JSON.serialize(results));
 
       return results;
     } catch (Exception e) {
@@ -165,16 +167,29 @@ public with sharing class ConvertLeadsInvocable {
     List<Database.LeadConvert> convertRequests,
     Boolean allOrNone
   ) {
-    // suppose this sets the externalId on the lead
-    System.debug('Lead.ExternalId__c=' + getExternalId());
+    Lead[] leads = new List<Lead>();
+    for (Database.LeadConvert convertRequest : convertRequests) {
+      Id leadId = convertRequest.leadid;
+      Lead lead = [SELECT Id, ExternalId__c FROM Lead WHERE id = :leadId]; // consider bulkification
+      if (lead.ExternalId__c == null) {
+        lead.ExternalId__c = getExternalId();
+        leads.add(lead);
+      }
+    }
+    update leads;
     // convert the leads
     System.debug('Converting leads : ' + convertRequests.size());
     return Database.convertLead(convertRequests, allOrNone);
   }
 
   private static String getExternalId() {
+    if (Test.isRunningTest()) {
+      return UUID.randomUUID().toString();
+    }
+
     Http http = new Http();
     HttpRequest request = new HttpRequest();
+    //suppose we call an external system to obtain an external id at convert time
     request.setEndpoint(
       Url.getSalesforceBaseUrl().toExternalForm() +
       '/services/data/v58.0/limits/'
@@ -184,7 +199,7 @@ public with sharing class ConvertLeadsInvocable {
 
     HttpResponse response = http.send(request);
     if (response.getStatusCode() == 200) {
-      return response.getBody();
+      return UUID.randomUUID().toString();
     }
     return null;
   }

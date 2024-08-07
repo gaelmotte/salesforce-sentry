@@ -2,6 +2,11 @@
 public with sharing class SentryConfigFactoryTest {
   @isTest
   public static void generatesADefaultDisabledConfigIfNoCMDT() {
+    SentryConfigFactory.getInstance()
+      .mdtProvider = new SentryConfigFactory.SentryConfigMdtProvider(
+      new List<Sentry_Config__mdt>()
+    );
+
     Test.startTest();
     SentryConfig config = SentryConfigFactory.getConfig();
     Test.stopTest();
@@ -69,6 +74,15 @@ public with sharing class SentryConfigFactoryTest {
 
   @isTest
   public static void generatesAConfigFromCMDT() {
+    Sentry_Config__mdt mdt = new Sentry_Config__mdt();
+    mdt.Enabled__c = false;
+    mdt.DSN__c = 'https://public@sentry.example.com/1';
+    mdt.ApexClass__c = SentryConfig.class.getName();
+    SentryConfigFactory.getInstance()
+      .mdtProvider = new SentryConfigFactory.SentryConfigMdtProvider(
+      new List<Sentry_Config__mdt>{ mdt }
+    );
+
     Test.startTest();
     SentryConfig config = SentryConfigFactory.getConfig();
     Test.stopTest();
