@@ -4,6 +4,6 @@
     <active>true</active>
     <errorConditionFormula
   >!ISBLANK( ExternalId__c ) &amp;&amp; LEN(ExternalId__c) != 36</errorConditionFormula>
-    <errorDisplayField>AnnualRevenue</errorDisplayField>
+    <errorDisplayField>ExternalId__c</errorDisplayField>
     <errorMessage>Must be a UUID</errorMessage>
 </ValidationRule>
