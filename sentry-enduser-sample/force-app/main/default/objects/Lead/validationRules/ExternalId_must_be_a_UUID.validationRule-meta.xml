@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ExternalId_must_be_a_UUID</fullName>
+    <active>true</active>
+    <errorConditionFormula
+  >!ISBLANK( ExternalId__c ) &amp;&amp; LEN(ExternalId__c) != 36</errorConditionFormula>
+    <errorDisplayField>AnnualRevenue</errorDisplayField>
+    <errorMessage>Must be a UUID</errorMessage>
+</ValidationRule>
