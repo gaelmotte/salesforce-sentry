@@ -13,6 +13,7 @@ public with sharing class SentryDebugLogsTraceFlagSetter {
     'Database' => 'FINEST',
     'System' => 'FINE',
     'Validation' => 'INFO',
+    'Workflow' => 'FINER',
     'DeveloperName' => 'Sentry_Debug_Level',
     'MasterLabel' => 'Sentry_Debug_Level'
   };
