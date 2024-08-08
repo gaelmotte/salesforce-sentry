@@ -3,10 +3,6 @@ public with sharing class SentryDebugLogParser {
     '^(\\d{2}):(\\d{2}):(\\d{2})\\.(\\d+) \\(\\d+\\)\\|([^|]*)\\|(.*)$'
   );
 
-  private static final Pattern USER_TIMEZONE_PATTERN = Pattern.compile(
-    '^.*|(005[^|]*)|.*$'
-  );
-
   private List<IDebugLogEntryStrategy> logEntryStrategies;
 
   public SentryDebugLogParser() {
