@@ -20,7 +20,6 @@ public virtual class SentryMechanismDMLExceptionStrategy extends SentryMechanism
     mechanism.data.put('numDml', ex.getNumDml());
 
     mechanism.type = getExceptionType().getName();
-    System.debug(JSON.serialize(mechanism.data));
 
     return mechanism;
   }
