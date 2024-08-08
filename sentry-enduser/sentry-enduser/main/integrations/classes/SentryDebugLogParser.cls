@@ -57,11 +57,6 @@ public with sharing class SentryDebugLogParser {
         }
       }
 
-      System.debug(
-        'Adujsting datetime (hours) :' +
-        tz.getOffset(Date.today()) / 1000 / 60 / 60
-      );
-
       // new entry
       currentDebugLogEntry = new DebugLogEntry(
         Datetime.newInstanceGMT(
