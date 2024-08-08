@@ -24,10 +24,13 @@ public with sharing class SentryDebugLogParser {
     List<String> logLines = debugLogBody.split('\n');
     logLines.remove(0); //first line is a summary of log levels
 
+    Matcher matcher;
+
     List<String> callStack = new List<String>();
     List<SentryBreadcrumb> breadcrumbs = new List<SentryBreadcrumb>();
 
-    Matcher matcher;
+    TimeZone tz = null;
+
     DebugLogEntry currentDebugLogEntry = null;
     for (String logLine : logLines) {
       matcher = LOGLINE_START_PATTERN.matcher(logLine);
@@ -42,6 +45,11 @@ public with sharing class SentryDebugLogParser {
         continue;
       }
 
+      // the first line contains details about the user. Use that to get the correct timing of logs
+      if (tz == null) {
+        tz = getTimeZone(logline);
+        continue;
+      }
       // starting an new entryType, so let the strategies handle the current one;
       if (currentDebugLogEntry != null) {
         for (IDebugLogEntryStrategy currentStrategy : logEntryStrategies) {
@@ -51,10 +59,11 @@ public with sharing class SentryDebugLogParser {
 
       // new entry
       currentDebugLogEntry = new DebugLogEntry(
-        Datetime.newInstance(
+        Datetime.newInstanceGMT(
           Date.today(),
           Time.newInstance(
-            Integer.valueOf(matcher.group(1)),
+            Integer.valueOf(matcher.group(1)) -
+            tz.getOffset(Date.today()) / 1000 / 60 / 60, // adjust towards GMT
             Integer.valueOf(matcher.group(2)),
             Integer.valueOf(matcher.group(3)),
             Integer.valueOf(matcher.group(4))
@@ -66,6 +75,26 @@ public with sharing class SentryDebugLogParser {
     }
 
     return breadcrumbs;
+  }
+
+  private static final Pattern USERID_PATTERN = Pattern.compile(
+    '^\\d{2}:\\d{2}:\\d{2}\\.\\d+ \\(\\d+\\)\\|[^|]*\\|[^|]*\\|(005\\w{12})'
+  );
+
+  private TimeZone getTimezone(String logline) {
+    Matcher matcher = USERID_PATTERN.matcher(logline);
+    if (matcher.find()) {
+      User user = [
+        SELECT Id, TimeZoneSidKey
+        FROM USER
+        WHERE Id = :matcher.group(1)
+      ];
+      if (user != null) {
+        return Timezone.getTimeZone(user.TimeZoneSidKey);
+      }
+    }
+
+    return null;
   }
 
   public class DebugLogEntry {

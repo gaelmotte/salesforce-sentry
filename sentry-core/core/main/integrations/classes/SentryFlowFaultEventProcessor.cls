@@ -7,12 +7,8 @@ public with sharing class SentryFlowFaultEventProcessor extends SentryEventProce
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
-    System.debug('HEREEE');
-
     // Ignore if no exception (avoir error)
     if (event.getOriginFlowError() != null) {
-      System.debug('PROCESSING MESSAGE');
-      System.debug(JSON.serialize(event.getOriginFlowError()));
       SentryFlowError flowErrorObj = event.getOriginFlowError();
       flowException = new SentrySyntheticFlowException(
         flowErrorObj.flowIntervieuwGuid,
@@ -49,6 +45,7 @@ public with sharing class SentryFlowFaultEventProcessor extends SentryEventProce
       // Get Flow details
       flowException = new SentrySyntheticFlowException(flowInterviewGUID, null);
       fetchFlowInterviewLog(event);
+      fetchFlowVariables(event);
       // Add contexts and mechanisms
       addMechanismsDetails(event);
       decorateFramesWithDetails(event);
@@ -57,6 +54,11 @@ public with sharing class SentryFlowFaultEventProcessor extends SentryEventProce
     return event;
   }
 
+  private void fetchFlowVariables(SentryEvent event) {
+  }
+
+  /* this could help bring information to the user when dealing with screen flows. they do not exist for autolaunched flows
+   */
   private void fetchFlowInterviewLog(SentryEvent event) {
     // For Test, create fictive details
     if (Test.isRunningTest()) {
@@ -80,7 +82,8 @@ public with sharing class SentryFlowFaultEventProcessor extends SentryEventProce
           InterviewDurationInMinutes,
           InterviewEndTimestamp,
           InterviewStartTimestamp,
-          InterviewStatus
+          InterviewStatus,
+          (SELECT id, ElementApiName, LogEntryType FROM FlowInterviewLogs)
         FROM FlowInterviewLog
         WHERE FlowInterviewGuid = :flowException.getGuid()
         LIMIT 1

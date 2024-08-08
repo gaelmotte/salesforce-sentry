@@ -21,8 +21,6 @@ public with sharing class SentryClient {
     // publish a platform event with the event processed.
     Sentry_Event__e pe = event.toPlatformEvent();
 
-    System.debug(JSON.serialize(pe));
-
     EventBus.publish(pe);
   }
 
