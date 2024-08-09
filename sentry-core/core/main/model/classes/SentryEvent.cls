@@ -102,6 +102,9 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     };
   }
 
+  /**
+   * Do not instanciate SentryEvent from this constructor. It is required for deserialization but should not be used.
+   */
   public SentryEvent() {
     this.eventId = EncodingUtil.convertToHex(Crypto.generateAesKey(128));
     this.contexts = new Map<String, Object>();
@@ -111,22 +114,33 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     this.errors = new List<SentryEventProcessingError>();
   }
 
-  public SentryEvent(Exception ex) {
-    this();
-    this.originException = ex;
+  public static SentryEvent fromApexException(Exception ex) {
+    SentryEvent event = new SentryEvent();
+    event.originException = ex;
+    return event;
   }
 
-  public SentryEvent(String message) {
-    this();
-    this.originMessage = message;
-  }
+  // public SentryEvent(String message) {
+  //   this();
+  //   this.originMessage = message;
+  // }
 
-  public SentryEvent(String flowInterviewGUID, String flowFaultMessage) {
-    this();
-    this.originFlowError = new SentryFlowError(
+  public static SentryEvent fromFlowFault(
+    String flowInterviewGUID,
+    String flowFaultMessage
+  ) {
+    SentryEvent event = new SentryEvent();
+    event.originFlowError = new SentryFlowError(
       flowInterviewGUID,
       flowFaultMessage
     );
+    return event;
+  }
+
+  public static SentryEvent fromLWCError(String error, String stack) {
+    SentryEvent event = new SentryEvent();
+    //TODO
+    return event;
   }
 
   public static SentryEvent fromPlatformEvent(Sentry_Event__e event) {

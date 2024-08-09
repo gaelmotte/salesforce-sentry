@@ -11,6 +11,10 @@ global with sharing class Sentry {
     SentryHub.getCurrentHub().captureException(ex);
   }
 
+  global static void captureLWCError(String error, String stack) {
+    SentryHub.getCurrentHub().captureLWCError(error, stack);
+  }
+
   /**
    * @description Entry method for Flow's Exception
    * @param inputParameters Input parameter with the Interview GUID

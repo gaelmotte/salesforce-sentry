@@ -5,7 +5,7 @@ public with sharing class SentryDebugLogsIntegrationTest {
     SentryScope scope = new SentryScope();
     SentryDebugLogsIntegration integration = new SentryDebugLogsIntegration();
     integration.applyToScope(scope);
-    SentryEvent event = new SentryEvent(new SentryException());
+    SentryEvent event = SentryEvent.fromApexException(new SentryException());
     event = scope.applyToEvent(scope.applyToEvent(event, true), false);
 
     Assert.isTrue(

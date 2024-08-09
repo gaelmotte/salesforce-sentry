@@ -6,7 +6,10 @@ public with sharing class SentryFlowFaultIntegrationTest {
     SentryFlowFaultIntegration integration = new SentryFlowFaultIntegration();
     integration.applyToScope(scope);
 
-    SentryEvent event = new SentryEvent('flowInterviewGUID', 'TEST ERROR');
+    SentryEvent event = SentryEvent.fromFlowFault(
+      'flowInterviewGUID',
+      'TEST ERROR'
+    );
     event = scope.applyToEvent(scope.applyToEvent(event, true), false);
 
     Assert.isNotNull(

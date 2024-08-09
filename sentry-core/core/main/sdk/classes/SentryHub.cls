@@ -42,7 +42,10 @@ public with sharing class SentryHub {
   }
 
   public void captureException(Exception ex) {
-    client.captureEvent(new SentryEvent(ex), scopes.get(scopes.size() - 1));
+    client.captureEvent(
+      SentryEvent.fromApexException(ex),
+      scopes.get(scopes.size() - 1)
+    );
   }
 
   /**
@@ -54,17 +57,24 @@ public with sharing class SentryHub {
     // TODO Capture Details vie SOQL on FlowInterview Object ? Capture error of this object and save in message variable
     // TODO : To avoid multiple constructor for SentryEvent, user Builder Pattern ?
     client.captureEvent(
-      new SentryEvent(interviewGUID, faultMessage),
+      SentryEvent.fromFlowFault(interviewGUID, faultMessage),
       scopes.get(scopes.size() - 1)
     );
   }
 
-  public void captureMessage(String message) {
+  public void captureLWCError(String error, String stack) {
     client.captureEvent(
-      new SentryEvent(message),
+      SentryEvent.fromLWCError(error, stack),
       scopes.get(scopes.size() - 1)
     );
   }
+
+  // public void captureMessage(String message) {
+  //   client.captureEvent(
+  //     new SentryEvent(message),
+  //     scopes.get(scopes.size() - 1)
+  //   );
+  // }
 
   public void transportEvents(List<SentryEvent> events) {
     client.transportEvents(events, scopes.get(scopes.size() - 1));

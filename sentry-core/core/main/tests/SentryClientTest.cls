@@ -84,7 +84,10 @@ public with sharing class SentryClientTest {
     );
 
     Test.startTest();
-    client.captureEvent(new SentryEvent(new SentryException()), scope);
+    client.captureEvent(
+      SentryEvent.fromApexException(new SentryException()),
+      scope
+    );
     Test.stopTest();
 
     Assert.areEqual(
@@ -114,7 +117,10 @@ public with sharing class SentryClientTest {
     );
 
     Test.startTest();
-    client.captureEvent(new SentryEvent(new SentryException()), scope);
+    client.captureEvent(
+      SentryEvent.fromApexException(new SentryException()),
+      scope
+    );
     Test.stopTest();
 
     Assert.areEqual(
@@ -137,7 +143,9 @@ public with sharing class SentryClientTest {
 
     Test.startTest();
     client.transportEvents(
-      new List<SentryEvent>{ new SentryEvent(new SentryException()) },
+      new List<SentryEvent>{
+        SentryEvent.fromApexException(new SentryException())
+      },
       scope
     );
     Test.stopTest();
@@ -152,7 +160,7 @@ public with sharing class SentryClientTest {
   @IsTest
   public static void transportsEvents() {
     List<SentryEvent> events = new List<SentryEvent>{
-      new SentryEvent(new SentryException())
+      SentryEvent.fromApexException(new SentryException())
     };
 
     Sentry_Config__mdt mdt = new Sentry_Config__mdt();
