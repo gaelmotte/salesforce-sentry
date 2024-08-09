@@ -1,3 +1,5 @@
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
+
 function assertIsLightningElementSubclass(Base) {
   const baseProto = Base.prototype;
 
@@ -8,14 +10,26 @@ function assertIsLightningElementSubclass(Base) {
   }
 }
 
+const HandleError = Symbol("handleError");
 const SentryBoundaryMixin = (Base) => {
   assertIsLightningElementSubclass(Base);
   return class extends Base {
-    // errorCallback(error, stack){
-    //     console.error(error);
-    //     console.log(stack);
-    // }
+    errorCallback(error, stack) {
+      console.error(error);
+      console.log(stack);
+
+      if (this[HandleError]) {
+        this[HandleError](error);
+      } else {
+        console.log("No error handler");
+        const event = new ShowToastEvent({
+          title: "An Error occured",
+          message: error
+        });
+        this.dispatchEvent(event);
+      }
+    }
   };
 };
 
-export { SentryBoundaryMixin };
+export { SentryBoundaryMixin, HandleError };

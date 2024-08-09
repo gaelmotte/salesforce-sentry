@@ -1,5 +1,5 @@
 import { LightningElement } from "lwc";
-import { SentryBoundaryMixin /*, HandleError*/ } from "c/mySentryMixin";
+import { SentryBoundaryMixin /*, HandleError*/ } from "c/sentryMixin";
 
 export default class ParentLWC extends SentryBoundaryMixin(LightningElement) {
   showChild = false;
