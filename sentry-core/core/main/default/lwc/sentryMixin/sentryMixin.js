@@ -1,5 +1,6 @@
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import captureLWCError from "@salesforce/apex/Sentry.captureLWCError";
+import { track } from "lwc";
 
 function assertIsLightningElementSubclass(Base) {
   const baseProto = Base.prototype;
@@ -21,9 +22,9 @@ const SentryMixin = (Base, componentName) => {
     Sentry = Object.freeze({
       log: (message) => {
         console.log(`Sentry: (${componentName}) ${message}`);
-        const logEvent = new CustomEvent("notification", {
+        const logEvent = new CustomEvent("sentry_log", {
           bubbles: true,
-          detail: { message: `${componentName}: ${message}` }
+          detail: { message, componentName, timestamp: new Date() }
         });
 
         // Dispatches the event.
@@ -44,22 +45,28 @@ const SentryBoundaryMixin = (Base, componentName) => {
   assertIsLightningElementSubclass(Base);
 
   return class extends SentryMixin(Base, componentName) {
+    @track
+    logs = [];
+
     constructor() {
       super();
-      this.template.addEventListener("notification", this.handleSentryLog);
-    }
-
-    handleSentryLog(event) {
-      console.log("SentryBoundary: " + event.detail.message);
+      this.template.addEventListener("sentry_log", (event) => {
+        console.log("SentryBoundary: ", event.detail.message);
+        this.logs.push({ ...event.detail });
+      });
     }
 
     errorCallback(error, stack) {
       // TODO identify if error commes from LDS for they do not have the same props
       // https://github.com/trailheadapps/lwc-recipes/blob/main/force-app/main/default/lwc/ldsUtils/ldsUtils.js
+
       captureLWCError({
-        error: error.message,
-        stack: error.stack,
-        cmpStack: stack
+        event: {
+          error: error.message,
+          stack: error.stack,
+          cmpStack: stack,
+          logs: this.logs
+        }
       })
         .then(() => {
           // nothing to do ?

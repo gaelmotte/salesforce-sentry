@@ -12,6 +12,6 @@ export default class BuggedLWC extends SentryMixin(
 
   handleClick() {
     this.Sentry.log("here is a log");
-    // throw new Error("Some other stupid thing happend");
+    throw new Error("Some other stupid thing happend");
   }
 }
