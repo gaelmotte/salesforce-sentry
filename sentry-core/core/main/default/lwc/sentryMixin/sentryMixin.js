@@ -1,6 +1,5 @@
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import captureLWCError from "@salesforce/apex/Sentry.captureLWCError";
-import { track } from "lwc";
 
 function assertIsLightningElementSubclass(Base) {
   const baseProto = Base.prototype;
@@ -50,8 +49,8 @@ const SentryMixin = (Base, componentName) => {
           detail: {
             error: error.message,
             stack: error.stack,
-            cmpStack: componentName
-            // timestamp: new Date()
+            cmpStack: componentName,
+            timestamp: new Date()
           }
         });
         this.dispatchEvent(errorEvent);
@@ -71,7 +70,6 @@ const SentryBoundaryMixin = (Base, componentName) => {
   assertIsLightningElementSubclass(Base);
 
   return class extends SentryMixin(Base, componentName) {
-    @track
     logs = [];
 
     constructor() {
@@ -115,8 +113,8 @@ const SentryBoundaryMixin = (Base, componentName) => {
           error: error.message,
           stack: error.stack,
           cmpStack: stack,
-          logs: this.logs
-          // timestamp: new Date()
+          logs: this.logs,
+          timestamp: new Date()
         }
       }).then(() => {
         if (this[displayError]) {
@@ -137,8 +135,33 @@ const SentryBoundaryMixin = (Base, componentName) => {
     }
 
     [Sentry] = Object.freeze({
+      ...this[Sentry],
       log: (message) => {
         this.logs.push({ message, componentName, timestamp: new Date() });
+      },
+      captureException: (error) => {
+        const errorEvent = {
+          error: error.message,
+          stack: error.stack,
+          cmpStack: componentName,
+          timestamp: new Date()
+        };
+        captureLWCError({ event: errorEvent }).then(() => {
+          if (this[displayError]) {
+            this[displayError](errorEvent.error);
+          } else {
+            // TODO : consider move over to a notification, so error in apex and flows may use a coherent display
+            // TODO : consider taking some options as to how to display the error
+            // TODO : consider overriding the render() method to display the error
+            const toastEvent = new ShowToastEvent({
+              title: "An Error occured",
+              message: errorEvent.error,
+              variant: "error",
+              mode: "sticky"
+            });
+            this.dispatchEvent(toastEvent);
+          }
+        });
       }
     });
   };

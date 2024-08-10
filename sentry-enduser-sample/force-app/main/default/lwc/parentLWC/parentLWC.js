@@ -6,15 +6,6 @@ export default class ParentLWC extends SentryBoundaryMixin(
   "ParentLWC"
 ) {
   showChild = false;
-  error;
-
-  getCause() {
-    return this.error.cause;
-  }
-
-  getStack() {
-    return this.error.stack;
-  }
 
   handleClick() {
     this.showChild = !this.showChild;
@@ -25,4 +16,8 @@ export default class ParentLWC extends SentryBoundaryMixin(
 
   //     this.error = error;
   // }
+  handleClickCaptureException() {
+    this[Sentry].log("here is a log from the other button");
+    this[Sentry].captureException(new Error("Some other stupid thing happend"));
+  }
 }
