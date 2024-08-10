@@ -1,5 +1,5 @@
 import { LightningElement } from "lwc";
-import { SentryMixin } from "c/sentryMixin";
+import { SentryMixin, Sentry } from "c/sentryMixin";
 
 export default class BuggedLWC extends SentryMixin(
   LightningElement,
@@ -7,11 +7,16 @@ export default class BuggedLWC extends SentryMixin(
 ) {
   connectedCallback() {
     // throw new Error("Some stupid thing happend");
-    this.Sentry.log("connected");
+    this[Sentry].log("connected");
   }
 
-  handleClick() {
-    this.Sentry.log("here is a log");
+  handleClickThrow() {
+    this[Sentry].log("here is a log");
     throw new Error("Some other stupid thing happend");
+  }
+
+  handleClickCaptureException() {
+    this[Sentry].log("here is a log from the other button");
+    this[Sentry].captureException(new Error("Some other stupid thing happend"));
   }
 }
