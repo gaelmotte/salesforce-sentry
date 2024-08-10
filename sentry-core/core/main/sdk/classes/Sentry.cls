@@ -11,8 +11,18 @@ global with sharing class Sentry {
     SentryHub.getCurrentHub().captureException(ex);
   }
 
-  global static void captureLWCError(String error, String stack) {
-    SentryHub.getCurrentHub().captureLWCError(error, stack);
+  @AuraEnabled
+  global static void captureLWCError(
+    String error,
+    String stack,
+    String cmpStack
+  ) {
+    try {
+      System.debug('called the apex action');
+      SentryHub.getCurrentHub().captureLWCError(error, stack, cmpStack);
+    } catch (Exception e) {
+      throw new AuraHandledException(e.getMessage());
+    }
   }
 
   /**

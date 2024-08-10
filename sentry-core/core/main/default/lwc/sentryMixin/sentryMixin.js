@@ -1,4 +1,5 @@
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import captureLWCError from "@salesforce/apex/Sentry.captureLWCError";
 
 function assertIsLightningElementSubclass(Base) {
   const baseProto = Base.prototype;
@@ -10,26 +11,81 @@ function assertIsLightningElementSubclass(Base) {
   }
 }
 
-const HandleError = Symbol("handleError");
-const SentryBoundaryMixin = (Base) => {
+/**
+ * This mixin is intended for components that are NOT exposed.
+ */
+const SentryMixin = (Base, componentName) => {
   assertIsLightningElementSubclass(Base);
-  return class extends Base {
-    errorCallback(error, stack) {
-      console.error(error);
-      console.log(stack);
 
-      if (this[HandleError]) {
-        this[HandleError](error);
-      } else {
-        console.log("No error handler");
-        const event = new ShowToastEvent({
-          title: "An Error occured",
-          message: error
+  return class extends Base {
+    Sentry = Object.freeze({
+      log: (message) => {
+        console.log(`Sentry: (${componentName}) ${message}`);
+        const logEvent = new CustomEvent("notification", {
+          bubbles: true,
+          detail: { message: `${componentName}: ${message}` }
         });
-        this.dispatchEvent(event);
+
+        // Dispatches the event.
+        this.dispatchEvent(logEvent);
       }
+    });
+  };
+};
+
+/**
+ * This mixin is intended for components that ARE exposed
+ * Implement a `[HandleError](error)` to display the error as you wish.
+ * It is otherwise shown as a toast
+ */
+const HandleError = Symbol("handleError");
+
+const SentryBoundaryMixin = (Base, componentName) => {
+  assertIsLightningElementSubclass(Base);
+
+  return class extends SentryMixin(Base, componentName) {
+    constructor() {
+      super();
+      this.template.addEventListener("notification", this.handleSentryLog);
+    }
+
+    handleSentryLog(event) {
+      console.log("SentryBoundary: " + event.detail.message);
+    }
+
+    errorCallback(error, stack) {
+      // TODO identify if error commes from LDS for they do not have the same props
+      // https://github.com/trailheadapps/lwc-recipes/blob/main/force-app/main/default/lwc/ldsUtils/ldsUtils.js
+      captureLWCError({
+        error: error.message,
+        stack: error.stack,
+        cmpStack: stack
+      })
+        .then(() => {
+          // nothing to do ?
+        })
+        .catch((e) => {
+          console.log(e);
+          //TODO Handle cases were we failed to log to sentry
+        })
+        .finally(() => {
+          if (this[HandleError]) {
+            this[HandleError](error);
+          } else {
+            // TODO : consider move over to a notification, so error in apex and flows may use a coherent display
+            // TODO : consider taking some options as to how to display the error
+            // TODO : consider overriding the render() method to display the error
+            const event = new ShowToastEvent({
+              title: "An Error occured",
+              message: error.message,
+              variant: "error",
+              mode: "sticky"
+            });
+            this.dispatchEvent(event);
+          }
+        });
     }
   };
 };
 
-export { SentryBoundaryMixin, HandleError };
+export { SentryBoundaryMixin, SentryMixin, HandleError };

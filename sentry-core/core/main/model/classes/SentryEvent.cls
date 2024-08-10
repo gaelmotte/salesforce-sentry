@@ -137,7 +137,11 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     return event;
   }
 
-  public static SentryEvent fromLWCError(String error, String stack) {
+  public static SentryEvent fromLWCError(
+    String error,
+    String stack,
+    String cmpStack
+  ) {
     SentryEvent event = new SentryEvent();
     //TODO
     return event;
