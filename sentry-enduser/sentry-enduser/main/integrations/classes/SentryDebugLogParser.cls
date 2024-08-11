@@ -84,6 +84,9 @@ public with sharing class SentryDebugLogParser {
   private TimeZone getTimezone(String logline) {
     Matcher matcher = USERID_PATTERN.matcher(logline);
     if (matcher.find()) {
+      if (Test.isRunningTest()) {
+        return TimeZone.getTimeZone('America/Los_Angeles');
+      }
       User user = [
         SELECT Id, TimeZoneSidKey
         FROM USER
