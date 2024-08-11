@@ -7,7 +7,7 @@ function assertIsLightningElementSubclass(Base) {
   if (typeof baseProto.dispatchEvent !== "function") {
     console.log("Base is not an Element type");
 
-    // throw new TypeError(`${Base} must be an Element type`);
+    throw new TypeError(`${Base} must be an Element type`);
   }
 }
 
