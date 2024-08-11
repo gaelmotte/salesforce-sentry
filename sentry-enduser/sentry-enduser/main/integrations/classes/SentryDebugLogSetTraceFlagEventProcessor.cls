@@ -8,6 +8,17 @@ public with sharing class SentryDebugLogSetTraceFlagEventProcessor extends Sentr
   }
 
   public override SentryEvent processAtTransport(SentryEvent event) {
+    String runtimeName = (String) event.getContextValue(
+      SentryRuntimeContext.TYPE,
+      'name'
+    );
+
+    if (
+      runtimeName != SentryRuntimeContext.APEX &&
+      runtimeName != SentryRuntimeContext.FLOW
+    ) {
+      return event;
+    }
     if (event.user != null && !PROCESSED_USER_IDS.contains(event.user.userId)) {
       traceFlagSetter.setTraceFlag(event.user.userId);
       PROCESSED_USER_IDS.add(event.user.userId);

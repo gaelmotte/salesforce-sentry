@@ -3,6 +3,7 @@ public with sharing class SentryDebugLogsIntegrationTest {
   @IsTest
   public static void addsRequestIdAndQuiddityOnlyByDefaultOnEvent() {
     SentryScope scope = new SentryScope();
+    scope.putContext(new SentryRuntimeContext(SentryRuntimeContext.APEX));
     SentryDebugLogsIntegration integration = new SentryDebugLogsIntegration();
     integration.applyToScope(scope);
     SentryEvent event = SentryEvent.fromApexException(new SentryException());

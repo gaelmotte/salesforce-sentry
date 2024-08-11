@@ -106,6 +106,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
    * Do not instanciate SentryEvent from this constructor. It is required for deserialization but should not be used.
    */
   public SentryEvent() {
+    //event ids are UUIDs without dashed. It is easier this way
     this.eventId = EncodingUtil.convertToHex(Crypto.generateAesKey(128));
     this.contexts = new Map<String, Object>();
     this.tags = new Map<String, String>();
@@ -198,5 +199,12 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
       }
     }
     return JSON.serialize(payloadMap, true); // do not serialize empty fields
+  }
+
+  public Object getContextValue(String contextKey, String valueKey) {
+    Map<String, Object> context = (Map<String, Object>) this.contexts.get(
+      contextKey
+    );
+    return context.get(valueKey);
   }
 }
