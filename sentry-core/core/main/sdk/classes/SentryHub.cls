@@ -62,9 +62,9 @@ public with sharing class SentryHub {
     );
   }
 
-  public void captureLWCError(String error, String stack, String cmpStack) {
+  public void captureLWCError(Sentry.SentryLWCErrorInputParameters event) {
     client.captureEvent(
-      SentryEvent.fromLWCError(error, stack, cmpStack),
+      SentryEvent.fromLWCError(event),
       scopes.get(scopes.size() - 1)
     );
   }

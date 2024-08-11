@@ -11,6 +11,17 @@ function assertIsLightningElementSubclass(Base) {
   }
 }
 
+function processStack(stack) {
+  let stackLines = stack.split(/\n\s*at /g);
+  stackLines = stackLines.slice(1);
+  return stackLines;
+}
+
+function processCmpStack(stack) {
+  let stackLines = [...stack.matchAll(/<([^>]*)>/g)].map((match) => match[1]);
+  return stackLines.reverse();
+}
+
 const Sentry = Symbol("sentry");
 
 /**
@@ -27,7 +38,7 @@ const SentryMixin = (Base, componentName) => {
           bubbles: true,
           detail: {
             ...event.detail,
-            cmpStack: componentName + "\n" + event.detail.cmpStack
+            cmpStack: [...event.detail.cmpStack, componentName]
           }
         });
         this.dispatchEvent(errorEvent);
@@ -48,8 +59,8 @@ const SentryMixin = (Base, componentName) => {
           bubbles: true,
           detail: {
             error: error.message,
-            stack: error.stack,
-            cmpStack: componentName,
+            stack: processStack(error.stack),
+            cmpStack: [componentName],
             timestamp: new Date()
           }
         });
@@ -82,7 +93,7 @@ const SentryBoundaryMixin = (Base, componentName) => {
       this.template.addEventListener("sentry_error", (event) => {
         const errorEvent = {
           ...event.detail,
-          cmpStack: componentName + "\n" + event.detail.cmpStack,
+          cmpStack: [...event.detail.cmpStack, componentName],
           logs: this.logs
         };
         captureLWCError({ event: errorEvent }).then(() => {
@@ -111,8 +122,8 @@ const SentryBoundaryMixin = (Base, componentName) => {
       captureLWCError({
         event: {
           error: error.message,
-          stack: error.stack,
-          cmpStack: stack,
+          stack: processStack(error.stack),
+          cmpStack: processCmpStack(stack), // weird display of genertaed component names
           logs: this.logs,
           timestamp: new Date()
         }
@@ -142,8 +153,8 @@ const SentryBoundaryMixin = (Base, componentName) => {
       captureException: (error) => {
         const errorEvent = {
           error: error.message,
-          stack: error.stack,
-          cmpStack: componentName,
+          stack: processStack(error.stack),
+          cmpStack: [componentName],
           timestamp: new Date()
         };
         captureLWCError({ event: errorEvent }).then(() => {

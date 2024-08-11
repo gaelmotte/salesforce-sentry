@@ -16,7 +16,7 @@ global with sharing class Sentry {
     try {
       System.debug('called the apex action');
       System.debug(JSON.serialize(event));
-      SentryHub.getCurrentHub().captureLWCError('error', 'stack', 'cmpStack');
+      SentryHub.getCurrentHub().captureLWCError(event);
     } catch (Exception e) {
       throw new AuraHandledException(e.getMessage());
     }
@@ -91,9 +91,9 @@ global with sharing class Sentry {
     @AuraEnabled
     public String error { get; set; }
     @AuraEnabled
-    public String stack { get; set; }
+    public List<String> stack { get; set; }
     @AuraEnabled
-    public String cmpStack { get; set; }
+    public List<String> cmpStack { get; set; }
     @AuraEnabled
     public List<SentryLWCLog> logs { get; set; }
     @AuraEnabled
