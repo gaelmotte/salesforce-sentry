@@ -12,18 +12,29 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
   /**
    * exception that caused the event
    * Some processors might need it
+   * Is only available to atCapture
    */
   private Exception originException;
   /**
    * message that caused the event
    * Some processors might need it
+   * Is only available to atCapture
    */
   private String originMessage;
   /**
    * flowInterviewGUID that caused the event
    * Some processors might need it
+   * TODO rework this to use the input parameters from Sentry.cls
+   * Is only available to atCapture
    */
   private SentryFlowError originFlowError;
+
+  /**
+   * The input passed to Sentry
+   * Some EventPRocessor will use it
+   * Is only available to atCapture
+   */
+  private Sentry.SentryLWCErrorInputParameters originLWCError;
 
   // Fields that are part of the Sentry Payload
 
@@ -160,6 +171,10 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
 
   public SentryFlowError getOriginFlowError() {
     return this.originFlowError;
+  }
+
+  public Sentry.SentryLWCErrorInputParameters getOriginLWCError() {
+    return this.originLWCError;
   }
 
   public Sentry_Event__e toPlatformEvent() {

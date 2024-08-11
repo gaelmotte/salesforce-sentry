@@ -37,7 +37,8 @@ public virtual with sharing class SentryConfig {
       return new List<ISentryIntegration>{
         new SentryUserIntegration(), // do not capture user PII is default
         new SentryStacktraceIntegration(),
-        new SentryFlowFaultIntegration()
+        new SentryFlowFaultIntegration(),
+        new SentryLWCErrorIntegration()
       };
     }
   }
