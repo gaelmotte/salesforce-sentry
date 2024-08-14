@@ -8,9 +8,6 @@ public with sharing class SentryLWCErrorEventProcessor extends SentryEventProces
       return event;
     }
 
-    System.debug('Adding details to the LWC Error event at capture');
-    System.debug(JSON.serialize(event.getOriginLWCError()));
-
     // add breadcrumbs from logs
     for (Sentry.SentryLWCLog log : input.logs) {
       event.breadcrumbs.add(
@@ -21,7 +18,7 @@ public with sharing class SentryLWCErrorEventProcessor extends SentryEventProces
     SentryValueClass valueClass = new SentryValueClass();
     valueClass.mechanism = new SentryValueClassMechanism();
     valueClass.mechanism.data = new Map<String, Object>{};
-    //   TODO : Add a flag in the input parameters to know if the error was captured or from a boundary
+    valueClass.mechanism.type = input.mechanism;
     valueClass.mechanism.synthetic = true;
     valueClass.value = input.error;
 

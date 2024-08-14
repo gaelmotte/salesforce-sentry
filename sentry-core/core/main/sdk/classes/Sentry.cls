@@ -98,6 +98,8 @@ global with sharing class Sentry {
     public List<SentryLWCLog> logs { get; set; }
     @AuraEnabled
     public Datetime timestamp { get; set; }
+    @AuraEnabled
+    public String mechanism { get; set; }
   }
 
   global class SentryLWCLog {

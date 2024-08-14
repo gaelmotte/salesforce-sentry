@@ -94,7 +94,8 @@ const SentryBoundaryMixin = (Base, componentName) => {
         const errorEvent = {
           ...event.detail,
           cmpStack: [componentName, ...event.detail.cmpStack],
-          logs: this.logs
+          logs: this.logs,
+          mechanism: "captured"
         };
         captureLWCError({ event: errorEvent }).then(() => {
           if (this[displayError]) {
@@ -125,7 +126,8 @@ const SentryBoundaryMixin = (Base, componentName) => {
           stack: processStack(error.stack),
           cmpStack: processCmpStack(stack), // weird display of genertaed component names
           logs: this.logs,
-          timestamp: new Date()
+          timestamp: new Date(),
+          mechanism: "boundary"
         }
       }).then(() => {
         if (this[displayError]) {
