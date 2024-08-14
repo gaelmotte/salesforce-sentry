@@ -14,7 +14,7 @@ function assertIsLightningElementSubclass(Base) {
 function processStack(stack) {
   let stackLines = stack.split(/\n\s*at /g);
   stackLines = stackLines.slice(1);
-  return stackLines;
+  return stackLines.reverse();
 }
 
 function processCmpStack(stack) {
@@ -38,7 +38,7 @@ const SentryMixin = (Base, componentName) => {
           bubbles: true,
           detail: {
             ...event.detail,
-            cmpStack: [...event.detail.cmpStack, componentName]
+            cmpStack: [componentName, ...event.detail.cmpStack]
           }
         });
         this.dispatchEvent(errorEvent);
@@ -93,7 +93,7 @@ const SentryBoundaryMixin = (Base, componentName) => {
       this.template.addEventListener("sentry_error", (event) => {
         const errorEvent = {
           ...event.detail,
-          cmpStack: [...event.detail.cmpStack, componentName],
+          cmpStack: [componentName, ...event.detail.cmpStack],
           logs: this.logs
         };
         captureLWCError({ event: errorEvent }).then(() => {

@@ -21,13 +21,13 @@ public with sharing class SentryLWCErrorEventProcessor extends SentryEventProces
     SentryValueClass valueClass = new SentryValueClass();
     valueClass.mechanism = new SentryValueClassMechanism();
     valueClass.mechanism.data = new Map<String, Object>{};
-      //   TODO : Add a flag in the input parameters to know if the error was captured or from a boundary
+    //   TODO : Add a flag in the input parameters to know if the error was captured or from a boundary
     valueClass.mechanism.synthetic = true;
     valueClass.value = input.error;
 
     valueClass.stacktrace = new SentryValueClass.Stacktrace();
-    valueClass.stacktrace.frames.addAll(getFramesFromStack(input.stack));
     valueClass.stacktrace.frames.addAll(getFramesFromCmpStack(input.cmpStack));
+    valueClass.stacktrace.frames.addAll(getFramesFromStack(input.stack));
 
     event.ex = new List<SentryValueClass>{ valueClass };
 
