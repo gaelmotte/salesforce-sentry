@@ -30,6 +30,7 @@ global with sharing class Sentry {
     label='Sentry - Flow exception'
     description='Send the flow exception to Sentry'
     iconName='resource:sentryLogo:logo'
+    category='Sentry'
   )
   global static void captureFlowFault(
     List<SentryFlowInputParameters> inputParameters
