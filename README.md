@@ -20,8 +20,8 @@ Here is the list of the features we can expect from a Sentry SDK : https://devel
 - Scopes : 🟠 You'll need to push them yourself.
 - Automatic Context Data : ✅ User and permissions are automatically sent (PII retrieval is enabled by integration)
 - Breadcrumbs : ✅ Manual breadcrumb should work.
-- Event Sampling : ⏳ not implemented yet
-- Rate Limiting : ⏳ not implemented yet
+- Event Sampling : ✅ not implemented yet
+- Rate Limiting : ✅ not implemented yet
 - In-App frames : ✅ callback available
 - Surrounding Source in Stack Trace : ✅ ( ⚠️ untested with managed packages yet. ISVs, i fear even if code requesting `ApexClass` sobject is from the same namespace, `Body` might well be null)
 - Local Variables : No way to do that. Though; it may be done for Flow Variables marked for Input or output. Does it have value to you ? Scrubbing PII may be super hard. There actually is a way by setting propper levels and catching it in eventProcessor https://help.salesforce.com/s/articleView?id=sf.code_setting_debug_log_levels.htm&type=5 STACK_FRAME_VARIABLE_LIST
