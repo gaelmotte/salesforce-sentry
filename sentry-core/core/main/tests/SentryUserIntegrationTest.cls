@@ -5,7 +5,7 @@ public with sharing class SentryUserIntegrationTest {
     SentryScope scope = new SentryScope();
     SentryUserIntegration integration = new SentryUserIntegration();
     integration.applyToScope(scope);
-    SentryEvent event = new SentryEvent(new SentryException());
+    SentryEvent event = SentryEvent.fromApexException(new SentryException());
     event = scope.applyToEvent(scope.applyToEvent(event, true), false);
 
     SentryUser user = new SentryUser();
@@ -24,7 +24,7 @@ public with sharing class SentryUserIntegrationTest {
     SentryScope scope = new SentryScope();
     SentryUserIntegration integration = new SentryUserIntegration();
     integration.applyToScope(scope);
-    SentryEvent event = new SentryEvent(new SentryException());
+    SentryEvent event = SentryEvent.fromApexException(new SentryException());
     event = scope.applyToEvent(scope.applyToEvent(event, true), false);
 
     SentryUser user = new SentryUser();
@@ -48,7 +48,7 @@ public with sharing class SentryUserIntegrationTest {
     SentryScope scope = new SentryScope();
     SentryUserIntegration integration = new SentryUserIntegration(false, true);
     integration.applyToScope(scope);
-    SentryEvent event = new SentryEvent(new SentryException());
+    SentryEvent event = SentryEvent.fromApexException(new SentryException());
     event = scope.applyToEvent(scope.applyToEvent(event, true), false);
 
     SentryUser user = new SentryUser();

@@ -16,6 +16,18 @@ public with sharing class SentryDebugLogParserEventProcessor extends SentryEvent
   }
 
   public override SentryEvent processAtTransport(SentryEvent event) {
+    String runtimeName = (String) event.getContextValue(
+      SentryRuntimeContext.TYPE,
+      'name'
+    );
+
+    if (
+      runtimeName != SentryRuntimeContext.APEX &&
+      runtimeName != SentryRuntimeContext.FLOW
+    ) {
+      return event;
+    }
+
     List<String> debugLogBodies = getDebugLogBody(event);
     if (debugLogBodies.size() == 0) {
       return event;

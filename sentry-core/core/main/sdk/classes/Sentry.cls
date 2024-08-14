@@ -11,6 +11,17 @@ global with sharing class Sentry {
     SentryHub.getCurrentHub().captureException(ex);
   }
 
+  @AuraEnabled
+  global static void captureLWCError(SentryLWCErrorInputParameters event) {
+    try {
+      System.debug('called the apex action');
+      System.debug(JSON.serialize(event));
+      SentryHub.getCurrentHub().captureLWCError(event);
+    } catch (Exception e) {
+      throw new AuraHandledException(e.getMessage());
+    }
+  }
+
   /**
    * @description Entry method for Flow's Exception
    * @param inputParameters Input parameter with the Interview GUID
@@ -74,5 +85,29 @@ global with sharing class Sentry {
     public String interviewGUID;
     @InvocableVariable(label='Flow Fault Message' required=true)
     public String faultMessage;
+  }
+
+  global class SentryLWCErrorInputParameters {
+    @AuraEnabled
+    public String error { get; set; }
+    @AuraEnabled
+    public List<String> stack { get; set; }
+    @AuraEnabled
+    public List<String> cmpStack { get; set; }
+    @AuraEnabled
+    public List<SentryLWCLog> logs { get; set; }
+    @AuraEnabled
+    public Datetime timestamp { get; set; }
+    @AuraEnabled
+    public String mechanism { get; set; }
+  }
+
+  global class SentryLWCLog {
+    @AuraEnabled
+    public String message { get; set; }
+    @AuraEnabled
+    public String componentName { get; set; }
+    @AuraEnabled
+    public Datetime timestamp { get; set; }
   }
 }

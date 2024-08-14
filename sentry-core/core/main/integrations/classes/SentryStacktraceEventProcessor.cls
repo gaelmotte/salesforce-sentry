@@ -17,7 +17,7 @@ public with sharing class SentryStacktraceEventProcessor extends SentryEventProc
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
-    // Ignore if no exception (avoir error)
+    // Ignore if no exception (avoid error)
     if (event.getOriginException() != null) {
       event.ex = fromException(event.getOriginException());
     }

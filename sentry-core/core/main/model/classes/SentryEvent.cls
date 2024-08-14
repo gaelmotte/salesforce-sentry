@@ -12,18 +12,29 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
   /**
    * exception that caused the event
    * Some processors might need it
+   * Is only available to atCapture
    */
   private Exception originException;
   /**
    * message that caused the event
    * Some processors might need it
+   * Is only available to atCapture
    */
   private String originMessage;
   /**
    * flowInterviewGUID that caused the event
    * Some processors might need it
+   * TODO rework this to use the input parameters from Sentry.cls
+   * Is only available to atCapture
    */
   private SentryFlowError originFlowError;
+
+  /**
+   * The input passed to Sentry
+   * Some EventPRocessor will use it
+   * Is only available to atCapture
+   */
+  private Sentry.SentryLWCErrorInputParameters originLWCError;
 
   // Fields that are part of the Sentry Payload
 
@@ -102,7 +113,11 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     };
   }
 
+  /**
+   * Do not instanciate SentryEvent from this constructor. It is required for deserialization but should not be used.
+   */
   public SentryEvent() {
+    //event ids are UUIDs without dashed. It is easier this way
     this.eventId = EncodingUtil.convertToHex(Crypto.generateAesKey(128));
     this.contexts = new Map<String, Object>();
     this.tags = new Map<String, String>();
@@ -111,22 +126,35 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     this.errors = new List<SentryEventProcessingError>();
   }
 
-  public SentryEvent(Exception ex) {
-    this();
-    this.originException = ex;
+  public static SentryEvent fromApexException(Exception ex) {
+    SentryEvent event = new SentryEvent();
+    event.originException = ex;
+    return event;
   }
 
-  public SentryEvent(String message) {
-    this();
-    this.originMessage = message;
-  }
+  // public SentryEvent(String message) {
+  //   this();
+  //   this.originMessage = message;
+  // }
 
-  public SentryEvent(String flowInterviewGUID, String flowFaultMessage) {
-    this();
-    this.originFlowError = new SentryFlowError(
+  public static SentryEvent fromFlowFault(
+    String flowInterviewGUID,
+    String flowFaultMessage
+  ) {
+    SentryEvent event = new SentryEvent();
+    event.originFlowError = new SentryFlowError(
       flowInterviewGUID,
       flowFaultMessage
     );
+    return event;
+  }
+
+  public static SentryEvent fromLWCError(
+    Sentry.SentryLWCErrorInputParameters eventInput
+  ) {
+    SentryEvent event = new SentryEvent();
+    event.originLWCError = eventInput;
+    return event;
   }
 
   public static SentryEvent fromPlatformEvent(Sentry_Event__e event) {
@@ -143,6 +171,10 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
 
   public SentryFlowError getOriginFlowError() {
     return this.originFlowError;
+  }
+
+  public Sentry.SentryLWCErrorInputParameters getOriginLWCError() {
+    return this.originLWCError;
   }
 
   public Sentry_Event__e toPlatformEvent() {
@@ -182,5 +214,12 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
       }
     }
     return JSON.serialize(payloadMap, true); // do not serialize empty fields
+  }
+
+  public Object getContextValue(String contextKey, String valueKey) {
+    Map<String, Object> context = (Map<String, Object>) this.contexts.get(
+      contextKey
+    );
+    return context.get(valueKey);
   }
 }

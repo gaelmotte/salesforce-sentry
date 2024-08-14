@@ -5,7 +5,7 @@ public with sharing class SentryStacktraceIntegrationTest {
     SentryScope scope = new SentryScope();
     SentryStacktraceIntegration integration = new SentryStacktraceIntegration();
     integration.applyToScope(scope);
-    SentryEvent event = new SentryEvent(new SentryException());
+    SentryEvent event = SentryEvent.fromApexException(new SentryException());
     event = scope.applyToEvent(scope.applyToEvent(event, true), false);
 
     Assert.isNotNull(
@@ -19,7 +19,7 @@ public with sharing class SentryStacktraceIntegrationTest {
       'should provide exception mechanism'
     );
     Assert.areEqual(
-      '    SentryEvent event = new SentryEvent(new SentryException());',
+      '    SentryEvent event = SentryEvent.fromApexException(new SentryException());',
       event.ex.get(0).stacktrace.frames.get(0).context_line,
       'should provide code line'
     );
