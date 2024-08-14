@@ -153,7 +153,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     Sentry.SentryLWCErrorInputParameters eventInput
   ) {
     SentryEvent event = new SentryEvent();
-    //TODO
+    event.originLWCError = eventInput;
     return event;
   }
 

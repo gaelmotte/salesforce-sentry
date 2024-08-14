@@ -46,6 +46,9 @@ public with sharing class SentryValueClass implements JSONDeserializer.Deseriali
   }
 
   public class Frame {
+    public Frame() {
+    }
+
     // Constructor for APEX Exception
     public Frame(SentryStacktraceParser.ApexFrame apexFrame) {
       this.filename = apexFrame.classname;
@@ -74,4 +77,30 @@ public with sharing class SentryValueClass implements JSONDeserializer.Deseriali
     public List<String> pre_context;
     public String platform; // the api version the class is ran
   }
+
+  //^([^(]*) \((.*):(\d*):(\d*)\)$
+  public static final Pattern FRAME_PATTERN = Pattern.compile(
+    '^([^(]*) \\((.*):(\\d*):(\\d*)\\)$'
+  );
+
+  // Contructor for LWC Error
+  public static Frame fromLWCStack(String stackTraceLine) {
+    Matcher matcher = FRAME_PATTERN.matcher(stackTraceLine);
+    if (!matcher.find()) {
+      Frame frame = new Frame();
+      frame.function = stackTraceLine;
+      return frame;
+    }
+
+    Frame frame = new Frame();
+    frame.module = matcher.group(2);
+    frame.function = matcher.group(1);
+    frame.lineno = Integer.valueOf(matcher.group(3));
+    // NO colno
+
+    return frame;
+  }
+
+  // Constructor for LWC Error CMP stack
+  // Just set the module property
 }
