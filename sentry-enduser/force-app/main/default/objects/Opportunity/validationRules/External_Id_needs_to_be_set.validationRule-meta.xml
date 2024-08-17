@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>External_Id_needs_to_be_set</fullName>
+    <active>true</active>
+    <errorConditionFormula
+  >ISBLANK( ExternalId__c ) ||  LEN(ExternalId__c) != 36</errorConditionFormula>
+    <errorDisplayField>ExternalId__c</errorDisplayField>
+    <errorMessage>The external id is required and must be a UUID</errorMessage>
+</ValidationRule>

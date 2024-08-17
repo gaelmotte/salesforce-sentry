@@ -1,8 +1,6 @@
 # Usage in Apex
 
-In any class or trigger, you may use the following syntax
-
-// TODO update after packaging
+In any class or trigger, you may use the following syntax.
 
 ```Apex
 try{
