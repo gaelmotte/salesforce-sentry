@@ -14,7 +14,7 @@
     "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
     "postinstall": "husky install",
     "precommit": "lint-staged",
-    "start": "concurrently \"npm run start --prefix sentry-core\" \"npm run start --prefix sentry-enduser\"  \"npm run start --prefix sentry-enduser-sample\" "
+    "start": "concurrently \"npm run start --prefix sentry-core\" \"npm run start --prefix sentry-enduser\""
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^1.1.2",

@@ -1,19 +1,35 @@
 {
   "packageDirectories": [
     {
-      "path": "sentry-enduser",
-      "default": true,
-      "package": "SentrySDK",
       "versionName": "ver 0.1",
       "versionNumber": "0.1.0.NEXT",
-      "versionDescription": "Sentry SDK for the Salesforce Platform"
+      "path": "sentry-enduser",
+      "default": false,
+      "package": "SentrySDK",
+      "versionDescription": "A Sentry SDK for the Salesforce Platform"
+    },
+    {
+      "path": "force-app",
+      "default": true
     }
   ],
   "name": "sentry-enduser",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "58.0",
+  "replacements": [
+    {
+      "filename": "force-app/main/default/remoteSiteSettings/Sentry.remoteSite-meta.xml",
+      "stringToReplace": "SENTRY_REMOTE_SITE",
+      "replaceWithEnv": "SENTRY_REMOTE_SITE"
+    },
+    {
+      "filename": "force-app/main/default/customMetadata/Sentry_Config.Default.md-meta.xml",
+      "stringToReplace": "SENTRY_DSN",
+      "replaceWithEnv": "SENTRY_DSN"
+    }
+  ],
   "packageAliases": {
-    "SentrySDK": "0Ho3Y000000k9eMSAQ"
+    "SentrySDK": "0HoQy0000000IOLKA2"
   }
 }

@@ -2,6 +2,20 @@
 
 This project aims at showcasing the usage of Salesforce-sentry package in the context of a Saleforce Customer willing to monitor issues occuring on their org.
 
+## Install the package
+
+Install the package from the most recent promoted version
+
+## Deploy project
+
+There are some replacement here
+So you may :
+
+```
+source .env
+sf project deploy start
+```
+
 ## Uses cases where Salesforce-Sentry is set up
 
 I'll try to show all the ways Salesforce-Sentry could help gathering knowledge to troubleshoot issues faster.
@@ -22,11 +36,6 @@ Issues in this `@InvocableMethod` :
 see :
 
 - `ConvertLeadsInvocable` : code is surrounded with a big Try/Catch to `Sentry.CaptureException()`
-
-### Inheritance of InvocableMethod
-
-Showcases a pattern where all actions can inherit standard behavior, like sending expcetions to Sentry
-TODO
 
 ### Execution issue in non screen Flow standard Elements
 
@@ -62,5 +71,4 @@ TODO
 ## Next Steps for this repo
 
 - Implement the uses cases in both this repo and the SDK
-- Package the SDK
 - Tests ?
