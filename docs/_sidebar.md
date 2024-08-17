@@ -11,3 +11,4 @@
   - [StackTrace Integration](stack.md)
   - [Flow Faults Integration](flowFault.md)
   - [LWC Errors Integration](lwcError.md)
+- [Changelog](changelog.md)
