@@ -1,6 +1,6 @@
 ![logo](_media/SentrySDK.png)
 
-# Sentry SDK for Salersforce
+# Sentry SDK for Salesforce
 
 > A much nicer way to be aware of issues on the Salesforce platform
 
