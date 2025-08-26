@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<AuthProvider xmlns="http://soap.sforce.com/2006/04/metadata">
+    <consumerKey
+  >3MVG90biqdLHqqMR.XZkCNHX3EuHBIhNzJ96R1dRd6k8006UZx4wG.3drTjtlpnIglz1t6FZRPr57OMItc.Eg</consumerKey>
+    <consumerSecret>Placeholder_Value</consumerSecret>
+    <defaultScopes>refresh_token full</defaultScopes>
+    <friendlyName>sentry</friendlyName>
+    <includeOrgIdInIdentifier>true</includeOrgIdInIdentifier>
+    <providerType>Salesforce</providerType>
+    <requireMfa>false</requireMfa>
+    <sendAccessTokenInHeader>false</sendAccessTokenInHeader>
+    <sendClientCredentialsInHeader>false</sendClientCredentialsInHeader>
+    <sendSecretInApis>true</sendSecretInApis>
+</AuthProvider>
