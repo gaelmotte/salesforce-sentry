@@ -4,6 +4,11 @@
 
 package.xml
 
+**ConnectedApp
+**AuthProvider
+**NamedCredential
+**PermissionSet/Sentry_tooling_api*
+
 
 # Standard stuff
 **AppMenu

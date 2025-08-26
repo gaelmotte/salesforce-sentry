@@ -34,7 +34,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
    * Some EventPRocessor will use it
    * Is only available to atCapture
    */
-  private Sentry.SentryLWCErrorInputParameters originLWCError;
+  private SentryLWCErrorInputParameters originLWCError;
 
   // Fields that are part of the Sentry Payload
 
@@ -150,7 +150,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
   }
 
   public static SentryEvent fromLWCError(
-    Sentry.SentryLWCErrorInputParameters eventInput
+    SentryLWCErrorInputParameters eventInput
   ) {
     SentryEvent event = new SentryEvent();
     event.originLWCError = eventInput;
@@ -173,7 +173,7 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
     return this.originFlowError;
   }
 
-  public Sentry.SentryLWCErrorInputParameters getOriginLWCError() {
+  public SentryLWCErrorInputParameters getOriginLWCError() {
     return this.originLWCError;
   }
 
