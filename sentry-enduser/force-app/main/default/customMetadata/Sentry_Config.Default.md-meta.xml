@@ -8,7 +8,7 @@
     <protected>false</protected>
     <values>
         <field>ApexClass__c</field>
-        <value xsi:type="xsd:string">SentryEnduserDefaultConfig</value>
+        <value xsi:type="xsd:string">SentryEnduserSampleConfig</value>
     </values>
     <values>
         <field>DSN__c</field>

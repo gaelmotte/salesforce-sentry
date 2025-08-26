@@ -21,7 +21,6 @@
             </value>
         </inputParameters>
         <nameSegment>Sentry</nameSegment>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>Convert_Lead</name>
@@ -54,7 +53,6 @@
         </inputParameters>
         <nameSegment>ConvertLeadsInvocable</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <actionCalls>
         <name>get_Uuid</name>
@@ -69,7 +67,6 @@
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <nameSegment>GenerateUuidInvocable</nameSegment>
         <storeOutputAutomatically>true</storeOutputAutomatically>
-        <versionSegment>1</versionSegment>
     </actionCalls>
     <apiVersion>58.0</apiVersion>
     <environments>Default</environments>
@@ -110,7 +107,7 @@
         <inputAssignments>
             <field>ExternalId__c</field>
             <value>
-                <stringValue>42</stringValue>
+                <elementReference>get_Uuid</elementReference>
             </value>
         </inputAssignments>
         <inputReference>$Record</inputReference>

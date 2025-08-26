@@ -1,8 +1,8 @@
-public with sharing class SentryEnduserDefaultConfig extends SentryConfig {
+public with sharing class SentryEnduserSampleConfig extends SentryConfig {
   public virtual override List<ISentryIntegration> getIntegrations() {
     return new List<ISentryIntegration>{
-      new SentryUserIntegration(), // all de defaults
-      new SentryDebugLogsIntegration(), // all de defaults
+      new SentryUserIntegration(true, true), // capture user PII, which is not default
+      new SentryDebugLogsIntegration(true), // all de defaults
       new SentryStacktraceIntegration(), // all the defaults,
       new SentryFlowFaultIntegration(),
       new SentryLWCErrorIntegration()
