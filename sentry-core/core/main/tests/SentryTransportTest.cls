@@ -42,7 +42,7 @@ public with sharing class SentryTransportTest {
     }
     public HTTPResponse respond(HTTPRequest req) {
       Assert.areEqual(
-        'https://sentry.example.com/api/1/store/',
+        'https://sentry.example.com/api/1/envelope/',
         req.getEndpoint(),
         'should match endpoint from DSN'
       );
@@ -97,7 +97,7 @@ public with sharing class SentryTransportTest {
     }
     public HTTPResponse respond(HTTPRequest req) {
       Assert.areEqual(
-        'https://sentry.example.com/api/1/store/',
+        'https://sentry.example.com/api/1/envelope/',
         req.getEndpoint(),
         'should match endpoint from DSN'
       );
