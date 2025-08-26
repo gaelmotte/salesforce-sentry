@@ -8,6 +8,10 @@ public with sharing class SentryDebugLogsIntegration implements ISentryIntegrati
     this(false, DEFAULT_NAMED_CRED_DEV_NAME);
   }
 
+  public SentryDebugLogsIntegration(Boolean autoAddUserDebugFlag) {
+    this(autoAddUserDebugFlag, DEFAULT_NAMED_CRED_DEV_NAME);
+  }
+
   public SentryDebugLogsIntegration(
     Boolean autoAddUserDebugFlag,
     String namedCredDevName
