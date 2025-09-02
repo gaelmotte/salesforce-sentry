@@ -1,9 +1,17 @@
-# Intendeed for End user as a managed package
+# Intendeed for End user as a managed or unlocked package
 
 ## Additional Features compared to Core
 
 - DebugLogs Integration
 - Setup Application
+
+## source folders
+
+- `sentry-enduser/*`:
+  contains the additional features aimed for endusers
+
+- `force-app/*`
+  contains sample code, flows and lwc demos used to validate the features
 
 ## How to install
 
@@ -12,7 +20,14 @@
 - TODO rework this so i do not depend on SFDC doc
 - TODO in setup, guide user on how to create all that and ask for namedCredName
 
-- add a remote site setting that matches your sentry ingest endpoint
+## deploy project
 
-- Install the managed Package
-- TODO package it
+```
+source .env
+sf project deploy start
+```
+
+## package
+
+todo move to managed package once we understand how to import an lwc mixin from managed package
+for now, we stick to unlocked
