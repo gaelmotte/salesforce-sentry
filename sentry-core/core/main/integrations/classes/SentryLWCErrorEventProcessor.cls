@@ -3,13 +3,13 @@ public with sharing class SentryLWCErrorEventProcessor extends SentryEventProces
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {
-    Sentry.SentryLWCErrorInputParameters input = event.getOriginLWCError();
+    SentryLWCErrorInputParameters input = event.getOriginLWCError();
     if (input == null) {
       return event;
     }
 
     // add breadcrumbs from logs
-    for (Sentry.SentryLWCLog log : input.logs) {
+    for (SentryLWCErrorInputParameters.SentryLWCLog log : input.logs) {
       event.breadcrumbs.add(
         new LWCLogBreadcrumb(log.componentName, log.timestamp, log.message)
       );

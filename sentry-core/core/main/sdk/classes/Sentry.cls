@@ -27,9 +27,9 @@ global with sharing class Sentry {
    * @param inputParameters Input parameter with the Interview GUID
    */
   @InvocableMethod(
-    label='Sentry - Flow exception'
-    description='Send the flow exception to Sentry'
-    iconName='resource:sentryLogo:logo'
+    label='Sentry - Flow fault'
+    description='Send the flow fault to Sentry'
+    iconName='resource:SentryLogo:logo'
     category='Sentry'
   )
   global static void captureFlowFault(
@@ -79,36 +79,4 @@ global with sharing class Sentry {
   // }
 
   // notion of session does not make sense for Salesforce
-
-  // Internal class for Invocable flow method
-  global class SentryFlowInputParameters {
-    @InvocableVariable(label='Flow Interview GUID' required=true)
-    public String interviewGUID;
-    @InvocableVariable(label='Flow Fault Message' required=true)
-    public String faultMessage;
-  }
-
-  global class SentryLWCErrorInputParameters {
-    @AuraEnabled
-    public String error { get; set; }
-    @AuraEnabled
-    public List<String> stack { get; set; }
-    @AuraEnabled
-    public List<String> cmpStack { get; set; }
-    @AuraEnabled
-    public List<SentryLWCLog> logs { get; set; }
-    @AuraEnabled
-    public Datetime timestamp { get; set; }
-    @AuraEnabled
-    public String mechanism { get; set; }
-  }
-
-  global class SentryLWCLog {
-    @AuraEnabled
-    public String message { get; set; }
-    @AuraEnabled
-    public String componentName { get; set; }
-    @AuraEnabled
-    public Datetime timestamp { get; set; }
-  }
 }

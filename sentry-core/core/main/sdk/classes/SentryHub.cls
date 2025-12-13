@@ -61,7 +61,7 @@ public with sharing class SentryHub {
     );
   }
 
-  public void captureLWCError(Sentry.SentryLWCErrorInputParameters event) {
+  public void captureLWCError(SentryLWCErrorInputParameters event) {
     SentryScope scope = getCurrentScope();
     scope.putContext(new SentryRuntimeContext(SentryRuntimeContext.LWC));
     client.captureEvent(SentryEvent.fromLWCError(event), scope);

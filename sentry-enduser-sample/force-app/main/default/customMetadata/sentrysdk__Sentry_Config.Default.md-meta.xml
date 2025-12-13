@@ -7,19 +7,21 @@
     <label>Default</label>
     <protected>false</protected>
     <values>
-        <field>ApexClass__c</field>
-        <value xsi:type="xsd:string">SentryEnduserDefaultConfig</value>
+        <field>sentrysdk__ApexClass__c</field>
+        <value
+      xsi:type="xsd:string"
+    >sentrysdk.SentryEnduserDefaultConfig</value>
     </values>
     <values>
-        <field>DSN__c</field>
+        <field>sentrysdk__DSN__c</field>
         <value xsi:type="xsd:string">SENTRY_DSN</value>
     </values>
     <values>
-        <field>Enabled__c</field>
+        <field>sentrysdk__Enabled__c</field>
         <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
-        <field>Sampling__c</field>
+        <field>sentrysdk__Sampling__c</field>
         <value xsi:type="xsd:double">100.0</value>
     </values>
 </CustomMetadata>

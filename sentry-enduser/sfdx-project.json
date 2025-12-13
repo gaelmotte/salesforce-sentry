@@ -1,8 +1,8 @@
 {
   "packageDirectories": [
     {
-      "versionName": "ver 0.1",
-      "versionNumber": "0.1.0.NEXT",
+      "versionName": "ver 0.2",
+      "versionNumber": "0.2.0.NEXT",
       "path": "sentry-enduser",
       "default": false,
       "package": "SentrySDK",
@@ -14,7 +14,7 @@
     }
   ],
   "name": "sentry-enduser",
-  "namespace": "",
+  "namespace": "sentrysdk",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "58.0",
   "replacements": [
@@ -30,6 +30,6 @@
     }
   ],
   "packageAliases": {
-    "SentrySDK": "0HoQy0000000IOLKA2"
+    "SentrySDK": "0HoQy0000000IMjKAM"
   }
 }
