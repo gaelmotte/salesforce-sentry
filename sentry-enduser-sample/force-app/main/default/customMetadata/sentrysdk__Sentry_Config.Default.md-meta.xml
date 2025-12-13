@@ -14,9 +14,7 @@
     </values>
     <values>
         <field>sentrysdk__DSN__c</field>
-        <value
-      xsi:type="xsd:string"
-    >https://a2ebb343d5443d5a185ea0ff34092383@o382299.ingest.us.sentry.io/4505894224723968</value>
+        <value xsi:type="xsd:string">SENTRY_DSN</value>
     </values>
     <values>
         <field>sentrysdk__Enabled__c</field>

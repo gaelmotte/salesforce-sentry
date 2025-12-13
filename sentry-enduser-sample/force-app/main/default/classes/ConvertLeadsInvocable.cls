@@ -158,7 +158,7 @@ public with sharing class ConvertLeadsInvocable {
 
       return results;
     } catch (Exception e) {
-      // sentrysdk.Sentry.captureException(e);
+      sentrysdk.Sentry.captureException(e);
       throw e;
     }
   }

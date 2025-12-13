@@ -16,7 +16,7 @@
       "replaceWithEnv": "SENTRY_REMOTE_SITE"
     },
     {
-      "filename": "force-app/main/default/customMetadata/Sentry_Config.Default.md-meta.xml",
+      "filename": "force-app/main/default/customMetadata/sentrysdk__Sentry_Config.Default.md-meta.xml",
       "stringToReplace": "SENTRY_DSN",
       "replaceWithEnv": "SENTRY_DSN"
     }

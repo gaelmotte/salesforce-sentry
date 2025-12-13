@@ -4,5 +4,6 @@
     "**/bower_components": true,
     "**/.sfdx": true
   },
-  "search.useIgnoreFiles": false
+  "search.useIgnoreFiles": false,
+  "xml.preferences.showSchemaDocumentationType": "none"
 }
