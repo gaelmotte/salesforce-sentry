@@ -29,4 +29,6 @@ sf project deploy start
 
 ## package
 
-`sf package version create`
+`sf package version create --installation-key-bypass --package SentrySDK -c`
+
+`sf package version promote --package 04t....`

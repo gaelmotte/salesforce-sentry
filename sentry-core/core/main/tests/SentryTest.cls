@@ -18,9 +18,16 @@ public with sharing class SentryTest {
       Sentry.captureException(e);
     }
     Test.stopTest();
-    AsyncApexJob job = [SELECT id, ApexClass.Name FROM AsyncApexJob LIMIT 1];
+    AsyncApexJob job = [
+      SELECT id, ApexClass.Name, ApexClass.NamespacePrefix
+      FROM AsyncApexJob
+      LIMIT 1
+    ];
     Assert.isNotNull(job, 'shoudl have enqued a QueueableTransportEvent');
-    Assert.areEqual(SentryClient.class.getName(), job.ApexClass.Name);
+    Assert.areEqual(
+      SentryClient.class.getName(),
+      job.ApexClass.NamespacePrefix + '.' + job.ApexClass.Name
+    );
   }
 
   @isTest
@@ -36,18 +43,25 @@ public with sharing class SentryTest {
 
     Test.startTest();
 
-    Sentry.SentryFlowInputParameters input = new Sentry.SentryFlowInputParameters();
+    SentryFlowInputParameters input = new SentryFlowInputParameters();
     input.interviewGUID = 'TEST';
     input.faultMessage = 'TEST';
-    List<Sentry.SentryFlowInputParameters> inputParameters = new List<Sentry.SentryFlowInputParameters>{
+    List<SentryFlowInputParameters> inputParameters = new List<SentryFlowInputParameters>{
       input
     };
     Sentry.captureFlowFault(inputParameters);
 
     Test.stopTest();
-    AsyncApexJob job = [SELECT id, ApexClass.Name FROM AsyncApexJob LIMIT 1];
+    AsyncApexJob job = [
+      SELECT id, ApexClass.Name, ApexClass.NamespacePrefix
+      FROM AsyncApexJob
+      LIMIT 1
+    ];
     Assert.isNotNull(job, 'shoudl have enqued a QueueableTransportEvent');
-    Assert.areEqual(SentryClient.class.getName(), job.ApexClass.Name);
+    Assert.areEqual(
+      SentryClient.class.getName(),
+      job.ApexClass.NamespacePrefix + '.' + job.ApexClass.Name
+    );
   }
 
   @isTest

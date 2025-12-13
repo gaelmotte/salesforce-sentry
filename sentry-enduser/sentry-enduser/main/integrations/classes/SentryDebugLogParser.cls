@@ -7,17 +7,21 @@ public with sharing class SentryDebugLogParser {
 
   public SentryDebugLogParser() {
     logEntryStrategies = new List<IDebugLogEntryStrategy>();
-    // find all the calleses that implement the correct strategy interface
-    for (ApexTypeImplementor implementor : [
-      SELECT id, ClassName
-      FROM ApexTypeImplementor
-      WHERE InterfaceName = :IDebugLogEntryStrategy.class.getName()
-    ]) {
-      logEntryStrategies.add(
-        (IDebugLogEntryStrategy) Type.forName(implementor.ClassName)
-          .newInstance()
-      );
-    }
+    // find all the classes that implement the correct strategy interface
+    // for (ApexTypeImplementor implementor : [
+    //   SELECT id, ClassName
+    //   FROM ApexTypeImplementor
+    //   WHERE InterfaceName = :IDebugLogEntryStrategy.class.getName()
+    // ]) {
+    //   logEntryStrategies.add(
+    //     (IDebugLogEntryStrategy) Type.forName(implementor.ClassName)
+    //       .newInstance()
+    //   );
+    // }
+    logEntryStrategies.add(new SentryDebugLogUserDebugStrategy());
+    logEntryStrategies.add(new SentryDebugLogMethodStrategy());
+    logEntryStrategies.add(new SentryDebugLogFlowElementStrategy());
+    logEntryStrategies.add(new SentryDebugLogCalloutStrategy());
   }
 
   public List<SentryBreadcrumb> parseLogBody(String debugLogBody) {

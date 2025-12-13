@@ -48,7 +48,7 @@ public with sharing class SentryMechanismDMLExceptionStrategyTest {
       );
 
       Assert.areEqual(
-        'Stored_By_Sentry__c',
+        'sentrysdk__Stored_By_Sentry__c',
         mech.data.get('dmlFieldNames0'),
         '1st error on Stored_By_Sentry__c'
       );
