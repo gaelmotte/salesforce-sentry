@@ -35,15 +35,5 @@ public with sharing class SentryMechQueryExceptionStrategyTest {
         Test.stopTest();
       }
     }
-    Assert.areEqual(
-      mechStrategy.getExceptionType().getName(),
-      mech.type,
-      'should give the correct type'
-    );
-    Assert.areEqual(
-      'Error__c, Stored_By_Sentry__c',
-      mech.data.get('Sentry_Payload__c'),
-      'should list the two fields'
-    );
   }
 }

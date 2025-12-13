@@ -6,5 +6,6 @@
   },
   "files.watcherInclude": [
     "node_modules/@guimini/apex-json-serialization"
-  ]
+  ],
+  "xml.preferences.showSchemaDocumentationType": "none"
 }

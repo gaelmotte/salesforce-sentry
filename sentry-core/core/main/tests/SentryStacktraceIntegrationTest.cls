@@ -18,6 +18,7 @@ public with sharing class SentryStacktraceIntegrationTest {
       event.ex.get(0).mechanism.type,
       'should provide exception mechanism'
     );
+    /* THESE ARE NOW INNACCESSIBLE AS THE CLASS IS PART OF A MANAGED PACKAGE
     Assert.areEqual(
       '    SentryEvent event = SentryEvent.fromApexException(new SentryException());',
       event.ex.get(0).stacktrace.frames.get(0).context_line,
@@ -32,5 +33,6 @@ public with sharing class SentryStacktraceIntegrationTest {
       event.ex.get(0).stacktrace.frames.get(0).in_app,
       'should consider everything in app by default'
     );
+    */
   }
 }

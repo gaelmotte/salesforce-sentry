@@ -29,7 +29,7 @@ global with sharing class Sentry {
   @InvocableMethod(
     label='Sentry - Flow fault'
     description='Send the flow fault to Sentry'
-    iconName='resource:SentryLogo:logo'
+    iconName='resource:sentrysdk__SentryLogo:logo'
     category='Sentry'
   )
   global static void captureFlowFault(
