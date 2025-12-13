@@ -29,5 +29,4 @@ sf project deploy start
 
 ## package
 
-todo move to managed package once we understand how to import an lwc mixin from managed package
-for now, we stick to unlocked
+`sf package version create`
