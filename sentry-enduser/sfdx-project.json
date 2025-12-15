@@ -1,12 +1,13 @@
 {
   "packageDirectories": [
     {
-      "versionName": "ver 0.3",
-      "versionNumber": "0.3.0.NEXT",
+      "versionName": "ver 0.4",
+      "versionNumber": "0.4.0.NEXT",
       "path": "sentry-enduser",
       "default": false,
       "package": "SentrySDK",
-      "versionDescription": "A Sentry SDK for the Salesforce Platform"
+      "versionDescription": "A Sentry SDK for the Salesforce Platform",
+      "ancestorVersion": "HIGHEST"
     },
     {
       "path": "force-app",
