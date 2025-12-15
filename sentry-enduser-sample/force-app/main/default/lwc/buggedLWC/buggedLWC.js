@@ -1,5 +1,5 @@
 import { LightningElement } from "lwc";
-import { SentryMixin, Sentry } from "c/sentryMixin";
+import { SentryMixin, Sentry } from "sentrysdk/sentryMixin";
 
 export default class BuggedLWC extends SentryMixin(
   LightningElement,

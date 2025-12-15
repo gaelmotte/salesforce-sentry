@@ -57,7 +57,7 @@ This is a superset of `SentryMixin`
 
 ```js
 import { LightningElement } from "lwc";
-import { SentryBoundaryMixin, Sentry, displayError } from "c/sentryMixin";
+import { SentryBoundaryMixin, Sentry, displayError } from "sentrysdk/sentryMixin";
 
 export default class ParentLWC extends SentryBoundaryMixin(
   LightningElement,

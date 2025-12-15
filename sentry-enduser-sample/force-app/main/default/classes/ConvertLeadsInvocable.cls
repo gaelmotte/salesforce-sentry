@@ -128,7 +128,10 @@ public with sharing class ConvertLeadsInvocable {
 
   // --------------------------------------------------------------------------------
 
-  @InvocableMethod(label='Convert Leads')
+  @InvocableMethod(
+    label='Convert Leads'
+    description='Converts a list of leads.'
+  )
   public static List<LeadConvertResult> convertLeads(
     List<LeadConvertRequest> requests
   ) {
@@ -167,43 +170,10 @@ public with sharing class ConvertLeadsInvocable {
     List<Database.LeadConvert> convertRequests,
     Boolean allOrNone
   ) {
-    Lead[] leads = new List<Lead>();
-    for (Database.LeadConvert convertRequest : convertRequests) {
-      Id leadId = convertRequest.leadid;
-      Lead lead = [SELECT Id, ExternalId__c FROM Lead WHERE id = :leadId]; // consider bulkification
-      if (lead.ExternalId__c == null) {
-        lead.ExternalId__c = getExternalId();
-        leads.add(lead);
-      }
-    }
-    update leads;
     // convert the leads
     System.debug('Converting leads : ' + convertRequests.size());
     return Database.convertLead(convertRequests, allOrNone);
   }
-
-  private static String getExternalId() {
-    if (Test.isRunningTest()) {
-      return UUID.randomUUID().toString();
-    }
-
-    Http http = new Http();
-    HttpRequest request = new HttpRequest();
-    //suppose we call an external system to obtain an external id at convert time
-    request.setEndpoint(
-      Url.getSalesforceBaseUrl().toExternalForm() +
-      '/services/data/v58.0/limits/'
-    );
-    request.setMethod('GET');
-    request.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
-
-    HttpResponse response = http.send(request);
-    if (response.getStatusCode() == 200) {
-      return UUID.randomUUID().toString();
-    }
-    return null;
-  }
-
   // --------------------------------------------------------------------------------
 
   private static Database.LeadConvert transform(LeadConvertRequest request) {
