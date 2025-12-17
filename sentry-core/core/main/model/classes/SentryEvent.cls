@@ -139,12 +139,16 @@ public with sharing class SentryEvent implements JSONDeserializer.Deserializable
 
   public static SentryEvent fromFlowFault(
     String flowInterviewGUID,
-    String flowFaultMessage
+    String flowFaultMessage,
+    string flowElementApiName,
+    string flowDefinitionId
   ) {
     SentryEvent event = new SentryEvent();
     event.originFlowError = new SentryFlowError(
       flowInterviewGUID,
-      flowFaultMessage
+      flowFaultMessage,
+      flowElementApiName,
+      flowDefinitionId
     );
     return event;
   }

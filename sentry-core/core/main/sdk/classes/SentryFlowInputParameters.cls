@@ -5,8 +5,6 @@ global with sharing class SentryFlowInputParameters {
   global String faultMessage;
   @InvocableVariable(label='Element Api Name' required=true)
   global String elementApiName;
-  @InvocableVariable(
-    label='Flow defition id'
-  ) // not required to save the flow first
+  @InvocableVariable(label='Flow defition id' required=true)
   global String flowDefinitionId;
 }

@@ -52,11 +52,21 @@ public with sharing class SentryHub {
    * @param interviewGUID Interview GUID of the Flow
    * @param faultMessage Fault Message of the Flow
    */
-  public void captureFlowFault(String interviewGUID, String faultMessage) {
+  public void captureFlowFault(
+    String interviewGUID,
+    String faultMessage,
+    string flowElementApiName,
+    string flowDefinitionId
+  ) {
     SentryScope scope = getCurrentScope();
     scope.putContext(new SentryRuntimeContext(SentryRuntimeContext.FLOW));
     client.captureEvent(
-      SentryEvent.fromFlowFault(interviewGUID, faultMessage),
+      SentryEvent.fromFlowFault(
+        interviewGUID,
+        faultMessage,
+        flowElementApiName,
+        flowDefinitionId
+      ),
       scope
     );
   }
