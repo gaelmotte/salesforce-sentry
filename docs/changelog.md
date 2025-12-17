@@ -4,3 +4,5 @@
   - Support for LWC, Flows and Apex
 - [vO.2](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000IjI1IAK) : Refactor use envelope endpoint
   - full support as a managed package
+- [vO.3](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000Is6nIAC) : Fix LWC mixin
+  - full support as a managed package

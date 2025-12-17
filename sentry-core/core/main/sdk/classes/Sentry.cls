@@ -31,6 +31,7 @@ global with sharing class Sentry {
     description='Send the flow fault to Sentry'
     iconName='resource:sentrysdk__SentryLogo:logo'
     category='Sentry'
+    configurationEditor='sentrysdk-capture-flow-fault-property-editor'
   )
   global static void captureFlowFault(
     List<SentryFlowInputParameters> inputParameters
