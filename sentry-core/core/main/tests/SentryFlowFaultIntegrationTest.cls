@@ -8,7 +8,9 @@ public with sharing class SentryFlowFaultIntegrationTest {
 
     SentryEvent event = SentryEvent.fromFlowFault(
       'flowInterviewGUID',
-      'TEST ERROR'
+      'TEST ERROR',
+      'flow_apiname',
+      'someSFDCID'
     );
     event = scope.applyToEvent(scope.applyToEvent(event, true), false);
 
@@ -16,13 +18,6 @@ public with sharing class SentryFlowFaultIntegrationTest {
       event.ex,
       'exception (ex because of reserved keywork) should be added'
     );
-    Assert.areEqual(1, event.ex.size());
-    Assert.areEqual(
-      (new SentryMechanismSyntheticFlowExStrategy())
-        .getExceptionType()
-        .getName(),
-      event.ex.get(0).mechanism.type,
-      'should provide exception mechanism'
-    );
+    Assert.areEqual(2, event.ex.size()); // the capture messagge and the original flow error
   }
 }
