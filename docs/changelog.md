@@ -6,3 +6,4 @@
   - full support as a managed package
 - [vO.3](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000Is6nIAC) : Fix LWC mixin
   - full support as a managed package
+- [vO.4](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000J5jxIAC) : Fix Flow Context

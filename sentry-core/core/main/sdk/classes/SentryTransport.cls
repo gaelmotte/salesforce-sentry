@@ -208,29 +208,6 @@ public with sharing class SentryTransport {
       return false;
     }
 
-    private HttpRequest getStoreRequest(SentryEvent event) {
-      HttpRequest request = new HttpRequest();
-      request.setEndpoint(config.dsn.baseUri.toExternalForm() + '/store/');
-      request.setMethod('POST');
-      request.setHeader('Content-Type', 'application/json');
-      request.setHeader('User-Agent', SentryClientSDKInfo.getFullName());
-      request.setHeader(
-        'X-Sentry-Auth',
-        'Sentry ' +
-        String.join(
-          new List<String>{
-            'sentry_version=7', // Sentry api version
-            'sentry_key=' + config.dsn.publicKey,
-            'sentry_client=' + SentryClientSDKInfo.getFullName()
-          },
-          ', '
-        )
-      );
-      request.setBody(event.serialize());
-
-      return request;
-    }
-
     private HttpRequest getEnvelopeRequest(SentryEvent event) {
       HttpRequest request = new HttpRequest();
       request.setEndpoint(config.dsn.baseUri.toExternalForm() + '/envelope/');
