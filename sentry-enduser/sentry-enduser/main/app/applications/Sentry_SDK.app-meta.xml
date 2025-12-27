@@ -15,6 +15,7 @@
     <label>Sentry SDK</label>
     <navType>Standard</navType>
     <setupExperience>all</setupExperience>
+    <tabs>Sentry_SDK_Config</tabs>
     <tabs>Sentry_Config</tabs>
     <tabs>Sentry_Payload__c</tabs>
     <uiType>Lightning</uiType>
