@@ -8,7 +8,7 @@ export default defineConfig({
     "A much nicer way to be aware of issues on the Salesforce platform",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: "/_media/SentrySDK.png",
+    logo: "/SentrySDK.png",
     nav: [
       { text: "Home", link: "/" },
       { text: "ISV", link: "/isv/" },
