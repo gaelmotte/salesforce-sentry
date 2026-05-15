@@ -1,5 +1,5 @@
 global with sharing class SentryFlowFaultIntegration implements ISentryIntegration {
-  public SentryFlowFaultIntegration() {
+  global SentryFlowFaultIntegration() {
   }
 
   public void applyToScope(SentryScope scope) {

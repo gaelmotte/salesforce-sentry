@@ -1,5 +1,5 @@
 global with sharing class SentryLWCErrorIntegration implements ISentryIntegration {
-  public SentryLWCErrorIntegration() {
+  global SentryLWCErrorIntegration() {
   }
 
   public void applyToScope(SentryScope scope) {

@@ -2,7 +2,7 @@
  * https://develop.sentry.dev/sdk/unified-api/#scope
  * User is excluded from scope and reworked as an SentryUserEventProcessor
  */
-public virtual class SentryScope {
+global virtual class SentryScope {
   protected Map<String, Object> extras = new Map<String, Object>();
   protected Map<String, String> tags = new Map<String, String>();
   protected Map<String, SentryContext> contexts = new Map<String, SentryContext>();

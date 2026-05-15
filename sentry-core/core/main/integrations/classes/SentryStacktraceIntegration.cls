@@ -11,14 +11,14 @@ global with sharing class SentryStacktraceIntegration implements ISentryIntegrat
     new SentryMechanismSyntheticFlowExStrategy()
   };
 
-  public SentryStacktraceIntegration() {
+  global SentryStacktraceIntegration() {
     this(5);
   }
 
-  public SentryStacktraceIntegration(Integer frameContextLines) {
+  global SentryStacktraceIntegration(Integer frameContextLines) {
     this(frameContextLines, new List<SentryMechanismExceptionStrategy>());
   }
-  public SentryStacktraceIntegration(
+  global SentryStacktraceIntegration(
     Integer frameContextLines,
     List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies
   ) {
@@ -28,7 +28,7 @@ global with sharing class SentryStacktraceIntegration implements ISentryIntegrat
       new AllFramesInAppCallback()
     );
   }
-  public SentryStacktraceIntegration(
+  global SentryStacktraceIntegration(
     Integer frameContextLines,
     List<SentryMechanismExceptionStrategy> mechanismExceptionStrategies,
     IInAppCallback inAppCallback
