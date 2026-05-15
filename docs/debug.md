@@ -1,16 +1,32 @@
-# DebugLogsIntegration
+# Debug Logs Integration
 
-It enriches events with info extracted from the debug logs.
+_(enduser package only)_
 
-This only works if the user has trace flags enabled. Good news is, it can add the traceflags for 24hours when an issue is caught for the user.
+Retrieves the most recent Apex debug log for the current user and parses it into breadcrumbs on the Sentry event. This gives you a chronological trace of what happened in the Apex execution leading up to the error.
+
+Because logs only exist when trace flags are active, the integration can optionally enable them automatically when an error is caught.
+
+## Usage
+
+```apex
+new sentrysdk.SentryDebugLogsIntegration()
+new sentrysdk.SentryDebugLogsIntegration(true)                          // auto-enable trace flags
+new sentrysdk.SentryDebugLogsIntegration(true, 'My_Named_Credential')   // custom named credential
+```
 
 ## Parameters
 
-| position |  type   |               default               | effect                                                                 |
-| :------: | :-----: | :---------------------------------: | :--------------------------------------------------------------------- |
-|    1     | Boolean |                false                | Should the SDK enable Trace Flags for the user when an error is caught |
-|    2     | String  | `Sentry_SDK_Tooling_Api_Credential` | Name of the Named Credential to use to enable Trace Flags              |
+| Position |  Type   |               Default               | Effect                                                                                            |
+| :------: | :-----: | :---------------------------------: | :------------------------------------------------------------------------------------------------ |
+|    1     | Boolean |               `false`               | Automatically enable `FINEST`-level trace flags for the user for 24 hours when an error is caught |
+|    2     | String  | `Sentry_SDK_Tooling_Api_Credential` | API name of the Named Credential used to call the Tooling API                                     |
 
-## Additional configuration
+## Setting up the Named Credential
 
-TODO List the steps to create a self named cred for the tooling api
+The integration calls the Salesforce Tooling API to retrieve `ApexLog` records. It authenticates via a Named Credential of type **Named Principal** using the **Salesforce (OAuth)** authentication provider.
+
+1. In Setup, go to **Named Credentials → New**.
+2. Set the **Label** and **Name** to `Sentry_SDK_Tooling_Api_Credential` (or your custom name).
+3. Set **URL** to your org's My Domain URL (e.g. `https://myorg.my.salesforce.com`).
+4. Set **Identity Type** to `Named Principal` and **Authentication Protocol** to `OAuth 2.0`.
+5. Configure the Auth Provider to use the Salesforce connected app with the `api` and `refresh_token` scopes.

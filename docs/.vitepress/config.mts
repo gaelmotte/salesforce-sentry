@@ -14,7 +14,6 @@ export default defineConfig({
       { text: "ISV", link: "/isv/" },
       { text: "Changelog", link: "/changelog" }
     ],
-
     sidebar: [
       {
         text: "Getting Started",
@@ -36,6 +35,13 @@ export default defineConfig({
           { text: "StackTrace Integration", link: "/stack" },
           { text: "LWC Errors Integration", link: "/lwcError" },
           { text: "Flow Faults Integration", link: "/flowFault" }
+        ]
+      },
+      {
+        text: "Architecture",
+        items: [
+          { text: "How it works", link: "/how-it-works" },
+          { text: "Troubleshooting", link: "/troubleshooting" }
         ]
       }
     ],

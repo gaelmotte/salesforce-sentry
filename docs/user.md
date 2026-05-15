@@ -1,12 +1,20 @@
-# UserIntegration
+# User Integration
 
-It enriches events with user details.
+Captures the current user's identity and, optionally, their permission sets and PII.
+
+The Organization ID and User ID are always included — they allow Sentry to count how many distinct users are affected by a given issue.
+
+## Usage
+
+```apex
+new sentrysdk.SentryUserIntegration()              // identity only (default)
+new sentrysdk.SentryUserIntegration(true, false)   // + permission sets, no PII
+new sentrysdk.SentryUserIntegration(true, true)    // + permission sets + PII
+```
 
 ## Parameters
 
-| position |  type   | default | effect                                                                                  |
-| :------: | :-----: | :-----: | :-------------------------------------------------------------------------------------- |
-|    1     | Boolean |  true   | Enrich with assigned Profile and Permission sets                                        |
-|    2     | Boolean |  false  | Enrich with User PII (Firstname, Lastname, Email, isActive, languageLocaleKey, country) |
-
-Note, The Organization ID and User Id are always sent to allow sentry to count how many users are impacted by a given issue.
+| Position |  Type   | Default | Effect                                                                   |
+| :------: | :-----: | :-----: | :----------------------------------------------------------------------- |
+|    1     | Boolean | `true`  | Include the user's assigned Profile and Permission Sets                  |
+|    2     | Boolean | `false` | Include PII: first name, last name, email, language, country, `isActive` |

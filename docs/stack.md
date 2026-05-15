@@ -1,11 +1,64 @@
-# StackTraceIntegration
+# StackTrace Integration
 
-It enriches events with detais about the APEX stacktrace.
+Parses raw Apex stack trace strings into structured frames that Sentry can display with file, line, and function information.
+
+At send time (Phase 2), the Tooling API is used to retrieve surrounding source lines for each frame — giving you pre/post context around the line that threw.
+
+## Usage
+
+```apex
+new sentrysdk.SentryStacktraceIntegration()                              // defaults
+new sentrysdk.SentryStacktraceIntegration(10)                            // 10 context lines
+new sentrysdk.SentryStacktraceIntegration(5, myStrategies)               // custom strategies
+new sentrysdk.SentryStacktraceIntegration(5, myStrategies, myCallback)   // + custom in-app filter
+```
 
 ## Parameters
 
-| position |                   type                   |        default         | effect                                                                                                                              |
-| :------: | :--------------------------------------: | :--------------------: | :---------------------------------------------------------------------------------------------------------------------------------- |
-|    1     |                 Integer                  |           5            | Number of lines of code before and after the faulty line should be added as context                                                 |
-|    2     | List< SentryMechanismExceptionStrategy > |           []           | List of Strategies to enrich the exception with. Should you implement your own custom exception, this can help capture usefull data |
-|    3     |     class implements IInAppCallback      | AllFramesInAppCallback | Callback to define what frames are `inApp`                                                                                          |
+| Position |                          Type                          |      Default      | Effect                                                                          |
+| :------: | :----------------------------------------------------: | :---------------: | :------------------------------------------------------------------------------ |
+|    1     |                        Integer                         |        `5`        | Number of source lines before and after the faulting line to include as context |
+|    2     |   `List<sentrysdk.SentryMechanismExceptionStrategy>`   |       `[]`        | Additional strategies for enriching specific exception subtypes                 |
+|    3     | `sentrysdk.SentryStacktraceIntegration.IInAppCallback` | All frames in-app | Callback to decide which frames belong to your application                      |
+
+## Custom in-app filter
+
+By default all frames are marked as in-app. Implement `IInAppCallback` to mark only your own namespace:
+
+```apex
+public class MyInAppCallback implements sentrysdk.SentryStacktraceIntegration.IInAppCallback {
+  public Boolean isInApp(sentrysdk.SentryValueClass.Frame frame) {
+    return 'myns'.equals(frame.namespace);
+  }
+}
+```
+
+Pass it as the third constructor argument:
+
+```apex
+new sentrysdk.SentryStacktraceIntegration(
+  5,
+  new List<sentrysdk.SentryMechanismExceptionStrategy>(),
+  new MyInAppCallback()
+)
+```
+
+## Custom exception strategies
+
+Extend `sentrysdk.SentryMechanismExceptionStrategy` to control how a specific exception subtype is represented in the Sentry `mechanism` field — useful for custom exception classes that carry extra diagnostic data.
+
+```apex
+public class MyExceptionStrategy extends sentrysdk.SentryMechanismExceptionStrategy {
+  public override System.Type getExceptionType() {
+    return MyCustomException.class;
+  }
+}
+```
+
+Pass your strategies as the second constructor argument:
+
+```apex
+new sentrysdk.SentryStacktraceIntegration(5, new List<sentrysdk.SentryMechanismExceptionStrategy>{
+  new MyExceptionStrategy()
+})
+```
