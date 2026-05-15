@@ -11,12 +11,12 @@ hero:
       text: Get Started
       link: /getStarted
     - theme: alt
-      text: Install v0.4
-      link: https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000J5jxIAC
+      text: Install v0.5
+      link: https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000VcSPIA0
 
 features:
-  - title: One-click managed package
-    details: Install from AppExchange in minutes. No code deployment required to get started.
+  - title: One-click managed package & CLI for quick adoption
+    details: Install from AppExchange in minutes. Use the `@salesforce-sentry/codemods` CLI to generate config files, instrument your codebase, and validate the setup — without touching a single file by hand.
   - title: Apex, Flow, and LWC coverage
     details: Capture exceptions in Apex triggers and classes, fault paths in Flows, and unhandled errors in Lightning Web Components — all routed to the same Sentry project.
   - title: Fully configurable

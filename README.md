@@ -102,6 +102,23 @@ This includes many more metadata to help a customer Setup Sentry :
 This is sample on how a Salesforce customer might use the enduser version of the SDK
 For now, it imports the enduser sdk with a symlink, but as soon as it is packaged, this should be changed
 
+## Adoption CLI
+
+The `@salesforce-sentry/codemods` package provides a CLI to instrument an existing SFDX project:
+
+```bash
+# Generate SentryConfig class + metadata files
+npx @salesforce-sentry/codemods setup
+
+# Instrument LWC components and Apex entry points
+npx @salesforce-sentry/codemods adopt
+
+# Verify everything is wired up
+npx @salesforce-sentry/codemods validate
+```
+
+See [`codemods/README.md`](codemods/README.md) for full documentation.
+
 ## Setup for dev
 
 ### NPM deps

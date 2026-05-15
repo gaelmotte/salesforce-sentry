@@ -1,9 +1,9 @@
 # Changelog
 
-- [vO.1](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy0000002NOjIAM) : Initial release
-  - Support for LWC, Flows and Apex
-- [vO.2](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000IjI1IAK) : Refactor use envelope endpoint
-  - full support as a managed package
-- [vO.3](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000Is6nIAC) : Fix LWC mixin
-  - full support as a managed package
-- [vO.4](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000J5jxIAC) : Fix Flow Context
+| Version | Notes                                                              | Package Version ID   | Production Install                                                                           | CLI Install                                               |
+| ------- | ------------------------------------------------------------------ | -------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| v0.1    | Initial release — Support for LWC, Flows and Apex                  | `04tQy0000002NOjIAM` | [Install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy0000002NOjIAM) | `sf package version install --package 04tQy0000002NOjIAM` |
+| v0.2    | Refactor use envelope endpoint — full support as a managed package | `04tQy000000IjI1IAK` | [Install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000IjI1IAK) | `sf package version install --package 04tQy000000IjI1IAK` |
+| v0.3    | Fix LWC mixin — full support as a managed package                  | `04tQy000000Is6nIAC` | [Install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000Is6nIAC) | `sf package version install --package 04tQy000000Is6nIAC` |
+| v0.4    | Fix Flow Context                                                   | `04tQy000000J5jxIAC` | [Install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000J5jxIAC) | `sf package version install --package 04tQy000000J5jxIAC` |
+| v0.5    | Fix not being able to define one's own config file                 | `04tQy000000VcSPIA0` | [Install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000VcSPIA0) | `sf package version install --package 04tQy000000VcSPIA0` |

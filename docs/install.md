@@ -1,31 +1,69 @@
 # Installation
 
-## Package installation
+## 1. Install the managed package
 
-**[Install v0.4 (latest)](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000J5jxIAC)**
+**[Install v0.5 (latest)](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000VcSPIA0)**
 
 For previous versions, see the [Changelog](/changelog).
 
-## Base configuration
+## 2. Configure and instrument your project
 
-### Add a custom metadata record
+### Option A — CLI (recommended)
 
-In setup, search for `Custom Metadata Types`
+The `@salesforce-sentry/codemods` CLI handles the entire setup in three commands. Run them from your SFDX project root.
+
+**Generate config files:**
+
+```bash
+npx @salesforce-sentry/codemods setup
+```
+
+This prompts for your DSN, class name, sampling rate, and integrations, then writes:
+
+- An Apex config class extending `sentrysdk.SentryConfig`
+- A `sentrysdk__Sentry_Config.Default` custom metadata record
+- A `Sentry` remote site setting
+
+**Instrument your code:**
+
+```bash
+npx @salesforce-sentry/codemods adopt
+```
+
+Scans your project and wraps LWC components and Apex entry points with Sentry error capture. Shows a diff and prompts before each change.
+
+**Verify everything is wired up:**
+
+```bash
+npx @salesforce-sentry/codemods validate
+```
+
+**Deploy:**
+
+```bash
+sf project deploy start
+```
+
+---
+
+### Option B — Manual setup
+
+#### Add a custom metadata record
+
+In Setup, search for `Custom Metadata Types`.
+
 ![Custom Metadata List](custometalist.png)
 
-Click on `Manage Records` next to `Sentry Config`, then new.
+Click `Manage Records` next to `Sentry Config`, then `New`.
+
 ![Config Sample](configSample.png)
 
-Note :
+- Only one record should be active at a time
+- **DSN** — your Sentry project DSN
+- **ApexClass** — a class extending `sentrysdk.SentryConfig`; `SentryEnduserDefaultConfig` is provided as a default
+- **Sampling** — 0 to 100
 
-- you may have several records for this custom metadata but only one should be active
-- You may name those records anyway you like
-- DSN should be your Sentry project DSN
-- Apexclass must be a class implementing `ISentryConfig`, we provide `SentryEnduserDefaultConfig` as a default to help you get started.
-- Sampling must be between 0 and 100, defines what percentage of events are sent to sentry.
+#### Add a remote site setting
 
-### Add a remote site
-
-In setup, search for `Remote Site Settings`, then click `New Remote Site`.
-Name it `Sentry` and for URL, it should be `https://o<somenumber>.ingest.sentry.io`.
-The ingest URL can be found from your DSN.
+In Setup, search for `Remote Site Settings`, then `New Remote Site`.
+Name it `Sentry`. For URL, use `https://o<number>.ingest.sentry.io` (the host part of your DSN).
