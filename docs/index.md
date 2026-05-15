@@ -4,17 +4,21 @@ layout: home
 
 hero:
   name: "Sentry SDK for Salesforce"
-  text: "A much nicer way to be aware of issues on the Salesforce platform"
+  text: "Salesforce has no global exception handler. Now it does."
+  tagline: "When Apex throws, a Flow faults, or an LWC crashes in production — you'll know. Sentry SDK routes errors to your Sentry project in real time, with stack traces, user context, and breadcrumbs."
   actions:
     - theme: brand
       text: Get Started
       link: /getStarted
+    - theme: alt
+      text: Install v0.4
+      link: https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000J5jxIAC
 
 features:
-  - title: A managed package
-    details: a simple link to install the sdk
-  - title: Captures errors in Flow, LWC and Apex
-    details: Any error can be caught, just requires a bit a plumbing
-  - title: Full configuration and extensibility
-    details: Allows for hooks to filter PII or other use cases
+  - title: One-click managed package
+    details: Install from AppExchange in minutes. No code deployment required to get started.
+  - title: Apex, Flow, and LWC coverage
+    details: Capture exceptions in Apex triggers and classes, fault paths in Flows, and unhandled errors in Lightning Web Components — all routed to the same Sentry project.
+  - title: Fully configurable
+    details: Control sampling rate, filter PII, enrich events with user identity, and extend with custom integrations via a simple Apex interface.
 ---

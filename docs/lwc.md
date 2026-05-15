@@ -2,10 +2,10 @@
 
 Mixins are offered as a way to integrate with Sentry from LWC.
 
-They come in two flavors :
+They come in two flavors:
 
 - `SentryMixin` for leaf components
-- `SentryBoundaryMiwin` for boundary (aka exposed) components
+- `SentryBoundaryMixin` for boundary (aka exposed) components
 
 ## `SentryMixin`
 
@@ -25,12 +25,14 @@ export default class BuggedLWC extends SentryMixin(
 
   handleClickThrow() {
     this[Sentry].log("here is a log");
-    throw new Error("Some stupid thing happend");
+    throw new Error("Some stupid thing happened");
   }
 
   handleClickCaptureException() {
     this[Sentry].log("here is a log from the other button");
-    this[Sentry].captureException(new Error("Some other stupid thing happend"));
+    this[Sentry].captureException(
+      new Error("Some other stupid thing happened")
+    );
   }
 }
 ```
@@ -49,7 +51,7 @@ The constructor takes two params :
 
 ### Note
 
-It is imperative such a component be a child of a `SentryBOundaryMixin` component
+It is imperative that such a component be a child of a `SentryBoundaryMixin` component.
 
 ## `SentryBoundaryMixin`
 
@@ -85,5 +87,5 @@ The constructor takes two params :
 
 ### Optional custom handling of error display
 
-By default, the coundary component will display a toast with the error.
-If you implment a `this[displayError]` callback, you are then free to display the error anyway you'd like.
+By default, the boundary component will display a toast with the error.
+If you implement a `this[displayError]` callback, you are then free to display the error any way you'd like.
