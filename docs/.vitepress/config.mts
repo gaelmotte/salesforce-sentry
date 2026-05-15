@@ -11,7 +11,8 @@ export default defineConfig({
     logo: "_media/SentrySDK.png",
     nav: [
       { text: "Home", link: "/" },
-      { text: "ISV", link: "/isv/" }
+      { text: "ISV", link: "/isv/" },
+      { text: "Changelog", link: "/changelog" }
     ],
 
     sidebar: [
@@ -34,7 +35,7 @@ export default defineConfig({
           { text: "Debug Logs Integration", link: "/debug" },
           { text: "StackTrace Integration", link: "/stack" },
           { text: "LWC Errors Integration", link: "/lwcError" },
-          { text: "Flow Faults Integration", link: "/flowfault" }
+          { text: "Flow Faults Integration", link: "/flowFault" }
         ]
       }
     ],

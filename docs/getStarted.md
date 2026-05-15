@@ -1,17 +1,21 @@
 # Prerequisites
 
-This will guide you with the standard setup of the SDK and its usage.
+This will guide you through the standard setup of the SDK and its usage.
 
-> If you want a deeper dive into what information is sent to Sentry when an issue in encountered, have a look at the [Configuration](configuration.md) guide.
+> If you want a deeper dive into what information is sent to Sentry when an issue is encountered, have a look at the [Configuration](configuration.md) guide.
 
 ## Sentry Project
 
-You already have a sentry project, and have its DSN close at hand.
+You already have a Sentry project and have its DSN close at hand.
 
-## Salesforce Editions
+## Salesforce Edition
 
-You have Salesforce Entreprise or supperior.
+You are on Salesforce Enterprise Edition or higher. (Platform Events, required for the async transport, are not available on lower editions.)
 
 ## Yourself
 
-You are well versed into Salesforce Developpement, meaning you won't fear writting some Apex code or dealing with Custom Medatata.
+You are comfortable with Salesforce development: writing Apex classes and working with Custom Metadata Types.
+
+## Performance & governor limits
+
+The SDK is designed to be non-blocking. Errors are published as a Platform Event within your transaction (a lightweight DML operation), and all HTTP callouts to the Sentry API happen asynchronously in a separate Queueable context. Capturing an exception adds one Platform Event publish to your transaction — no synchronous HTTP callouts, no significant governor limit impact.

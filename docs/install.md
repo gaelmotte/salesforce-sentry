@@ -2,7 +2,9 @@
 
 ## Package installation
 
-Install this package with this [link](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000IjI1IAK)
+**[Install v0.4 (latest)](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQy000000J5jxIAC)**
+
+For previous versions, see the [Changelog](/changelog).
 
 ## Base configuration
 
