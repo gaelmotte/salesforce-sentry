@@ -41,7 +41,10 @@ const INTEGRATIONS = [
 ];
 
 function buildApexClass(className, integrations) {
-  const items = integrations.map((i) => `      new sentrysdk.${i}(),`);
+  const items = integrations.map(
+    (i, idx) =>
+      `      new sentrysdk.${i}()` + (idx < integrations.length - 1 ? "," : "")
+  );
   return [
     `public with sharing class ${className} extends sentrysdk.SentryConfig {`,
     `  public override List<sentrysdk.ISentryIntegration> getIntegrations() {`,
