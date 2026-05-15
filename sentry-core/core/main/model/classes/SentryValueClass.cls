@@ -1,7 +1,7 @@
 /**
  * https://develop.sentry.dev/sdk/event-payloads/types/#valueclass
  */
-public with sharing class SentryValueClass implements JSONDeserializer.Deserializable {
+global with sharing class SentryValueClass implements JSONDeserializer.Deserializable {
   public SentryValueClassMechanism mechanism;
   //   public String module;
   public Stacktrace stacktrace;
@@ -45,7 +45,7 @@ public with sharing class SentryValueClass implements JSONDeserializer.Deseriali
     }
   }
 
-  public class Frame {
+  global class Frame {
     public Frame() {
     }
 

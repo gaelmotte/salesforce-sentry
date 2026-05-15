@@ -1,7 +1,7 @@
-public virtual class SentryMechanismExceptionStrategy implements Comparable {
+global virtual class SentryMechanismExceptionStrategy implements Comparable {
   private string stacktraceStringKey;
 
-  public SentryMechanismExceptionStrategy() {
+  global SentryMechanismExceptionStrategy() {
     this.stacktraceStringKey = SentryStacktraceIntegration.STACKTRACE_AS_STRING_KEY;
   }
 

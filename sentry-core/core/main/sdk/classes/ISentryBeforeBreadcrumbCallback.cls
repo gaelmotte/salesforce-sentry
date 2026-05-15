@@ -1,3 +1,3 @@
-public interface ISentryBeforeBreadcrumbCallback {
+global interface ISentryBeforeBreadcrumbCallback {
   SentryBreadcrumb process(SentryBreadcrumb breadcrumb);
 }

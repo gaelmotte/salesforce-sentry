@@ -1,3 +1,3 @@
-public interface ISentryIntegration {
+global interface ISentryIntegration {
   void applyToScope(SentryScope scope);
 }

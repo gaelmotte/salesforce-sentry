@@ -1,18 +1,18 @@
-public with sharing class SentryDebugLogsIntegration implements ISentryIntegration {
+global with sharing class SentryDebugLogsIntegration implements ISentryIntegration {
   public static final String DEFAULT_NAMED_CRED_DEV_NAME = 'Sentry_SDK_Tooling_Api_Credential';
 
   private Boolean autoAddUserDebugFlag;
   private String namedCredDevName;
 
-  public SentryDebugLogsIntegration() {
+  global SentryDebugLogsIntegration() {
     this(false, DEFAULT_NAMED_CRED_DEV_NAME);
   }
 
-  public SentryDebugLogsIntegration(Boolean autoAddUserDebugFlag) {
+  global SentryDebugLogsIntegration(Boolean autoAddUserDebugFlag) {
     this(autoAddUserDebugFlag, DEFAULT_NAMED_CRED_DEV_NAME);
   }
 
-  public SentryDebugLogsIntegration(
+  global SentryDebugLogsIntegration(
     Boolean autoAddUserDebugFlag,
     String namedCredDevName
   ) {

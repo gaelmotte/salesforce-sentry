@@ -1,11 +1,11 @@
-public with sharing class SentryUserIntegration implements ISentryIntegration {
+global with sharing class SentryUserIntegration implements ISentryIntegration {
   private Boolean captureUserPII;
   private Boolean captureUserPermissions;
 
-  public SentryUserIntegration() {
+  global SentryUserIntegration() {
     this(true, false);
   }
-  public SentryUserIntegration(
+  global SentryUserIntegration(
     Boolean captureUserPermissions,
     Boolean captureUserPII
   ) {

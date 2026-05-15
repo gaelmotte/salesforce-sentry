@@ -8,7 +8,7 @@
  * 5. Transformed to a payload sentry api does recognize
  *
  */
-public with sharing class SentryEvent implements JSONDeserializer.Deserializable {
+global with sharing class SentryEvent implements JSONDeserializer.Deserializable {
   /**
    * exception that caused the event
    * Some processors might need it

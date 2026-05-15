@@ -1,4 +1,4 @@
-public virtual with sharing class SentryBreadcrumb {
+global virtual with sharing class SentryBreadcrumb {
   public String type;
   public String category;
   public String message;
