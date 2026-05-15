@@ -1,0 +1,26 @@
+{
+  "name": "@salesforce-sentry/codemods",
+  "version": "1.0.0",
+  "description": "CLI to adopt the salesforce-sentry SDK in an SFDX project",
+  "license": "MIT",
+  "bin": {
+    "salesforce-sentry": "index.js"
+  },
+  "files": [
+    "index.js",
+    "commands/",
+    "transforms/",
+    "utils/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "diff": "^5.2.0",
+    "fast-xml-parser": "^4.3.6",
+    "jscodeshift": "^0.16.1",
+    "picocolors": "^1.1.0",
+    "prompts": "^2.4.2"
+  }
+}
