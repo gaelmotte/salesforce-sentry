@@ -51,7 +51,7 @@ global with sharing class SentryStacktraceIntegration implements ISentryIntegrat
     );
   }
 
-  public interface IInAppCallback {
+  global interface IInAppCallback {
     boolean isInApp(SentryValueClass.Frame frame);
   }
 
