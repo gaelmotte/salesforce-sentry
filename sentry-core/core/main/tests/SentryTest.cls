@@ -46,6 +46,8 @@ public with sharing class SentryTest {
     SentryFlowInputParameters input = new SentryFlowInputParameters();
     input.interviewGUID = 'TEST';
     input.faultMessage = 'TEST';
+    input.elementApiName = 'TEST';
+    input.flowDefinitionId = 'TEST';
     List<SentryFlowInputParameters> inputParameters = new List<SentryFlowInputParameters>{
       input
     };

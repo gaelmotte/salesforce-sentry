@@ -10,10 +10,8 @@ Using your usual dev workflow, crate a new class for the Sentry SDK config.
 
 It must read like this :
 
-TODO : update after packaging
-
 ```apex
-public with sharing class MySentryConfig extends SentryConfig {
+public with sharing class MySentryConfig extends Sentrysdk__SentryConfig {
   public virtual override List<ISentryIntegration> getIntegrations() {
     return new List<ISentryIntegration>{
       new SentryUserIntegration(true, true), // capture user PII, which is not default

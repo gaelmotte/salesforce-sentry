@@ -1,0 +1,87 @@
+<template>
+  <template lwc:if={zeroConfig}>
+    <lightning-card>
+      <h3 slot="title">
+        <lightning-icon
+          icon-name="utility:not_saved"
+          size="small"
+          variant="error"
+        ></lightning-icon>
+        No Active Config
+      </h3>
+      <lightning-button
+        label="Doc"
+        slot="actions"
+        onclick={handleClick}
+      ></lightning-button>
+      <p class="slds-p-horizontal_small">
+        No config found. Please create a config record.
+      </p>
+    </lightning-card>
+  </template>
+  <template lwc:elseif={oneConfig}>
+    <template lwc:if={isActive}>
+      <lightning-card>
+        <h3 slot="title">
+          <lightning-icon
+            icon-name="utility:fully_synced"
+            size="small"
+            variant="success"
+          ></lightning-icon>
+          {firstConfig.DeveloperName.value}
+        </h3>
+        <lightning-button
+          label="Doc"
+          slot="actions"
+          onclick={handleClick}
+        ></lightning-button>
+        <p>DSN: {firstConfig.sentrysdk__DSN__c.value}</p>
+        <p>Enabled : {firstConfig.sentrysdk__Enabled__c.value}</p>
+        <p>Sampling: {firstConfig.sentrysdk__Sampling__c.value}</p>
+        <p>Apex Class: {firstConfig.sentrysdk__ApexClass__c.value}</p>
+      </lightning-card>
+    </template>
+    <template lwc:else>
+      <lightning-card>
+        <h3 slot="title">
+          <lightning-icon
+            icon-name="utility:not_in_sync"
+            size="small"
+            variant="warning"
+          ></lightning-icon>
+          {firstConfig.DeveloperName.value}
+        </h3>
+        <lightning-button
+          label="Doc"
+          slot="actions"
+          onclick={handleClick}
+        ></lightning-button>
+
+        <p>DSN: {firstConfig.sentrysdk__DSN__c.value}</p>
+        <p>Enabled : {firstConfig.sentrysdk__Enabled__c.value}</p>
+        <p>Sampling: {firstConfig.sentrysdk__Sampling__c.value}</p>
+        <p>Apex Class: {firstConfig.sentrysdk__ApexClass__c.value}</p>
+      </lightning-card>
+    </template>
+  </template>
+  <template lwc:else>
+    <lightning-card>
+      <h3 slot="title">
+        <lightning-icon
+          icon-name="utility:not_in_sync"
+          size="small"
+          variant="error"
+        ></lightning-icon>
+        Multiple SDK config found
+      </h3>
+      <lightning-button
+        label="Doc"
+        slot="actions"
+        onclick={handleClick}
+      ></lightning-button>
+      <p class="slds-p-horizontal_small">
+        Please delete or disable all but one.
+      </p>
+    </lightning-card>
+  </template>
+</template>

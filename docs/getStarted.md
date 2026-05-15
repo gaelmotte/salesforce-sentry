@@ -1,10 +1,8 @@
-# Getting Started
+# Prerequisites
 
 This will guide you with the standard setup of the SDK and its usage.
 
 > If you want a deeper dive into what information is sent to Sentry when an issue in encountered, have a look at the [Configuration](configuration.md) guide.
-
-# Prerequisites
 
 ## Sentry Project
 

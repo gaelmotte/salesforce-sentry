@@ -31,6 +31,7 @@ global with sharing class Sentry {
     description='Send the flow fault to Sentry'
     iconName='resource:sentrysdk__SentryLogo:logo'
     category='Sentry'
+    configurationEditor='sentrysdk-capture-flow-fault-property-editor'
   )
   global static void captureFlowFault(
     List<SentryFlowInputParameters> inputParameters
@@ -39,13 +40,23 @@ global with sharing class Sentry {
     for (SentryFlowInputParameters inputParam : inputParameters) {
       String flowInterviewGUID = inputParam.interviewGUID;
       String flowFaultMessage = inputParam.faultMessage;
+      String flowElementApiName = inputParam.elementApiName;
+      String flowDefinitionId = inputParam.flowDefinitionId;
       if (
-        String.isBlank(flowInterviewGUID) && String.isBlank(flowFaultMessage)
+        String.isBlank(flowInterviewGUID) ||
+        String.isBlank(flowFaultMessage) ||
+        String.isBlank(flowElementApiName) ||
+        String.isBlank(flowDefinitionId)
       ) {
         throw new SentryException('Input parameters invalid');
       }
       SentryHub.getCurrentHub()
-        .captureFlowFault(flowInterviewGUID, flowFaultMessage);
+        .captureFlowFault(
+          flowInterviewGUID,
+          flowFaultMessage,
+          flowElementApiName,
+          flowDefinitionId
+        );
     }
   }
 

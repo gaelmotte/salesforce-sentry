@@ -1,0 +1,9 @@
+select Id, FlowRecordId, Status, VersionNumber from FlowRecordVersion
+
+
+select id, FlowDefinition, FlowType, Name, Type from FlowRecord
+
+
+select id, durableId, ActiveVersionId, ApiName, LatestVersionId, Label from FlowDefinitionView where durableId='300RR00000RDqKbYAL'
+
+select durableId, FlowDefinitionViewId from FlowVersionView where durableId= '301RR00000vtWQLYA2'
