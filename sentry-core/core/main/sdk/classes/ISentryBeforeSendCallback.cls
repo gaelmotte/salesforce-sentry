@@ -1,3 +1,3 @@
-public interface ISentryBeforeSendCallback {
+global interface ISentryBeforeSendCallback {
   SentryEvent process(SentryEvent event);
 }

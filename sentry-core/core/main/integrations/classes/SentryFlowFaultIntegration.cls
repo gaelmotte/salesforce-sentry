@@ -1,4 +1,4 @@
-public with sharing class SentryFlowFaultIntegration implements ISentryIntegration {
+global with sharing class SentryFlowFaultIntegration implements ISentryIntegration {
   public SentryFlowFaultIntegration() {
   }
 

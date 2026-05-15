@@ -1,4 +1,4 @@
-public with sharing class SentryLWCErrorIntegration implements ISentryIntegration {
+global with sharing class SentryLWCErrorIntegration implements ISentryIntegration {
   public SentryLWCErrorIntegration() {
   }
 
