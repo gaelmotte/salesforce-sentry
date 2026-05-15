@@ -103,5 +103,3 @@ Name it `Sentry`. For URL, use the host part of your DSN:
 | DSN                                           | Remote Site URL                    |
 | --------------------------------------------- | ---------------------------------- |
 | `https://abc123@o123456.ingest.sentry.io/789` | `https://o123456.ingest.sentry.io` |
-
-z
