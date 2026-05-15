@@ -2,6 +2,7 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: "/salesforce-sentry",
   title: "Sentry SDK for Salesforce",
   description:
     "A much nicer way to be aware of issues on the Salesforce platform",
