@@ -3,6 +3,7 @@
 layout: home
 
 hero:
+  image: "/SentrySDK.png"
   name: "Sentry SDK for Salesforce"
   text: "Salesforce has no global exception handler. Now it does."
   tagline: "When Apex throws, a Flow faults, or an LWC crashes in production — you'll know. Sentry SDK routes errors to your Sentry project in real time, with stack traces, user context, and breadcrumbs."
