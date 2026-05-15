@@ -1,6 +1,6 @@
 # StackTraceIntegration
 
-It enriches events with detais about the APEX stacktrace.
+It enriches events with details about the Apex stacktrace.
 
 ## Parameters
 

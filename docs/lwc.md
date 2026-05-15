@@ -7,6 +7,21 @@ They come in two flavors:
 - `SentryMixin` for leaf components
 - `SentryBoundaryMixin` for boundary (aka exposed) components
 
+## Automated instrumentation (CLI)
+
+The `adopt` command instruments your LWC components automatically:
+
+```bash
+npx @salesforce-sentry/codemods adopt
+```
+
+It scans your project and wraps each component with the right mixin:
+
+- Exposed components (`isExposed: true`) → `SentryBoundaryMixin`
+- All other components → `SentryMixin`
+
+It shows a diff for each file and prompts before applying. Already-instrumented files are skipped.
+
 ## `SentryMixin`
 
 Here's a minimal example
@@ -39,7 +54,7 @@ export default class BuggedLWC extends SentryMixin(
 
 ### Constructor
 
-The constructor takes two params :
+The constructor takes two params:
 
 - the element you are extending from. It should most likely be `LightningElement`, but it could be another mixin
 - the name of the component. Sorry, you'll have to repeat yourself here.
@@ -51,7 +66,8 @@ The constructor takes two params :
 
 ### Note
 
-It is imperative that such a component be a child of a `SentryBoundaryMixin` component.
+It is imperative that such a component be a child of a `SentryBoundaryMixin` component so logged messages are caught when sendding the exeption to sentry.
+If you initalized the exposed LWCs with SentryBondaryMixin, you are ready to go.
 
 ## `SentryBoundaryMixin`
 
@@ -75,7 +91,7 @@ export default class ParentLWC extends SentryBoundaryMixin(
 
 ### Constructor
 
-The constructor takes two params :
+The constructor takes two params:
 
 - the element you are extending from. It should most likely be `LightningElement`, but it could be another mixin
 - the name of the component. Sorry, you'll have to repeat yourself here.

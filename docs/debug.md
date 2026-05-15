@@ -2,7 +2,7 @@
 
 It enriches events with info extracted from the debug logs.
 
-This only works if the user has trace flags enabled. Good news is, it can add the traceflags for 24hours when an issue is caught for the user.
+This only works if the user has trace flags enabled. Good news is, it can add the trace flags for 24 hours when an issue is caught for the user.
 
 ## Parameters
 

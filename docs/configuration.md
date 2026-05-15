@@ -6,16 +6,16 @@ In the following, you will see how to create a configuration class for finer set
 
 ## Create a configuration class
 
-Using your usual dev workflow, crate a new class for the Sentry SDK config.
+Using your usual dev workflow, create a new class for the Sentry SDK config.
 
-It must read like this :
+It must read like this:
 
 ```apex
 public with sharing class MySentryConfig extends Sentrysdk__SentryConfig {
   public virtual override List<ISentryIntegration> getIntegrations() {
     return new List<ISentryIntegration>{
       new SentryUserIntegration(true, true), // capture user PII, which is not default
-      new SentryDebugLogsIntegration(), // all de defaults
+      new SentryDebugLogsIntegration(), // all the defaults
       new SentryStacktraceIntegration(), // all the defaults,
       new SentryFlowFaultIntegration(),
       new SentryLWCErrorIntegration()

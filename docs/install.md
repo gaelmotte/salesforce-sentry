@@ -24,14 +24,6 @@ This prompts for your DSN, class name, sampling rate, and integrations, then wri
 - A `sentrysdk__Sentry_Config.Default` custom metadata record
 - A `Sentry` remote site setting
 
-**Instrument your code:**
-
-```bash
-npx @salesforce-sentry/codemods adopt
-```
-
-Scans your project and wraps LWC components and Apex entry points with Sentry error capture. Shows a diff and prompts before each change.
-
 **Verify everything is wired up:**
 
 ```bash
@@ -47,6 +39,46 @@ sf project deploy start
 ---
 
 ### Option B — Manual setup
+
+#### Create a config class
+
+Create an Apex class that extends `sentrysdk.SentryConfig`. All methods are optional — only override what you need.
+
+```apex
+public with sharing class MySentryConfig extends sentrysdk.SentryConfig {
+  /**
+   * Return the list of integrations to enable.
+   * Omit this method to disable all integrations.
+   */
+  public override List<sentrysdk.ISentryIntegration> getIntegrations() {
+    return new List<sentrysdk.ISentryIntegration>{
+      new sentrysdk.SentryUserIntegration(),
+      new sentrysdk.SentryStacktraceIntegration(),
+      new sentrysdk.SentryFlowFaultIntegration(),
+      new sentrysdk.SentryLWCErrorIntegration()
+    };
+  }
+
+  /**
+   * Return a callback to inspect or modify an event before it is sent.
+   * Return null to send the event as-is (default).
+   * Return a modified event, or throw, to discard it.
+   */
+  public override sentrysdk.ISentryBeforeSendCallback getBeforeSendCallback() {
+    return null;
+  }
+
+  /**
+   * Return a callback to inspect or discard breadcrumbs before they are attached to an event.
+   * Return null to keep all breadcrumbs (default).
+   */
+  public override sentrysdk.ISentryBeforeBreadcrumbCallback getBeforeBreadcrumbCallback() {
+    return null;
+  }
+}
+```
+
+Set the **ApexClass** field on the metadata record to the name of this class (`MySentryConfig` in the example above). See [Advanced Configuration](configuration.md) for details on integrations and their parameters.
 
 #### Add a custom metadata record
 
@@ -66,4 +98,8 @@ Click `Manage Records` next to `Sentry Config`, then `New`.
 #### Add a remote site setting
 
 In Setup, search for `Remote Site Settings`, then `New Remote Site`.
-Name it `Sentry`. For URL, use `https://o<number>.ingest.sentry.io` (the host part of your DSN).
+Name it `Sentry`. For URL, use the host part of your DSN:
+
+| DSN                                           | Remote Site URL                    |
+| --------------------------------------------- | ---------------------------------- |
+| `https://abc123@o123456.ingest.sentry.io/789` | `https://o123456.ingest.sentry.io` |

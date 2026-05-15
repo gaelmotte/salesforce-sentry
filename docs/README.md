@@ -9,12 +9,12 @@ We will assume you know and use both products ;)
 
 # Features
 
-- Catches error in three runtimes:
+- Catches errors in three runtimes:
   - Apex
   - Flow
   - LWC
-- Captures context data :
+- Captures context data:
   - User PII and permissions
   - Logs
   - Callouts
-- Full fledge configuration and extensibility
+- Full-fledged configuration and extensibility
