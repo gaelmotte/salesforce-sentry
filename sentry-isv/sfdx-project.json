@@ -1,0 +1,12 @@
+{
+  "packageDirectories": [
+    {
+      "path": "sentry-isv",
+      "default": true
+    }
+  ],
+  "name": "sentry-isv",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "65.0"
+}
