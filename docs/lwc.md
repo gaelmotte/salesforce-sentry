@@ -66,7 +66,7 @@ The constructor takes two params:
 
 ### Note
 
-It is imperative that such a component be a child of a `SentryBoundaryMixin` component so logged messages are caught when sendding the exeption to sentry.
+It is imperative that such a component be a child of a `SentryBoundaryMixin` for it is this component that will actually dispatch an event to sentry, including the component stack trace, and eventual logs of all the components.
 If you initalized the exposed LWCs with SentryBondaryMixin, you are ready to go.
 
 ## `SentryBoundaryMixin`
