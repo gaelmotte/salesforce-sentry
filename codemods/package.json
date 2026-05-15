@@ -1,6 +1,6 @@
 {
   "name": "@salesforce-sentry/codemods",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI to adopt the salesforce-sentry SDK in an SFDX project",
   "license": "MIT",
   "bin": {
