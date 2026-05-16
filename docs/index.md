@@ -17,7 +17,7 @@ hero:
 
 features:
   - title: One-click managed package & CLI for quick adoption
-    details: Install from AppExchange in minutes. Use the `@salesforce-sentry/codemods` CLI to generate config files, instrument your codebase, and validate the setup — without touching a single file by hand.
+    details: Install from AppExchange in minutes. Use the `@salesforce-sentry/enduser-cli` CLI to generate config files, instrument your codebase, and validate the setup — without touching a single file by hand.
   - title: Apex, Flow, and LWC coverage
     details: Capture exceptions in Apex triggers and classes, fault paths in Flows, and unhandled errors in Lightning Web Components — all routed to the same Sentry project.
   - title: Fully configurable

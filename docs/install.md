@@ -10,12 +10,12 @@ For previous versions, see the [Changelog](/changelog).
 
 ### Option A — CLI (recommended)
 
-The `@salesforce-sentry/codemods` CLI handles the entire setup in three commands. Run them from your SFDX project root.
+The `@salesforce-sentry/enduser-cli` CLI handles the entire setup in three commands. Run them from your SFDX project root.
 
 **Generate config files:**
 
 ```bash
-npx @salesforce-sentry/codemods setup
+npx @salesforce-sentry/enduser-cli setup
 ```
 
 This prompts for your DSN, class name, sampling rate, and integrations, then writes:
@@ -27,7 +27,7 @@ This prompts for your DSN, class name, sampling rate, and integrations, then wri
 **Verify everything is wired up:**
 
 ```bash
-npx @salesforce-sentry/codemods validate
+npx @salesforce-sentry/enduser-cli validate
 ```
 
 **Deploy:**

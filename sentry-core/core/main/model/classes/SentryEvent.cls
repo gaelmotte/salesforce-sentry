@@ -44,6 +44,7 @@ global with sharing class SentryEvent implements JSONDeserializer.Deserializable
   public string eventId { get; private set; }
   public SentryLogEntry logentry;
   public String release;
+  public String environment;
   public String transac; // naming trouble
   public List<SentryBreadcrumb> breadcrumbs;
   public Map<String, Object> contexts;
@@ -61,6 +62,9 @@ global with sharing class SentryEvent implements JSONDeserializer.Deserializable
       }
       when 'logentry' {
         this.logentry = (SentryLogEntry) value;
+      }
+      when 'environment' {
+        this.environment = (String) value;
       }
       when 'transaction' {
         this.transac = (String) value;
@@ -101,6 +105,7 @@ global with sharing class SentryEvent implements JSONDeserializer.Deserializable
       'eventId' => String.class,
       'logentry' => SentryLogEntry.class,
       'release' => String.class,
+      'environment' => String.class,
       'transaction' => String.class,
       'breadcrumbs' => List<SentryBreadcrumb>.class,
       'contexts' => Map<String, Object>.class,
@@ -200,6 +205,7 @@ global with sharing class SentryEvent implements JSONDeserializer.Deserializable
       'event_id' => eventId,
       'logentry' => logentry,
       'release' => release,
+      'environment' => environment,
       'transaction' => transac, // namming trouble
       'exception' => ex, // namming trouble
       'breadcrumbs' => breadcrumbs,

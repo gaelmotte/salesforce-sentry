@@ -3,7 +3,7 @@
 Run the validation command first — it catches the most common issues automatically:
 
 ```bash
-npx @salesforce-sentry/codemods validate [project-path]
+npx @salesforce-sentry/enduser-cli validate [project-path]
 ```
 
 ---
@@ -59,7 +59,7 @@ Source lines in stack frames are retrieved via the Tooling API at send time. The
 
 ## LWC errors not captured
 
-- Verify the component extends `SentryMixin` or `SentryBoundaryMixin` (run `npx @salesforce-sentry/codemods adopt` to instrument it).
+- Verify the component extends `SentryMixin` or `SentryBoundaryMixin` (run `npx @salesforce-sentry/enduser-cli adopt` to instrument it).
 - `SentryBoundaryMixin` catches errors from **child components**. Errors thrown in the component's own lifecycle must be caught manually with `Sentry.captureLWCError()`.
 
 ---
@@ -68,6 +68,6 @@ Source lines in stack frames are retrieved via the Tooling API at send time. The
 
 [Open an issue on GitHub](https://github.com/gaelmotte/salesforce-sentry/issues) and include:
 
-- Output of `npx @salesforce-sentry/codemods validate`
+- Output of `npx @salesforce-sentry/enduser-cli validate`
 - The error message or symptom
 - Your Salesforce edition and managed package version

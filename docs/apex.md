@@ -7,7 +7,7 @@ Wrap any code that may throw with a try/catch and call `Sentry.captureException(
 The `adopt` command instruments your Apex entry points automatically:
 
 ```bash
-npx @salesforce-sentry/codemods adopt
+npx @salesforce-sentry/enduser-cli adopt
 ```
 
 It wraps the following with a try/catch that calls `Sentry.captureException()`:

@@ -1,0 +1,27 @@
+{
+  "name": "@salesforce-sentry/enduser-cli",
+  "version": "0.1.3",
+  "description": "CLI to adopt the salesforce-sentry SDK in an SFDX project",
+  "license": "MIT",
+  "bin": {
+    "sentry-enduser": "index.js"
+  },
+  "files": [
+    "index.js",
+    "commands/",
+    "transforms/",
+    "utils/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@salesforce-sentry/cli-shared": "^0.1.0",
+    "diff": "^5.2.0",
+    "fast-xml-parser": "^4.3.6",
+    "jscodeshift": "^0.16.1",
+    "picocolors": "^1.1.0",
+    "prompts": "^2.4.2"
+  }
+}
