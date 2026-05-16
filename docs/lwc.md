@@ -12,7 +12,7 @@ They come in two flavors:
 The `adopt` command instruments your LWC components automatically:
 
 ```bash
-npx @salesforce-sentry/codemods adopt
+npx @salesforce-sentry/enduser-cli adopt
 ```
 
 It scans your project and wraps each component with the right mixin:

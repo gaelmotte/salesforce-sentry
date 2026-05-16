@@ -24,7 +24,7 @@ Set the **ApexClass** field on the `Sentry_Config` metadata record to the class 
 The `setup` CLI command generates this class and the metadata record for you:
 
 ```bash
-npx @salesforce-sentry/codemods setup
+npx @salesforce-sentry/enduser-cli setup
 ```
 
 ## Integrations
