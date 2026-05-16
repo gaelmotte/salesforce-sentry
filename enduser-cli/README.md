@@ -1,22 +1,16 @@
-# @salesforce-sentry/codemods
+# @salesforce-sentry/enduser-cli
 
-CLI to adopt the [salesforce-sentry](https://github.com/gaelmotte/salesforce-sentry) SDK in an SFDX project.
+CLI to adopt the [Salesforce Sentry](https://github.com/gaelmotte/salesforce-sentry) SDK in an SFDX project. Requires the `sentrysdk` managed package installed in your org.
 
-## Installation
-
-```bash
-npm install -g @salesforce-sentry/codemods
-```
-
-Or run without installing via `npx`:
+## Usage
 
 ```bash
-npx @salesforce-sentry/codemods <command>
+npx @salesforce-sentry/enduser-cli <command> [project-path]
 ```
-
-## Commands
 
 All commands accept an optional path to the SFDX project root. Defaults to the current working directory.
+
+## Commands
 
 ### `setup`
 
@@ -28,7 +22,7 @@ Interactive wizard that generates the files needed to wire up the SDK:
 - A `Sentry.remoteSite-meta.xml` remote site setting
 
 ```bash
-salesforce-sentry setup [project-path]
+npx @salesforce-sentry/enduser-cli setup [project-path]
 ```
 
 You will be prompted for:
@@ -45,7 +39,7 @@ Generated files are written to the `default` package directory from `sfdx-projec
 Scans your SFDX project and instruments LWC components and Apex entry points with Sentry error capture. Shows a diff for each file and prompts before applying.
 
 ```bash
-salesforce-sentry adopt [project-path]
+npx @salesforce-sentry/enduser-cli adopt [project-path]
 ```
 
 **LWC components:**
@@ -55,8 +49,8 @@ salesforce-sentry adopt [project-path]
 
 **Apex entry points instrumented:**
 
-- `@AuraEnabled` methods → try/catch with `captureException` + `AuraHandledException`
-- `@InvocableMethod`, `@RemoteAction`, `@HttpGet/Post/Put/Delete/Patch` → try/catch with `captureException` + rethrow
+- `@AuraEnabled` methods → try/catch with `sentrysdk.Sentry.captureException(e)` + `AuraHandledException`
+- `@InvocableMethod`, `@RemoteAction`, `@HttpGet/Post/Put/Delete/Patch` → try/catch with `sentrysdk.Sentry.captureException(e)` + rethrow
 - `Schedulable.execute`, `Queueable.execute`, `Database.Batchable` start/execute/finish → same
 
 Already-instrumented files are skipped automatically.
@@ -66,7 +60,7 @@ Already-instrumented files are skipped automatically.
 Checks that the SDK is correctly wired up in the project:
 
 ```bash
-salesforce-sentry validate [project-path]
+npx @salesforce-sentry/enduser-cli validate [project-path]
 ```
 
 Verifies:

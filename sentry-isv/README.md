@@ -1,18 +1,44 @@
-# Salesforce DX Project: Next Steps
+# @salesforce-sentry/sentry-isv
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+Transformed Salesforce Sentry SDK source for ISV managed packages. This package contains ready-to-vendor SFDX metadata that an ISV embeds in their own managed package under their own namespace.
 
-## How Do You Plan to Deploy Your Changes?
+**You do not use this package directly.** The [`@salesforce-sentry/isv-cli`](https://www.npmjs.com/package/@salesforce-sentry/isv-cli) `vendor` command reads it, substitutes your namespace for the `{{NAMESPACE}}` placeholder, and writes the result into your SFDX project.
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+## What's inside
 
-## Configure Your Salesforce DX Project
+```
+sentry-isv/
+  core/       ← Generated from sentry-core. global→public, sentrysdk→{{NAMESPACE}},
+              |  CMT visibility→Protected, field manageability→Upgradeable
+  isv/        ← Hand-authored ISV-specific integrations
+              |  SentryISVContextIntegration — sets release, environment, subscriber org tag
+```
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+`core/` mirrors `sentry-core/core/main/` with the following transformations applied:
 
-## Read All About It
+| What                                                  | Transform                                          |
+| ----------------------------------------------------- | -------------------------------------------------- |
+| `*.cls`, `*.trigger`                                  | `global` → `public`, `sentrysdk` → `{{NAMESPACE}}` |
+| `Sentry_Config__mdt.object-meta.xml`                  | `Public` → `Protected` visibility                  |
+| `fields/*.field-meta.xml` under `Sentry_Config__mdt/` | `SubscriberControlled` → `Upgradeable`             |
+| All other files                                       | `sentrysdk` → `{{NAMESPACE}}` catch-all            |
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+## Regenerating `core/`
+
+`core/` is a derived artifact. Regenerate it after pulling changes from `sentry-core`:
+
+```bash
+npm run build
+```
+
+The build script copies from `../sentry-core/core/main/` and `node_modules/@guimini/apex-json-serialization/`, applies all transforms, and prunes the previous output first.
+
+## Usage (via isv-cli)
+
+```bash
+# In your ISV SFDX project root (namespace must be set in sfdx-project.json)
+npx @salesforce-sentry/isv-cli vendor
+npx @salesforce-sentry/isv-cli setup
+npx @salesforce-sentry/isv-cli adopt
+npx @salesforce-sentry/isv-cli validate
+```
