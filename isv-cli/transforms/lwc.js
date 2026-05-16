@@ -72,10 +72,13 @@ function transformLWCSource(source, isExposed) {
   return root.toSource({ quote: "double" });
 }
 
-async function collectLWCTransforms(projectRoot) {
+async function collectLWCTransforms(projectRoot, { excludeDir } = {}) {
   const jsFiles = findSfdxFiles(
     projectRoot,
-    (f) => f.endsWith(".js") && f.includes("/lwc/")
+    (f) =>
+      f.endsWith(".js") &&
+      f.includes("/lwc/") &&
+      (!excludeDir || !f.startsWith(excludeDir + path.sep))
   );
   const transforms = [];
 

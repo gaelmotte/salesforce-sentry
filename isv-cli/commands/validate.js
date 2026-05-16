@@ -197,9 +197,10 @@ async function validate(projectArg) {
   // 9. Pending instrumentation
   process.stdout.write("\n");
   process.stdout.write(pc.dim("  Scanning for uninstrumented files…"));
+  const excludeDir = path.join(defaultSourceDir, "sentry");
   const [lwc, apex] = await Promise.all([
-    collectLWCTransforms(projectRoot),
-    collectApexTransforms(projectRoot)
+    collectLWCTransforms(projectRoot, { excludeDir }),
+    collectApexTransforms(projectRoot, { excludeDir })
   ]);
   process.stdout.write("\r" + " ".repeat(50) + "\r");
 
