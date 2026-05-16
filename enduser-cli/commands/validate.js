@@ -83,11 +83,15 @@ async function validate(projectArg) {
       let enabled = false;
       let dsn = null;
       let cls = null;
+      const rawVal = (v) =>
+        v?.value != null && typeof v.value === "object"
+          ? v.value["#text"]
+          : v.value;
       for (const v of valuesArr) {
         if (!v) continue;
-        if (v.field === "Enabled__c" && v.value === true) enabled = true;
-        if (v.field === "DSN__c") dsn = String(v.value ?? "");
-        if (v.field === "ApexClass__c") cls = String(v.value ?? "");
+        if (v.field === "Enabled__c" && rawVal(v) === true) enabled = true;
+        if (v.field === "DSN__c") dsn = String(rawVal(v) ?? "");
+        if (v.field === "ApexClass__c") cls = String(rawVal(v) ?? "");
       }
       if (enabled) {
         enabledRecords.push(f);

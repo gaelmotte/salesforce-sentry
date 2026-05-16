@@ -42,12 +42,12 @@ function transform(filePath, content) {
     );
   }
 
-  // CMT field manageability: Upgradeable lets ISV rotate values via push upgrade
+  // CMT field manageability: DeveloperControlled — ISV rotates values via push upgrade; subscribers cannot modify
   if (
     normalized.includes("/Sentry_Config__mdt/fields/") &&
     filePath.endsWith(".field-meta.xml")
   ) {
-    content = content.replace(/SubscriberControlled/g, "Upgradeable");
+    content = content.replace(/SubscriberControlled/g, "DeveloperControlled");
   }
 
   // Namespace placeholder — isv-cli vendor substitutes this with the ISV's namespace
