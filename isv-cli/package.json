@@ -9,6 +9,7 @@
   "files": [
     "index.js",
     "commands/",
+    "transforms/",
     "utils/"
   ],
   "engines": {
@@ -16,6 +17,11 @@
   },
   "dependencies": {
     "@salesforce-sentry/cli-shared": "^0.1.0",
-    "@salesforce-sentry/sentry-isv": "file:../sentry-isv"
+    "@salesforce-sentry/sentry-isv": "file:../sentry-isv",
+    "diff": "^5.2.0",
+    "fast-xml-parser": "^4.3.6",
+    "jscodeshift": "^0.16.1",
+    "picocolors": "^1.1.0",
+    "prompts": "^2.4.2"
   }
 }
