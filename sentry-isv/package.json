@@ -1,6 +1,6 @@
 {
   "name": "@salesforce-sentry/sentry-isv",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Salesforce Sentry SDK source for ISV managed packages — vendored into your SFDX project by isv-cli",
   "license": "MIT",
   "files": [
