@@ -1,12 +1,19 @@
 {
   "packageDirectories": [
     {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
       "path": "force-app",
-      "default": true
+      "default": true,
+      "package": "SentryIsvAdoption",
+      "versionDescription": ""
     }
   ],
   "name": "sentry-isv-adoption",
-  "namespace": "myisv",
+  "namespace": "sentrysdk",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "61.0"
+  "sourceApiVersion": "61.0",
+  "packageAliases": {
+    "SentryIsvAdoption": "0HoQy0000001dCDKAY"
+  }
 }

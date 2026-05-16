@@ -19,15 +19,15 @@ npm run test:unit:coverage    # Coverage report
 npm run prettier              # Format all source files
 npm run prettier:verify       # Verify formatting
 
-# Deploy to a Salesforce org
-source .env
-sf project deploy start
-
 # Run isv-cli against this project (from this directory)
 npx @salesforce-sentry/isv-cli vendor
 npx @salesforce-sentry/isv-cli setup
 npx @salesforce-sentry/isv-cli adopt
 npx @salesforce-sentry/isv-cli validate
+
+# Deploy to a Salesforce org
+source .env
+sf project deploy start
 ```
 
 Apex tests run via SFDX CLI against a live org:
