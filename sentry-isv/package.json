@@ -16,6 +16,9 @@
     "prepare": "husky || true",
     "precommit": "lint-staged"
   },
+  "dependencies": {
+    "@guimini/apex-json-serialization": "^1.0.5"
+  },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^3.1.0",
     "@prettier/plugin-xml": "^3.4.1",

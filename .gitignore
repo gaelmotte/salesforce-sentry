@@ -44,7 +44,4 @@ $RECYCLE.BIN/
 **/.venv/
 **/venv/
 
-
-sentry-core/core/deps/apex-json-serialization/**
-sentry-enduser-sample/force-app/sentry-sdk/**
-sentry-enduser/sentry-enduser/core/**
+sentry-isv/sentry-isv/core/**

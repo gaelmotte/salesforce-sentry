@@ -2,20 +2,8 @@ public class SentryISVEventProcessor extends SentryEventProcessor {
   private final String release;
   private static Boolean cachedIsSandbox;
 
-  public SentryISVEventProcessor() {
-    this(null);
-  }
-
   public SentryISVEventProcessor(String release) {
-    this.release = release != null
-      ? release
-      : versionString(System.requestVersion());
-  }
-
-  private static String versionString(System.Version v) {
-    if (v == null)
-      return null;
-    return v.major() + '.' + v.minor() + '.x';
+    this.release = release;
   }
 
   public override SentryEvent processAtCapture(SentryEvent event) {

@@ -2,8 +2,16 @@
 const fs = require("fs");
 const path = require("path");
 
+const CORE_ROOT = path.resolve(__dirname, "sentry-isv/core");
+
 const SRC = path.resolve(__dirname, "../sentry-core/core/main");
-const DEST = path.resolve(__dirname, "sentry-isv/core");
+const DEST = path.resolve(CORE_ROOT, "main");
+
+const DEP_SRC = path.resolve(
+  __dirname,
+  "node_modules/@guimini/apex-json-serialization/force-app/main"
+);
+const DEP_DEST = path.resolve(CORE_ROOT, "deps/apex-json-serialization");
 
 const SKIP_NAMES = new Set([".eslintrc.json", "jsconfig.json"]);
 const SKIP_PATTERNS = [/\/lwc\/[^/]+\/__tests__\//];
@@ -63,8 +71,9 @@ function copyDir(src, dest) {
   }
 }
 
-if (fs.existsSync(DEST)) {
-  fs.rmSync(DEST, { recursive: true });
+if (fs.existsSync(CORE_ROOT)) {
+  fs.rmSync(CORE_ROOT, { recursive: true });
 }
 copyDir(SRC, DEST);
-console.log(`core/ regenerated → ${path.relative(process.cwd(), DEST)}`);
+copyDir(DEP_SRC, DEP_DEST);
+console.log(`core/ regenerated → ${path.relative(process.cwd(), CORE_ROOT)}`);
