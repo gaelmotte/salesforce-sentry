@@ -1,6 +1,6 @@
 {
   "name": "@salesforce-sentry/isv-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI to vendor and adopt the salesforce-sentry ISV SDK",
   "license": "MIT",
   "bin": {
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@salesforce-sentry/cli-shared": "^0.1.0",
-    "@salesforce-sentry/sentry-isv": "file:../sentry-isv",
+    "@salesforce-sentry/sentry-isv": "^0.1.0",
     "diff": "^5.2.0",
     "fast-xml-parser": "^4.3.6",
     "jscodeshift": "^0.16.1",

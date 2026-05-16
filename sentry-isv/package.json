@@ -1,8 +1,12 @@
 {
-  "name": "salesforce-app",
-  "private": true,
-  "version": "1.0.0",
-  "description": "Salesforce App",
+  "name": "@salesforce-sentry/sentry-isv",
+  "version": "0.1.0",
+  "description": "Salesforce Sentry SDK source for ISV managed packages — vendored into your SFDX project by isv-cli",
+  "license": "MIT",
+  "files": [
+    "sentry-isv/",
+    "build.js"
+  ],
   "scripts": {
     "build": "node build.js",
     "lint": "eslint **/{aura,lwc}/**/*.js",
