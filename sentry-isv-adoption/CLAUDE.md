@@ -23,11 +23,11 @@ npm run prettier:verify       # Verify formatting
 source .env
 sf project deploy start
 
-# Run isv-cli against this project (from monorepo root)
-node isv-cli/index.js vendor sentry-isv-adoption/
-node isv-cli/index.js setup sentry-isv-adoption/
-node isv-cli/index.js adopt sentry-isv-adoption/
-node isv-cli/index.js validate sentry-isv-adoption/
+# Run isv-cli against this project (from this directory)
+npx @salesforce-sentry/isv-cli vendor
+npx @salesforce-sentry/isv-cli setup
+npx @salesforce-sentry/isv-cli adopt
+npx @salesforce-sentry/isv-cli validate
 ```
 
 Apex tests run via SFDX CLI against a live org:
@@ -62,7 +62,7 @@ The `../isv-cli/` CLI targets this directory. The full workflow:
 
 **3. `adopt`** — instruments entry points:
 
-- Wraps `@AuraEnabled`, `@InvocableMethod`, `@HttpGet/Post/Put/Delete/Patch`, `@RemoteAction` methods in try/catch with `Sentry.captureException(e)` — **no `myisv.` prefix** (vendored SDK is in the same package)
+- Wraps `@AuraEnabled`, `@InvocableMethod`, `@HttpGet/Post/Put/Delete/Patch`, `@RemoteAction` methods in try/catch with `Sentry.captureException(e)` — **no namespace prefix** (vendored SDK is in the same package)
 - Wraps `Schedulable.execute`, `Queueable.execute`, `Database.Batchable` start/execute/finish methods
 - Wraps entire trigger bodies in try/catch
 - Skips methods that already contain `captureException` or whose body starts with `try`

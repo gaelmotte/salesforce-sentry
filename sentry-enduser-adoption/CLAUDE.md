@@ -21,8 +21,8 @@ npm run prettier:verify       # Verify formatting
 source .env
 sf project deploy start
 
-# Run the codemod against this project (from monorepo root)
-node codemods/index.js adopt sentry-enduser-adoption/
+# Run the CLI against this project (from this directory)
+npx @salesforce-sentry/enduser-cli adopt
 ```
 
 Apex tests run via SFDX CLI against a live org:
