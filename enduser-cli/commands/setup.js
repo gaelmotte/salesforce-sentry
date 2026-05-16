@@ -4,8 +4,11 @@ const path = require("path");
 const fs = require("fs");
 const prompts = require("prompts");
 const pc = require("picocolors");
-const { readSfdxProject } = require("../utils/files");
-const { parseDSN, validateDSN } = require("../utils/dsn");
+const { readSfdxProject } = require("@salesforce-sentry/cli-shared/utils/sfdx");
+const {
+  parseDSN,
+  validateDSN
+} = require("@salesforce-sentry/cli-shared/utils/dsn");
 
 const INTEGRATIONS = [
   {

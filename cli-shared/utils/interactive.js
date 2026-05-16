@@ -33,11 +33,8 @@ async function showDiffAndPrompt(transform) {
     transform.newContent,
     "",
     "",
-    {
-      context: 3
-    }
+    { context: 3 }
   );
-  // Drop the file header lines (---, +++), keep only hunks
   const hunks = patch.split("\n").slice(4).join("\n");
   console.log(colorDiff(hunks));
 
@@ -60,4 +57,4 @@ async function showDiffAndPrompt(transform) {
   return decision ?? "quit";
 }
 
-module.exports = { showDiffAndPrompt };
+module.exports = { colorDiff, showDiffAndPrompt };

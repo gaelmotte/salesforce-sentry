@@ -3,7 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 
-// Directories that are never meaningful source in an SFDX project
 const SKIP_DIRS = new Set([
   "node_modules",
   "__tests__",
@@ -12,10 +11,6 @@ const SKIP_DIRS = new Set([
   ".sf"
 ]);
 
-/**
- * Read and parse sfdx-project.json from projectRoot.
- * Throws with a clear message if the file is missing or malformed.
- */
 function readSfdxProject(projectRoot) {
   const sfdxPath = path.join(projectRoot, "sfdx-project.json");
   if (!fs.existsSync(sfdxPath)) {
@@ -31,10 +26,6 @@ function readSfdxProject(projectRoot) {
   }
 }
 
-/**
- * Return the absolute paths of all packageDirectory source roots
- * declared in sfdx-project.json, filtering out any that don't exist on disk.
- */
 function getSourceDirs(projectRoot) {
   const project = readSfdxProject(projectRoot);
   const packageDirs = project.packageDirectories ?? [];
@@ -46,7 +37,17 @@ function getSourceDirs(projectRoot) {
     .filter((dir) => fs.existsSync(dir));
 }
 
-/** Low-level recursive file finder (used internally). */
+function getDefaultSourceDir(projectRoot) {
+  const project = readSfdxProject(projectRoot);
+  const entry =
+    project.packageDirectories?.find((d) => d.default) ??
+    project.packageDirectories?.[0];
+  if (!entry) {
+    throw new Error("No packageDirectories found in sfdx-project.json");
+  }
+  return path.resolve(projectRoot, entry.path);
+}
+
 function findFiles(dir, predicate, results = []) {
   let entries;
   try {
@@ -54,7 +55,6 @@ function findFiles(dir, predicate, results = []) {
   } catch {
     return results;
   }
-
   for (const entry of entries) {
     if (entry.isDirectory()) {
       if (!SKIP_DIRS.has(entry.name) && !entry.name.startsWith(".")) {
@@ -64,21 +64,20 @@ function findFiles(dir, predicate, results = []) {
       results.push(path.join(dir, entry.name));
     }
   }
-
   return results;
 }
 
-/**
- * Find files matching predicate, scoped to the packageDirectories
- * declared in sfdx-project.json at projectRoot.
- */
-function findSfdxFiles(projectRoot, predicate) {
-  const sourceDirs = getSourceDirs(projectRoot);
+function findProjectFiles(projectRoot, predicate) {
   const results = [];
-  for (const dir of sourceDirs) {
+  for (const dir of getSourceDirs(projectRoot)) {
     findFiles(dir, predicate, results);
   }
   return results;
 }
 
-module.exports = { readSfdxProject, getSourceDirs, findSfdxFiles };
+module.exports = {
+  readSfdxProject,
+  getSourceDirs,
+  getDefaultSourceDir,
+  findProjectFiles
+};

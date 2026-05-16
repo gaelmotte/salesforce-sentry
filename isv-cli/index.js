@@ -2,19 +2,21 @@
 "use strict";
 
 const pc = require("picocolors");
-const { adopt } = require("./commands/adopt");
+const { vendor } = require("./commands/vendor");
 const { setup } = require("./commands/setup");
+const { adopt } = require("./commands/adopt");
 const { validate } = require("./commands/validate");
 
 const USAGE = `
-${pc.bold("Salesforce Sentry CLI")}
+${pc.bold("Salesforce Sentry ISV CLI")}
 
-  ${pc.cyan("Usage:")} sentry <command> [project-path]
+  ${pc.cyan("Usage:")} sentry-isv <command> [project-path]
 
   ${pc.bold("Commands:")}
     ${pc.cyan(
-      "setup"
-    )}     Generate SentryConfig class and required metadata files
+      "vendor"
+    )}    Copy SDK source into the ISV project with namespace substitution
+    ${pc.cyan("setup")}     Generate config class and required metadata files
     ${pc.cyan(
       "adopt"
     )}     Instrument LWC and Apex entry points with Sentry error capture
@@ -27,6 +29,8 @@ async function main() {
   const [, , cmd, projectArg] = process.argv;
 
   switch (cmd) {
+    case "vendor":
+      return vendor(projectArg);
     case "setup":
       return setup(projectArg);
     case "adopt":

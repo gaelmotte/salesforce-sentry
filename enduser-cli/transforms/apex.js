@@ -2,7 +2,9 @@
 
 const fs = require("fs");
 const path = require("path");
-const { findSfdxFiles } = require("../utils/files");
+const {
+  findProjectFiles: findSfdxFiles
+} = require("@salesforce-sentry/cli-shared/utils/sfdx");
 
 // ---------------------------------------------------------------------------
 // Brace matching — skips strings and comments

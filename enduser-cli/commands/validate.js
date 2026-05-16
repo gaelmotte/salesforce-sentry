@@ -4,8 +4,11 @@ const path = require("path");
 const fs = require("fs");
 const pc = require("picocolors");
 const { XMLParser } = require("fast-xml-parser");
-const { readSfdxProject, findSfdxFiles } = require("../utils/files");
-const { parseDSN } = require("../utils/dsn");
+const {
+  readSfdxProject,
+  findProjectFiles: findSfdxFiles
+} = require("@salesforce-sentry/cli-shared/utils/sfdx");
+const { parseDSN } = require("@salesforce-sentry/cli-shared/utils/dsn");
 const { collectLWCTransforms } = require("../transforms/lwc");
 const { collectApexTransforms } = require("../transforms/apex");
 
@@ -160,7 +163,7 @@ async function validate(projectArg) {
     allPassed = false;
   }
 
-  // 6. Pending codemods
+  // 6. Pending instrumentation
   process.stdout.write("\n");
   process.stdout.write(pc.dim("  Scanning for uninstrumented files…"));
   const [lwc, apex] = await Promise.all([

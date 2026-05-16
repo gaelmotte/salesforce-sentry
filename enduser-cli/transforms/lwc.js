@@ -3,8 +3,10 @@
 const fs = require("fs");
 const path = require("path");
 const jscodeshift = require("jscodeshift");
-const { readMetaXml } = require("../utils/meta-xml");
-const { findSfdxFiles } = require("../utils/files");
+const { readMetaXml } = require("@salesforce-sentry/cli-shared/utils/meta-xml");
+const {
+  findProjectFiles: findSfdxFiles
+} = require("@salesforce-sentry/cli-shared/utils/sfdx");
 
 const j = jscodeshift.withParser("babel");
 

@@ -4,8 +4,10 @@ const path = require("path");
 const fs = require("fs");
 const { collectLWCTransforms } = require("../transforms/lwc");
 const { collectApexTransforms } = require("../transforms/apex");
-const { showDiffAndPrompt } = require("../utils/interactive");
-const { getSourceDirs } = require("../utils/files");
+const {
+  showDiffAndPrompt
+} = require("@salesforce-sentry/cli-shared/utils/interactive");
+const { getSourceDirs } = require("@salesforce-sentry/cli-shared/utils/sfdx");
 const pc = require("picocolors");
 
 async function adopt(projectArg) {
