@@ -47,3 +47,6 @@ $RECYCLE.BIN/
 
 # unpackaged files from enduser package
 force-app/packaged/
+
+# vendored sentry
+force-app/sentry/
