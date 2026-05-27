@@ -1,14 +1,9 @@
 {
-  "name": "@salesforce-sentry/sentry-isv",
-  "version": "0.1.3",
-  "description": "Salesforce Sentry SDK source for ISV managed packages — vendored into your SFDX project by isv-cli",
-  "license": "MIT",
-  "files": [
-    "sentry-isv/",
-    "build.js"
-  ],
+  "name": "salesforce-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Salesforce App",
   "scripts": {
-    "build": "node build.js",
     "lint": "eslint **/{aura,lwc}/**/*.js",
     "test": "npm run test:unit",
     "test:unit": "sfdx-lwc-jest",
@@ -19,9 +14,6 @@
     "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
     "prepare": "husky || true",
     "precommit": "lint-staged"
-  },
-  "dependencies": {
-    "@guimini/apex-json-serialization": "^1.0.5"
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^3.1.0",
