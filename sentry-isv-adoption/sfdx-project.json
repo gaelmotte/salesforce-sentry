@@ -3,10 +3,13 @@
     {
       "versionName": "ver 0.1",
       "versionNumber": "0.1.0.NEXT",
-      "path": "force-app",
-      "default": true,
+      "path": "instrumented",
       "package": "SentryIsvAdoption",
       "versionDescription": ""
+    },
+    {
+      "path": "force-app",
+      "default": true
     }
   ],
   "name": "sentry-isv-adoption",
