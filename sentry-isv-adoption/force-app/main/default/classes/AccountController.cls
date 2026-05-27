@@ -17,6 +17,16 @@ public with sharing class AccountController {
     update acc;
   }
 
+  @AuraEnabled(cacheable=true)
+  public static List<Contact> getContactsByAccount(Id accountId) {
+    return [
+      SELECT Id, FirstName, LastName, Email, Phone
+      FROM Contact
+      WHERE AccountId = :accountId
+      ORDER BY LastName, FirstName
+    ];
+  }
+
   // Already has try-catch but no Sentry — codemod should SKIP this one
   @AuraEnabled
   public static List<Account> searchAccounts(String searchTerm) {

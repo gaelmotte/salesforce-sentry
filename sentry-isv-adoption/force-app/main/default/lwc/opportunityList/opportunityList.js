@@ -2,7 +2,6 @@ import { LightningElement, wire } from "lwc";
 import { NavigationMixin } from "lightning/navigation";
 import getOpportunities from "@salesforce/apex/OpportunityController.getOpportunities";
 
-// Exposed component with existing NavigationMixin composition
 export default class OpportunityList extends NavigationMixin(LightningElement) {
   opportunities;
   error;
@@ -12,7 +11,10 @@ export default class OpportunityList extends NavigationMixin(LightningElement) {
     if (data) {
       this.opportunities = data;
     } else if (error) {
-      this.error = error;
+      this.error =
+        error?.body?.message ??
+        error?.statusText ??
+        "Failed to load opportunities";
     }
   }
 

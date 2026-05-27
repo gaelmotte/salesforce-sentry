@@ -1,12 +1,13 @@
 import { LightningElement, api, wire } from "lwc";
 import getAccountDetails from "@salesforce/apex/AccountController.getAccountDetails";
 import updateAccountStatus from "@salesforce/apex/AccountController.updateAccountStatus";
+import getContactsByAccount from "@salesforce/apex/AccountController.getContactsByAccount";
 
-// Exposed page-level component — should receive SentryBoundaryMixin
 export default class AccountDashboard extends LightningElement {
   @api recordId;
 
   account;
+  contacts;
   error;
 
   @wire(getAccountDetails, { accountId: "$recordId" })
@@ -14,7 +15,18 @@ export default class AccountDashboard extends LightningElement {
     if (data) {
       this.account = data;
     } else if (error) {
-      this.error = error;
+      this.error =
+        error?.body?.message ?? error?.statusText ?? "Failed to load account";
+    }
+  }
+
+  @wire(getContactsByAccount, { accountId: "$recordId" })
+  wiredContacts({ data, error }) {
+    if (data) {
+      this.contacts = data;
+    } else if (error) {
+      this.error =
+        error?.body?.message ?? error?.statusText ?? "Failed to load contacts";
     }
   }
 
@@ -25,7 +37,14 @@ export default class AccountDashboard extends LightningElement {
         this.dispatchEvent(new CustomEvent("statusupdated"));
       })
       .catch((error) => {
-        this.error = error;
+        this.error =
+          error?.body?.message ??
+          error?.statusText ??
+          "Failed to update status";
       });
+  }
+
+  handleContactSelected(event) {
+    console.log(event);
   }
 }
