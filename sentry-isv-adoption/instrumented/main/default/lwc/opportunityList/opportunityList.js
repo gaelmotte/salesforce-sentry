@@ -2,7 +2,12 @@ import { LightningElement, wire } from "lwc";
 import { NavigationMixin } from "lightning/navigation";
 import getOpportunities from "@salesforce/apex/OpportunityController.getOpportunities";
 
-export default class OpportunityList extends NavigationMixin(LightningElement) {
+import { SentryBoundaryMixin } from "c/sentryMixin";
+
+export default class OpportunityList extends SentryBoundaryMixin(
+  NavigationMixin(LightningElement),
+  "OpportunityList"
+) {
   opportunities;
   error;
 

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "lastAppliedMigration": "v0.1",
+  "files": {
+    "instrumented/main/default/lwc/accountDashboard/accountDashboard.js": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.832Z"
+    },
+    "instrumented/main/default/lwc/contactCard/contactCard.js": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.834Z"
+    },
+    "instrumented/main/default/lwc/opportunityList/opportunityList.js": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.835Z"
+    },
+    "instrumented/main/default/triggers/AccountTrigger.trigger": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.836Z"
+    },
+    "instrumented/main/default/triggers/OpportunityTrigger.trigger": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.836Z"
+    },
+    "instrumented/main/default/classes/AccountController.cls": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.837Z"
+    },
+    "instrumented/main/default/classes/ContactRestService.cls": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.838Z"
+    },
+    "instrumented/main/default/classes/DailyScheduler.cls": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.838Z"
+    },
+    "instrumented/main/default/classes/EmailQueueable.cls": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.839Z"
+    },
+    "instrumented/main/default/classes/LeadProcessor.cls": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.839Z"
+    },
+    "instrumented/main/default/classes/NightlyBatchJob.cls": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.839Z"
+    },
+    "instrumented/main/default/classes/OpportunityController.cls": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-05-27T15:23:55.840Z"
+    }
+  }
+}

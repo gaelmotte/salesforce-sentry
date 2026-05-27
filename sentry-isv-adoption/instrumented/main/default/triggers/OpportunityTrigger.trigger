@@ -3,10 +3,15 @@ trigger OpportunityTrigger on Opportunity(
   before update,
   after update
 ) {
-  OpportunityTriggerHandler.run(
-    Trigger.new,
-    Trigger.old,
-    Trigger.oldMap,
-    Trigger.operationType
-  );
+  try {
+    OpportunityTriggerHandler.run(
+      Trigger.new,
+      Trigger.old,
+      Trigger.oldMap,
+      Trigger.operationType
+    );
+  } catch (Exception e) {
+    Sentry.captureException(e);
+    throw e;
+  }
 }

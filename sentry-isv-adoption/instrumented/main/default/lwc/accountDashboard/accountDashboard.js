@@ -3,7 +3,12 @@ import getAccountDetails from "@salesforce/apex/AccountController.getAccountDeta
 import updateAccountStatus from "@salesforce/apex/AccountController.updateAccountStatus";
 import getContactsByAccount from "@salesforce/apex/AccountController.getContactsByAccount";
 
-export default class AccountDashboard extends LightningElement {
+import { SentryBoundaryMixin } from "c/sentryMixin";
+
+export default class AccountDashboard extends SentryBoundaryMixin(
+  LightningElement,
+  "AccountDashboard"
+) {
   @api recordId;
 
   account;

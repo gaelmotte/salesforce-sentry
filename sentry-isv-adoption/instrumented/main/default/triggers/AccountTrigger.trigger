@@ -4,10 +4,15 @@ trigger AccountTrigger on Account(
   after insert,
   after update
 ) {
-  if (Trigger.isBefore) {
-    AccountTriggerHandler.handleBefore(Trigger.new, Trigger.oldMap);
-  }
-  if (Trigger.isAfter) {
-    AccountTriggerHandler.handleAfter(Trigger.new, Trigger.oldMap);
+  try {
+    if (Trigger.isBefore) {
+      AccountTriggerHandler.handleBefore(Trigger.new, Trigger.oldMap);
+    }
+    if (Trigger.isAfter) {
+      AccountTriggerHandler.handleAfter(Trigger.new, Trigger.oldMap);
+    }
+  } catch (Exception e) {
+    Sentry.captureException(e);
+    throw e;
   }
 }

@@ -1,6 +1,11 @@
 import { LightningElement, api } from "lwc";
 
-export default class ContactCard extends LightningElement {
+import { SentryMixin } from "c/sentryMixin";
+
+export default class ContactCard extends SentryMixin(
+  LightningElement,
+  "ContactCard"
+) {
   @api contact;
 
   get fullName() {
