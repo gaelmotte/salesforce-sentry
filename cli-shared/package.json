@@ -1,6 +1,6 @@
 {
   "name": "@salesforce-sentry/cli-shared",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Shared utilities, migration runner, and codemods for salesforce-sentry CLI tools",
   "license": "MIT",
   "engines": {
