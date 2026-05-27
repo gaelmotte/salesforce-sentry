@@ -8,6 +8,7 @@ export default class ContactCard extends LightningElement {
   }
 
   handleClick() {
+    console.log(`Contact selected: ${this.contact.Id}`);
     this.dispatchEvent(
       new CustomEvent("contactselected", { detail: this.contact.Id })
     );

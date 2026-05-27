@@ -14,6 +14,7 @@ export default class AccountDashboard extends LightningElement {
   wiredAccount({ data, error }) {
     if (data) {
       this.account = data;
+      console.log(`Account loaded: ${data.Name}`);
     } else if (error) {
       this.error =
         error?.body?.message ?? error?.statusText ?? "Failed to load account";
@@ -24,6 +25,7 @@ export default class AccountDashboard extends LightningElement {
   wiredContacts({ data, error }) {
     if (data) {
       this.contacts = data;
+      console.log(`Loaded ${data.length} contacts`);
     } else if (error) {
       this.error =
         error?.body?.message ?? error?.statusText ?? "Failed to load contacts";
@@ -32,6 +34,7 @@ export default class AccountDashboard extends LightningElement {
 
   handleStatusChange(event) {
     const newStatus = event.detail.value;
+    console.log(`Updating status to: ${newStatus}`);
     updateAccountStatus({ accountId: this.recordId, status: newStatus })
       .then(() => {
         this.dispatchEvent(new CustomEvent("statusupdated"));
@@ -45,6 +48,6 @@ export default class AccountDashboard extends LightningElement {
   }
 
   handleContactSelected(event) {
-    console.log(event);
+    console.log(`Contact selected from child: ${event.detail}`);
   }
 }

@@ -10,6 +10,7 @@ export default class OpportunityList extends NavigationMixin(LightningElement) {
   wiredOpportunities({ data, error }) {
     if (data) {
       this.opportunities = data;
+      console.log(`Loaded ${data.length} opportunities`);
     } else if (error) {
       this.error =
         error?.body?.message ??
@@ -20,6 +21,7 @@ export default class OpportunityList extends NavigationMixin(LightningElement) {
 
   navigateToRecord(event) {
     const recordId = event.currentTarget.dataset.id;
+    console.log(`Navigating to opportunity: ${recordId}`);
     this[NavigationMixin.Navigate]({
       type: "standard__recordPage",
       attributes: { recordId, actionName: "view" }
