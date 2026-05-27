@@ -2,8 +2,7 @@
 
 const path = require("path");
 const fs = require("fs");
-const { collectLWCTransforms } = require("../transforms/lwc");
-const { collectApexTransforms } = require("../transforms/apex");
+const runner = require("@salesforce-sentry/cli-shared/runner");
 const {
   showDiffAndPrompt
 } = require("@salesforce-sentry/cli-shared/utils/interactive");
@@ -39,30 +38,43 @@ async function adopt(projectArg) {
       .join(", ")}\n`
   );
 
-  const [lwcTransforms, apexTransforms] = await Promise.all([
-    collectLWCTransforms(projectRoot, { excludeDir }),
-    collectApexTransforms(projectRoot, { excludeDir })
-  ]);
+  let transforms;
+  try {
+    transforms = await runner.collectPendingTransforms(projectRoot, {
+      capturePrefix: "Sentry",
+      sentryImportPath: "c/sentryMixin",
+      excludeDir
+    });
+  } catch (e) {
+    console.error(pc.red(e.message));
+    process.exit(1);
+  }
 
-  const all = [...lwcTransforms, ...apexTransforms];
-
-  if (all.length === 0) {
+  if (transforms.length === 0) {
+    runner.ensureStateFile(projectRoot);
     console.log(pc.green("✓ Nothing to transform."));
     return;
   }
 
+  const lwcCount = transforms.filter((t) => t.path.endsWith(".js")).length;
+  const apexCount = transforms.length - lwcCount;
   console.log(
-    `Found ${pc.yellow(String(lwcTransforms.length))} LWC file(s) and ` +
-      `${pc.yellow(String(apexTransforms.length))} Apex file(s) to transform.\n`
+    `Found ${pc.yellow(String(lwcCount))} LWC file(s) and ` +
+      `${pc.yellow(String(apexCount))} Apex file(s) to transform.\n`
   );
 
   let applyAll = false;
   let applied = 0;
   let skipped = 0;
 
-  for (const transform of all) {
+  for (const transform of transforms) {
     if (applyAll) {
       fs.writeFileSync(transform.path, transform.newContent, "utf8");
+      runner.saveFileState(
+        projectRoot,
+        transform.path,
+        transform.migrationVersion
+      );
       applied++;
       continue;
     }
@@ -71,10 +83,15 @@ async function adopt(projectArg) {
 
     if (decision === "yes" || decision === "all") {
       fs.writeFileSync(transform.path, transform.newContent, "utf8");
+      runner.saveFileState(
+        projectRoot,
+        transform.path,
+        transform.migrationVersion
+      );
       applied++;
       if (decision === "all") applyAll = true;
     } else if (decision === "quit") {
-      skipped += all.length - applied - 1;
+      skipped += transforms.length - applied - 1;
       break;
     } else {
       skipped++;

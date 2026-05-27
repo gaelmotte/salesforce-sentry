@@ -10,8 +10,7 @@ const {
   findProjectFiles: findSfdxFiles
 } = require("@salesforce-sentry/cli-shared/utils/sfdx");
 const { parseDSN } = require("@salesforce-sentry/cli-shared/utils/dsn");
-const { collectLWCTransforms } = require("../transforms/lwc");
-const { collectApexTransforms } = require("../transforms/apex");
+const runner = require("@salesforce-sentry/cli-shared/runner");
 
 const xmlParser = new XMLParser({
   ignoreAttributes: false,
@@ -198,23 +197,22 @@ async function validate(projectArg) {
     allPassed = false;
   }
 
-  // 9. Pending instrumentation
+  // 9. Pending instrumentation — delegated to the migration runner
   process.stdout.write("\n");
   process.stdout.write(pc.dim("  Scanning for uninstrumented files…"));
   const excludeDir = path.join(defaultSourceDir, "sentry");
-  const [lwc, apex] = await Promise.all([
-    collectLWCTransforms(projectRoot, { excludeDir }),
-    collectApexTransforms(projectRoot, { excludeDir })
-  ]);
+  const violations = await runner.runValidations(projectRoot, {
+    capturePrefix: "Sentry",
+    sentryImportPath: "c/sentryMixin",
+    excludeDir
+  });
   process.stdout.write("\r" + " ".repeat(50) + "\r");
 
-  const pending = lwc.length + apex.length;
-  if (pending === 0) {
+  if (violations.length === 0) {
     pass("All LWC and Apex entry points are instrumented");
   } else {
-    warn(
-      `${pending} file(s) still need instrumentation — run \`sentry-isv adopt\``
-    );
+    violations.forEach((v) => warn(v.message));
+    allPassed = false;
   }
 
   console.log(

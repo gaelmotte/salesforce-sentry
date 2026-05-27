@@ -1,0 +1,5 @@
+import { LightningElement } from "lwc";
+
+import { SentryMixin, Sentry } from "sentrysdk/sentryMixin";
+
+export default class ContactCard extends SentryMixin(LightningElement, "ContactCard") {}

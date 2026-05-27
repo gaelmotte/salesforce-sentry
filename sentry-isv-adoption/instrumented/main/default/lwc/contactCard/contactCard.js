@@ -1,6 +1,6 @@
 import { LightningElement, api } from "lwc";
 
-import { SentryMixin, Sentry } from "c/sentryMixin";
+import { SentryMixin } from "c/sentryMixin";
 
 export default class ContactCard extends SentryMixin(
   LightningElement,
@@ -13,7 +13,6 @@ export default class ContactCard extends SentryMixin(
   }
 
   handleClick() {
-    this[Sentry].log(`Contact selected: ${this.contact.Id}`);
     this.dispatchEvent(
       new CustomEvent("contactselected", { detail: this.contact.Id })
     );
