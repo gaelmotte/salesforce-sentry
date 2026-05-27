@@ -1,14 +1,24 @@
 {
   "name": "@salesforce-sentry/cli-shared",
-  "version": "0.1.1",
-  "description": "Shared utilities for salesforce-sentry CLI tools",
+  "version": "0.1.2",
+  "description": "Shared utilities, migration runner, and codemods for salesforce-sentry CLI tools",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "files": [
-    "utils/"
+    "utils/",
+    "migrations/",
+    "runner.js",
+    "state.js"
   ],
+  "scripts": {
+    "test": "node --test 'test/*.test.js'"
+  },
   "dependencies": {
     "diff": "^5.2.0",
     "fast-xml-parser": "^4.3.6",
+    "jscodeshift": "^0.16.1",
     "picocolors": "^1.1.0",
     "prompts": "^2.4.2"
   }

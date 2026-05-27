@@ -2,12 +2,9 @@
 
 const fs = require("fs");
 const path = require("path");
-const {
-  findProjectFiles: findSfdxFiles
-} = require("@salesforce-sentry/cli-shared/utils/sfdx");
 
 // ---------------------------------------------------------------------------
-// Brace matching — skips strings and comments
+// Brace matching — skips strings and line/block comments
 // ---------------------------------------------------------------------------
 function findMatchingBrace(content, openPos) {
   let depth = 0;
@@ -16,7 +13,6 @@ function findMatchingBrace(content, openPos) {
   while (i < content.length) {
     const ch = content[i];
 
-    // Single-line comment
     if (ch === "/" && content[i + 1] === "/") {
       const nl = content.indexOf("\n", i + 2);
       if (nl === -1) return -1;
@@ -24,7 +20,6 @@ function findMatchingBrace(content, openPos) {
       continue;
     }
 
-    // Block comment
     if (ch === "/" && content[i + 1] === "*") {
       const end = content.indexOf("*/", i + 2);
       if (end === -1) return -1;
@@ -62,7 +57,7 @@ function findMatchingBrace(content, openPos) {
 }
 
 // ---------------------------------------------------------------------------
-// Detect the indent unit used in a file (tabs, 2- or 4-space)
+// Detect the indent unit used in a file (tabs, 2-space, or 4-space)
 // ---------------------------------------------------------------------------
 function detectIndentUnit(content) {
   for (const line of content.split("\n")) {
@@ -77,7 +72,6 @@ function detectIndentUnit(content) {
 // ---------------------------------------------------------------------------
 // Wrap the block at [bracePos..bodyEnd] in try-catch, preserving indentation.
 // Returns the replacement string (includes both outer braces).
-// Caller should splice: content.slice(0, bracePos) + result + content.slice(bodyEnd + 1)
 // ---------------------------------------------------------------------------
 function buildWrappedBlock(
   content,
@@ -87,14 +81,11 @@ function buildWrappedBlock(
   indentUnit
 ) {
   const body = content.slice(bracePos + 1, bodyEnd);
-
   const lines = body.split("\n");
   const firstNonEmpty = lines.find((l) => l.trim());
   if (!firstNonEmpty) return null; // empty body — nothing to wrap
 
   const baseIndent = firstNonEmpty.match(/^(\s*)/)[1];
-
-  // Indentation of the closing brace in the original source (e.g. '  ' for a 2-space method)
   const closingLineStart = content.lastIndexOf("\n", bodyEnd - 1) + 1;
   const closingIndent = content.slice(closingLineStart, bodyEnd);
 
@@ -121,7 +112,6 @@ function buildWrappedBlock(
 function applyTransforms(content, transforms, indentUnit) {
   const sorted = [...transforms].sort((a, b) => b.bodyStart - a.bodyStart);
   let result = content;
-
   for (const t of sorted) {
     const replacement = buildWrappedBlock(
       result,
@@ -134,7 +124,6 @@ function applyTransforms(content, transforms, indentUnit) {
     result =
       result.slice(0, t.bodyStart) + replacement + result.slice(t.bodyEnd + 1);
   }
-
   return result;
 }
 
@@ -149,7 +138,6 @@ function findAnnotatedMethods(content, annotationName, catchStatements) {
   while ((match = re.exec(content)) !== null) {
     let pos = match.index + match[0].length;
 
-    // Skip optional annotation params: @AuraEnabled(cacheable=true)
     while (pos < content.length && /[ \t\r\n]/.test(content[pos])) pos++;
     if (content[pos] === "(") {
       let d = 1;
@@ -161,11 +149,9 @@ function findAnnotatedMethods(content, annotationName, catchStatements) {
       }
     }
 
-    // Next `{` is the method body opener
     const bracePos = content.indexOf("{", pos);
     if (bracePos === -1) continue;
 
-    // Between annotation and `{` must look like a method signature
     const between = content.slice(pos, bracePos);
     if (!between.includes("(") || !between.includes(")")) continue;
     if (/\bclass\b|\binterface\b/i.test(between)) continue;
@@ -175,8 +161,6 @@ function findAnnotatedMethods(content, annotationName, catchStatements) {
 
     const body = content.slice(bracePos + 1, bodyEnd);
     if (body.includes("captureException")) continue;
-    // Skip if the body is already dominated by a try block — adding an outer
-    // try-catch around existing try-catch logic is rarely the right move.
     if (body.trim().startsWith("try ") || body.trim().startsWith("try{"))
       continue;
 
@@ -203,8 +187,6 @@ function findSignatureMethods(content, interfaceRe, methodRe, catchStatements) {
     const afterSig = match.index + match[0].length;
     const bracePos = content.indexOf("{", afterSig);
     if (bracePos === -1) continue;
-
-    // Ensure nothing else opened a brace before us (would mean we jumped scopes)
     if (content.slice(afterSig, bracePos).includes("{")) continue;
 
     const bodyEnd = findMatchingBrace(content, bracePos);
@@ -221,48 +203,6 @@ function findSignatureMethods(content, interfaceRe, methodRe, catchStatements) {
   return results;
 }
 
-// ---------------------------------------------------------------------------
-// Annotation patterns
-// ---------------------------------------------------------------------------
-const GENERIC_CATCH = ["sentrysdk.Sentry.captureException(e);", "throw e;"];
-const AURA_CATCH = [
-  "sentrysdk.Sentry.captureException(e);",
-  "throw new AuraHandledException(e.getMessage());"
-];
-
-const ANNOTATION_PATTERNS = [
-  { annotation: "AuraEnabled", catchStatements: AURA_CATCH },
-  { annotation: "InvocableMethod", catchStatements: GENERIC_CATCH },
-  { annotation: "RemoteAction", catchStatements: GENERIC_CATCH },
-  { annotation: "HttpGet", catchStatements: GENERIC_CATCH },
-  { annotation: "HttpPost", catchStatements: GENERIC_CATCH },
-  { annotation: "HttpPut", catchStatements: GENERIC_CATCH },
-  { annotation: "HttpDelete", catchStatements: GENERIC_CATCH },
-  { annotation: "HttpPatch", catchStatements: GENERIC_CATCH }
-];
-
-// ---------------------------------------------------------------------------
-// Interface / lifecycle patterns
-// ---------------------------------------------------------------------------
-const INTERFACE_PATTERNS = [
-  {
-    interfaceRe: /implements\s+[^{]*\bSchedulable\b/i,
-    methodRe: /\bvoid\s+execute\s*\(\s*SchedulableContext/gi,
-    catchStatements: GENERIC_CATCH
-  },
-  {
-    interfaceRe: /implements\s+[^{]*\bQueueable\b/i,
-    methodRe: /\bvoid\s+execute\s*\(\s*QueueableContext/gi,
-    catchStatements: GENERIC_CATCH
-  },
-  {
-    // Batchable: start(), execute(), finish()
-    interfaceRe: /implements\s+[^{]*Database\.Batchable/i,
-    methodRe: /\b(?:start|execute|finish)\s*\(\s*Database\.BatchableContext/gi,
-    catchStatements: GENERIC_CATCH
-  }
-];
-
 function dedup(transforms) {
   const seen = new Set();
   return transforms.filter(({ bodyStart }) => {
@@ -275,15 +215,64 @@ function dedup(transforms) {
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
-async function collectApexTransforms(projectRoot) {
-  const triggers = findSfdxFiles(projectRoot, (f) => f.endsWith(".trigger"));
-  const classes = findSfdxFiles(projectRoot, (f) => f.endsWith(".cls"));
-  const transforms = [];
 
-  // --- Triggers ---
+/**
+ * Collect Apex transforms for the given candidate file paths.
+ * Skips files that already contain captureException or whose entry-point
+ * bodies start with a try block.
+ * @param {string[]} filePaths - absolute paths to consider
+ * @param {{ capturePrefix?: string, excludeDir?: string }} [options]
+ * @returns {{ path: string, label: string, oldContent: string, newContent: string }[]}
+ */
+function collectApexTransforms(filePaths, options = {}) {
+  const { capturePrefix = "sentrysdk.Sentry", excludeDir } = options;
+  const sentryCapture = `${capturePrefix}.captureException(e);`;
+
+  const GENERIC_CATCH = [sentryCapture, "throw e;"];
+  const AURA_CATCH = [
+    sentryCapture,
+    "throw new AuraHandledException(e.getMessage());"
+  ];
+
+  const ANNOTATION_PATTERNS = [
+    { annotation: "AuraEnabled", catchStatements: AURA_CATCH },
+    { annotation: "InvocableMethod", catchStatements: GENERIC_CATCH },
+    { annotation: "RemoteAction", catchStatements: GENERIC_CATCH },
+    { annotation: "HttpGet", catchStatements: GENERIC_CATCH },
+    { annotation: "HttpPost", catchStatements: GENERIC_CATCH },
+    { annotation: "HttpPut", catchStatements: GENERIC_CATCH },
+    { annotation: "HttpDelete", catchStatements: GENERIC_CATCH },
+    { annotation: "HttpPatch", catchStatements: GENERIC_CATCH }
+  ];
+
+  const INTERFACE_PATTERNS = [
+    {
+      interfaceRe: /implements\s+[^{]*\bSchedulable\b/i,
+      methodRe: /\bvoid\s+execute\s*\(\s*SchedulableContext/gi,
+      catchStatements: GENERIC_CATCH
+    },
+    {
+      interfaceRe: /implements\s+[^{]*\bQueueable\b/i,
+      methodRe: /\bvoid\s+execute\s*\(\s*QueueableContext/gi,
+      catchStatements: GENERIC_CATCH
+    },
+    {
+      interfaceRe: /implements\s+[^{]*Database\.Batchable/i,
+      methodRe:
+        /\b(?:start|execute|finish)\s*\(\s*Database\.BatchableContext/gi,
+      catchStatements: GENERIC_CATCH
+    }
+  ];
+
+  const exclude = (f) => excludeDir && f.startsWith(excludeDir + path.sep);
+  const triggers = filePaths.filter(
+    (f) => f.endsWith(".trigger") && !exclude(f)
+  );
+  const classes = filePaths.filter((f) => f.endsWith(".cls") && !exclude(f));
+  const results = [];
+
   for (const triggerFile of triggers) {
     const content = fs.readFileSync(triggerFile, "utf8");
-
     const bracePos = content.indexOf("{");
     if (bracePos === -1) continue;
     const bodyEnd = findMatchingBrace(content, bracePos);
@@ -304,7 +293,7 @@ async function collectApexTransforms(projectRoot) {
 
     const newContent =
       content.slice(0, bracePos) + replacement + content.slice(bodyEnd + 1);
-    transforms.push({
+    results.push({
       path: triggerFile,
       label: `Apex Trigger  →  try/catch  (${path.basename(triggerFile)})`,
       oldContent: content,
@@ -312,7 +301,6 @@ async function collectApexTransforms(projectRoot) {
     });
   }
 
-  // --- Classes ---
   for (const clsFile of classes) {
     const content = fs.readFileSync(clsFile, "utf8");
     const found = [];
@@ -320,7 +308,6 @@ async function collectApexTransforms(projectRoot) {
     for (const { annotation, catchStatements } of ANNOTATION_PATTERNS) {
       found.push(...findAnnotatedMethods(content, annotation, catchStatements));
     }
-
     for (const {
       interfaceRe,
       methodRe,
@@ -337,7 +324,7 @@ async function collectApexTransforms(projectRoot) {
     const indentUnit = detectIndentUnit(content);
     const newContent = applyTransforms(content, unique, indentUnit);
 
-    transforms.push({
+    results.push({
       path: clsFile,
       label: `Apex Class  →  ${
         unique.length
@@ -347,7 +334,7 @@ async function collectApexTransforms(projectRoot) {
     });
   }
 
-  return transforms;
+  return results;
 }
 
 module.exports = { collectApexTransforms };

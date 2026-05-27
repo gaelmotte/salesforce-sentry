@@ -3,10 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const jscodeshift = require("jscodeshift");
-const { readMetaXml } = require("@salesforce-sentry/cli-shared/utils/meta-xml");
-const {
-  findProjectFiles: findSfdxFiles
-} = require("@salesforce-sentry/cli-shared/utils/sfdx");
+const { readMetaXml } = require("../../utils/meta-xml");
 
 const j = jscodeshift.withParser("babel");
 
@@ -20,7 +17,19 @@ function containsLightningElement(node) {
   return false;
 }
 
-function transformLWCSource(source, isExposed) {
+/**
+ * Transform a single LWC JS source string.
+ * Returns null if already instrumented, unparseable, or has no LightningElement superclass.
+ * @param {string} source
+ * @param {boolean} isExposed
+ * @param {string} sentryImportPath - e.g. "sentrysdk/sentryMixin" or "c/sentryMixin"
+ * @returns {string|null}
+ */
+function transformLWCSource(
+  source,
+  isExposed,
+  sentryImportPath = "sentrysdk/sentryMixin"
+) {
   if (/\bextends\s+Sentry(?:Boundary)?Mixin\(/.test(source)) return null;
 
   let root;
@@ -53,13 +62,12 @@ function transformLWCSource(source, isExposed) {
     j.stringLiteral(componentName)
   ]);
 
-  // ISV: vendored mixin lives under c/ (same package), not sentrysdk/
   const sentryImport = j.importDeclaration(
     [
       j.importSpecifier(j.identifier(mixinName)),
       j.importSpecifier(j.identifier("Sentry"))
     ],
-    j.stringLiteral("c/sentryMixin")
+    j.stringLiteral(sentryImportPath)
   );
 
   const importPaths = root.find(j.ImportDeclaration).paths();
@@ -72,15 +80,24 @@ function transformLWCSource(source, isExposed) {
   return root.toSource({ quote: "double" });
 }
 
-async function collectLWCTransforms(projectRoot, { excludeDir } = {}) {
-  const jsFiles = findSfdxFiles(
-    projectRoot,
+/**
+ * Collect LWC transforms for the given candidate file paths.
+ * Skips files that are already instrumented, have no meta.xml, or parse errors.
+ * @param {string[]} filePaths - absolute paths to consider
+ * @param {{ sentryImportPath?: string, excludeDir?: string }} [options]
+ * @returns {{ path: string, label: string, oldContent: string, newContent: string }[]}
+ */
+function collectLWCTransforms(filePaths, options = {}) {
+  const { sentryImportPath = "sentrysdk/sentryMixin", excludeDir } = options;
+
+  const jsFiles = filePaths.filter(
     (f) =>
       f.endsWith(".js") &&
       f.includes("/lwc/") &&
       (!excludeDir || !f.startsWith(excludeDir + path.sep))
   );
-  const transforms = [];
+
+  const results = [];
 
   for (const jsFile of jsFiles) {
     const dir = path.dirname(jsFile);
@@ -96,11 +113,11 @@ async function collectLWCTransforms(projectRoot, { excludeDir } = {}) {
       meta?.LightningComponentBundle?.isExposed === true ||
       meta?.LightningComponentBundle?.isExposed === "true";
 
-    const newContent = transformLWCSource(source, isExposed);
+    const newContent = transformLWCSource(source, isExposed, sentryImportPath);
     if (!newContent || newContent === source) continue;
 
     const mixinName = isExposed ? "SentryBoundaryMixin" : "SentryMixin";
-    transforms.push({
+    results.push({
       path: jsFile,
       label: `LWC  →  ${mixinName}  (${componentName})`,
       oldContent: source,
@@ -108,7 +125,7 @@ async function collectLWCTransforms(projectRoot, { excludeDir } = {}) {
     });
   }
 
-  return transforms;
+  return results;
 }
 
-module.exports = { collectLWCTransforms };
+module.exports = { collectLWCTransforms, transformLWCSource };

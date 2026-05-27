@@ -1,0 +1,5 @@
+import { LightningElement } from "lwc";
+
+import { SentryBoundaryMixin, Sentry } from "sentrysdk/sentryMixin";
+
+export default class AccountDashboard extends SentryBoundaryMixin(LightningElement, "AccountDashboard") {}
