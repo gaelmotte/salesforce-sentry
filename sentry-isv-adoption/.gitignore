@@ -50,3 +50,4 @@ force-app/packaged/
 
 # vendored sentry
 force-app/sentry/
+instrumented/sentry/
