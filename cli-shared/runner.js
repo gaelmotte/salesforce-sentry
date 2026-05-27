@@ -31,7 +31,7 @@ function requireSfdxProject(projectRoot) {
 function requireCleanGit(projectRoot) {
   let status;
   try {
-    status = execSync("git status --porcelain", {
+    status = execSync("git status --porcelain -- .", {
       cwd: projectRoot,
       encoding: "utf8",
       stdio: ["pipe", "pipe", "pipe"]
@@ -132,4 +132,20 @@ async function runValidations(projectRoot, options = {}) {
   return violations;
 }
 
-module.exports = { collectPendingTransforms, saveFileState, runValidations };
+/**
+ * Write the state file if it does not already exist.
+ * Calling adopt on a project with nothing to transform should still leave a
+ * .sentry-adoption.json so future incremental runs can track progress.
+ * @param {string} projectRoot
+ */
+function ensureStateFile(projectRoot) {
+  const state = readState(projectRoot);
+  writeState(projectRoot, state);
+}
+
+module.exports = {
+  collectPendingTransforms,
+  saveFileState,
+  runValidations,
+  ensureStateFile
+};

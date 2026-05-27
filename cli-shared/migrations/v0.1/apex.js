@@ -91,7 +91,8 @@ function buildWrappedBlock(
 
   const reindented = lines
     .map((l) => (l.trim() ? indentUnit + l : ""))
-    .join("\n");
+    .join("\n")
+    .trimEnd();
 
   const catchLines = catchStatements
     .map((s) => `${baseIndent}${indentUnit}${s}`)

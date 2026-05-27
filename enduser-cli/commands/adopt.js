@@ -45,6 +45,7 @@ async function adopt(projectArg) {
   }
 
   if (transforms.length === 0) {
+    runner.ensureStateFile(projectRoot);
     console.log(pc.green("✓ Nothing to transform."));
     return;
   }
