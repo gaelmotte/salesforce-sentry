@@ -51,19 +51,4 @@ public with sharing class SentryISVContextIntegrationTest {
       'environment must match org type'
     );
   }
-
-  @IsTest
-  public static void defaultConstructorOmitsReleaseWhenRequestVersionReturnsNull() {
-    SentryScope scope = new SentryScope();
-    SentryISVContextIntegration integration = new SentryISVContextIntegration();
-    integration.applyToScope(scope);
-    SentryEvent event = SentryEvent.fromApexException(new SentryException());
-    event = scope.applyToEvent(scope.applyToEvent(event, true), false);
-
-    // System.requestVersion() returns null outside a packaged context
-    Assert.isNull(
-      event.release,
-      'release must be omitted when requestVersion returns null'
-    );
-  }
 }

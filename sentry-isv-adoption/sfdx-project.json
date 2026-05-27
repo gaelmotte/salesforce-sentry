@@ -1,0 +1,22 @@
+{
+  "packageDirectories": [
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "path": "instrumented",
+      "package": "SentryIsvAdoption",
+      "versionDescription": "",
+      "default": true
+    }
+  ],
+  "name": "sentry-isv-adoption",
+  "namespace": "sentrysdk",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "61.0",
+  "packageAliases": {
+    "SentryIsvAdoption": "0HoQy0000001dCDKAY",
+    "SentryIsvAdoption@0.1.0-3": "04tQy000000VvRpIAK",
+    "SentryIsvAdoption@0.1.0-4": "04tQy000000VvejIAC",
+    "SentryIsvAdoption@0.1.0-5": "04tQy000000VvgLIAS"
+  }
+}

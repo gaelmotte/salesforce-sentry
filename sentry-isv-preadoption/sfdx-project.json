@@ -1,0 +1,17 @@
+{
+  "packageDirectories": [
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "path": "force-app",
+      "package": "SentryIsvApredoption",
+      "versionDescription": "",
+
+      "default": true
+    }
+  ],
+  "name": "sentry-isv-preadoption",
+  "namespace": "sentrysdk",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "61.0"
+}

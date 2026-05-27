@@ -106,11 +106,15 @@ async function validate(projectArg) {
       let enabled = false;
       let dsn = null;
       let cls = null;
+      const rawVal = (v) =>
+        v?.value != null && typeof v.value === "object"
+          ? v.value["#text"]
+          : v.value;
       for (const v of valuesArr) {
         if (!v) continue;
-        if (v.field === "Enabled__c" && v.value === true) enabled = true;
-        if (v.field === "DSN__c") dsn = String(v.value ?? "");
-        if (v.field === "ApexClass__c") cls = String(v.value ?? "");
+        if (v.field === "Enabled__c" && rawVal(v) === true) enabled = true;
+        if (v.field === "DSN__c") dsn = String(rawVal(v) ?? "");
+        if (v.field === "ApexClass__c") cls = String(rawVal(v) ?? "");
       }
       if (enabled) {
         enabledRecords.push(f);
@@ -197,9 +201,10 @@ async function validate(projectArg) {
   // 9. Pending instrumentation
   process.stdout.write("\n");
   process.stdout.write(pc.dim("  Scanning for uninstrumented files…"));
+  const excludeDir = path.join(defaultSourceDir, "sentry");
   const [lwc, apex] = await Promise.all([
-    collectLWCTransforms(projectRoot),
-    collectApexTransforms(projectRoot)
+    collectLWCTransforms(projectRoot, { excludeDir }),
+    collectApexTransforms(projectRoot, { excludeDir })
   ]);
   process.stdout.write("\r" + " ".repeat(50) + "\r");
 

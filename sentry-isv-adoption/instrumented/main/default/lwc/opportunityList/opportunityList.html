@@ -1,0 +1,27 @@
+<template>
+  <lightning-card title="Open Opportunities" icon-name="standard:opportunity">
+    <div class="slds-m-around_medium">
+      <template lwc:if={opportunities}>
+        <template for:each={opportunities} for:item="opp">
+          <div
+            key={opp.Id}
+            class="slds-box slds-m-bottom_x-small slds-p-around_small"
+            data-id={opp.Id}
+            onclick={navigateToRecord}
+            role="button"
+            tabindex="0"
+          >
+            <p class="slds-text-heading_small">{opp.Name}</p>
+            <p class="slds-text-body_regular">{opp.StageName}</p>
+            <p class="slds-text-body_small slds-text-color_weak">
+              Close: {opp.CloseDate} &bull; {opp.Account.Name}
+            </p>
+          </div>
+        </template>
+      </template>
+      <template lwc:if={error}>
+        <div class="slds-text-color_error">{error}</div>
+      </template>
+    </div>
+  </lightning-card>
+</template>

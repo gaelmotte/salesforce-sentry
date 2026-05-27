@@ -7,7 +7,10 @@ const { collectApexTransforms } = require("../transforms/apex");
 const {
   showDiffAndPrompt
 } = require("@salesforce-sentry/cli-shared/utils/interactive");
-const { getSourceDirs } = require("@salesforce-sentry/cli-shared/utils/sfdx");
+const {
+  getSourceDirs,
+  getDefaultSourceDir
+} = require("@salesforce-sentry/cli-shared/utils/sfdx");
 const pc = require("picocolors");
 
 async function adopt(projectArg) {
@@ -18,13 +21,15 @@ async function adopt(projectArg) {
     process.exit(1);
   }
 
-  let sourceDirs;
+  let sourceDirs, defaultSourceDir;
   try {
     sourceDirs = getSourceDirs(projectRoot);
+    defaultSourceDir = getDefaultSourceDir(projectRoot);
   } catch (e) {
     console.error(pc.red(e.message));
     process.exit(1);
   }
+  const excludeDir = path.join(defaultSourceDir, "sentry");
 
   console.log(pc.bold("\nSalesforce Sentry ISV — Adoption Codemod"));
   console.log(`Project: ${pc.cyan(projectRoot)}`);
@@ -35,8 +40,8 @@ async function adopt(projectArg) {
   );
 
   const [lwcTransforms, apexTransforms] = await Promise.all([
-    collectLWCTransforms(projectRoot),
-    collectApexTransforms(projectRoot)
+    collectLWCTransforms(projectRoot, { excludeDir }),
+    collectApexTransforms(projectRoot, { excludeDir })
   ]);
 
   const all = [...lwcTransforms, ...apexTransforms];

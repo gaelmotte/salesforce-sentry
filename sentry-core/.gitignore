@@ -44,3 +44,5 @@ $RECYCLE.BIN/
 **/.venv/
 **/venv/
 
+# dependencies
+core/deps/apex-json-serialization

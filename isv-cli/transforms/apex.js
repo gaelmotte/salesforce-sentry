@@ -236,9 +236,16 @@ function dedup(transforms) {
   });
 }
 
-async function collectApexTransforms(projectRoot) {
-  const triggers = findSfdxFiles(projectRoot, (f) => f.endsWith(".trigger"));
-  const classes = findSfdxFiles(projectRoot, (f) => f.endsWith(".cls"));
+async function collectApexTransforms(projectRoot, { excludeDir } = {}) {
+  const exclude = (f) => excludeDir && f.startsWith(excludeDir + path.sep);
+  const triggers = findSfdxFiles(
+    projectRoot,
+    (f) => f.endsWith(".trigger") && !exclude(f)
+  );
+  const classes = findSfdxFiles(
+    projectRoot,
+    (f) => f.endsWith(".cls") && !exclude(f)
+  );
   const transforms = [];
 
   for (const triggerFile of triggers) {

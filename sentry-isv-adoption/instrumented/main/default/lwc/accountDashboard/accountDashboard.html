@@ -1,0 +1,45 @@
+<template>
+  <lightning-card title="Account" icon-name="standard:account">
+    <div class="slds-var-m-around_medium">
+      <template lwc:if={account}>
+        <dl class="slds-dl_horizontal">
+          <dt class="slds-dl_horizontal__label slds-truncate">Name</dt>
+          <dd class="slds-dl_horizontal__detail">{account.Name}</dd>
+          <dt class="slds-dl_horizontal__label slds-truncate">Industry</dt>
+          <dd class="slds-dl_horizontal__detail">{account.Industry}</dd>
+          <dt class="slds-dl_horizontal__label slds-truncate">
+            Annual Revenue
+          </dt>
+          <dd class="slds-dl_horizontal__detail">{account.AnnualRevenue}</dd>
+          <dt class="slds-dl_horizontal__label slds-truncate">Employees</dt>
+          <dd class="slds-dl_horizontal__detail">
+            {account.NumberOfEmployees}
+          </dd>
+        </dl>
+        <div class="slds-var-m-top_medium">
+          <lightning-input
+            label="Status"
+            onchange={handleStatusChange}
+          ></lightning-input>
+        </div>
+      </template>
+
+      <template lwc:if={contacts}>
+        <div class="slds-var-m-top_medium">
+          <p class="slds-text-title_caps slds-var-m-bottom_x-small">Contacts</p>
+          <template for:each={contacts} for:item="contact">
+            <c-contact-card
+              key={contact.Id}
+              contact={contact}
+              oncontactselected={handleContactSelected}
+            ></c-contact-card>
+          </template>
+        </div>
+      </template>
+
+      <template lwc:if={error}>
+        <div class="slds-text-color_error slds-var-m-top_small">{error}</div>
+      </template>
+    </div>
+  </lightning-card>
+</template>
