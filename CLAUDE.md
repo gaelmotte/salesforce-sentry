@@ -38,12 +38,50 @@ sf project deploy start
 
 ## Monorepo Structure
 
-| Directory                | Purpose                                                                   |
-| ------------------------ | ------------------------------------------------------------------------- |
-| `sentry-core/`           | Base SDK — Apex classes, LWC mixin, platform event, metadata              |
-| `sentry-enduser/`        | Managed package (namespace `sentrysdk`) — setup UI, DebugLogs integration |
-| `sentry-enduser-sample/` | Sample customer org implementation                                        |
-| `docs/`                  | VitePress documentation site                                              |
+| Directory                 | Purpose                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| `sentry-core/`            | Base SDK — Apex classes, LWC mixin, platform event, metadata                          |
+| `sentry-enduser/`         | Managed package (namespace `sentrysdk`) — setup UI, DebugLogs integration             |
+| `sentry-enduser-sample/`  | Sample customer org implementation                                                    |
+| `sentry-isv-preadoption/` | ISV working directory — vendor SDK + instrument Apex/LWC here before packaging        |
+| `sentry-isv-adoption/`    | ISV managed package — holds the instrumented output (`instrumented/`) that gets built |
+| `sentry-isv-sample/`      | Sample ISV customer org (scratch org scratch-def used by the adoption pipeline)       |
+| `isv-cli/`                | CLI tool driving the ISV adoption pipeline (`vendor`, `setup`, `adopt` commands)      |
+| `scripts/`                | Shell scripts automating the ISV packaging pipeline                                   |
+| `docs/`                   | VitePress documentation site                                                          |
+
+## ISV Adoption Pipeline
+
+ISVs embed the SDK in their own managed package rather than installing it as a dependency. The pipeline has two phases: **preadoption** (instrument the ISV source) and **adoption** (build and publish the package).
+
+### Directories
+
+- `sentry-isv-preadoption/force-app/main/` — ISV's own Apex/LWC source (checked in, never committed after mutation)
+- `sentry-isv-preadoption/force-app/sentry/` — SDK vendored in by the CLI (gitignored, ephemeral)
+- `sentry-isv-adoption/instrumented/` — output of the pipeline; what gets packaged (committed)
+
+### Full pipeline — one command
+
+```bash
+./scripts/release-isv-adoption.sh
+```
+
+This script runs 6 steps end-to-end:
+
+1. **vendor** — `isv-cli vendor sentry-isv-preadoption` copies the SDK source into `sentry-isv-preadoption/force-app/sentry/`
+2. **setup** — `isv-cli setup sentry-isv-preadoption` interactively generates the config class and metadata (prompts for DSN, namespace, etc.)
+3. **adopt** — `isv-cli adopt sentry-isv-preadoption` instruments Apex and LWC entry points in-place
+4. **sync** — `rsync` copies the instrumented output from `sentry-isv-preadoption/force-app/` into `sentry-isv-adoption/instrumented/`
+5. **package** — `./scripts/create-isv-adoption-package.sh` runs `sf package version create` for `sentry-isv-adoption` and updates the subscriber package version ID in `sentry-isv-sample/config/project-scratch-def.json`
+6. **reset** — `git restore` + `git clean` bring `sentry-isv-preadoption/force-app/main/` back to the checked-in state and delete `force-app/sentry/`
+
+### Partial run — package only
+
+```bash
+./scripts/create-isv-adoption-package.sh
+```
+
+Use this when `sentry-isv-adoption/instrumented/` is already up to date and you only need to cut a new package version (e.g. after a metadata-only change).
 
 ## Architecture
 
