@@ -18,6 +18,7 @@ export default class AccountDashboard extends LightningElement {
     } else if (error) {
       this.error =
         error?.body?.message ?? error?.statusText ?? "Failed to load account";
+      console.log(`Failed to load account: ${this.error}`);
     }
   }
 
@@ -29,6 +30,7 @@ export default class AccountDashboard extends LightningElement {
     } else if (error) {
       this.error =
         error?.body?.message ?? error?.statusText ?? "Failed to load contacts";
+      console.log(`Failed to load contacts: ${this.error}`);
     }
   }
 
@@ -37,6 +39,7 @@ export default class AccountDashboard extends LightningElement {
     console.log(`Updating status to: ${newStatus}`);
     updateAccountStatus({ accountId: this.recordId, status: newStatus })
       .then(() => {
+        console.log(`Status updated to: ${newStatus}`);
         this.dispatchEvent(new CustomEvent("statusupdated"));
       })
       .catch((error) => {
@@ -44,6 +47,7 @@ export default class AccountDashboard extends LightningElement {
           error?.body?.message ??
           error?.statusText ??
           "Failed to update status";
+        console.log(`Failed to update status: ${this.error}`);
       });
   }
 
