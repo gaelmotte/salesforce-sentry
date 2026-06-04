@@ -24,6 +24,14 @@ This prompts for your DSN, class name, sampling rate, and integrations, then wri
 - A `sentrysdk__Sentry_Config.Default` custom metadata record
 - A `Sentry` remote site setting
 
+**Instrument your existing code:**
+
+```bash
+npx @salesforce-sentry/enduser-cli adopt
+```
+
+Adds `Sentry.captureException()` calls to Apex catch blocks and wraps LWC components with the appropriate mixin. Shows a diff for each file and prompts before applying.
+
 **Verify everything is wired up:**
 
 ```bash

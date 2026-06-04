@@ -12,6 +12,10 @@ You already have a Sentry project and have its DSN close at hand.
 
 You are on Salesforce Enterprise Edition or higher. (Platform Events, required for the async transport, are not available on lower editions.)
 
+## Node.js and npx
+
+The `@salesforce-sentry/enduser-cli` package handles setup and instrumentation. You'll need Node.js 18+ to run it via `npx`. If you prefer to configure everything manually, Node.js is not required — see [Installation](install.md) for both options.
+
 ## Yourself
 
 You are comfortable with Salesforce development: writing Apex classes and working with Custom Metadata Types.
