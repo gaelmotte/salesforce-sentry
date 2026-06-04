@@ -14,7 +14,7 @@ export default class AccountDashboard extends LightningElement {
   wiredAccount({ data, error }) {
     if (data) {
       this.account = data;
-      console.log(`Account loaded: ${data.Name}`);
+      console.log("Account loaded:", data.Name);
     } else if (error) {
       this.error =
         error?.body?.message ?? error?.statusText ?? "Failed to load account";
@@ -47,7 +47,7 @@ export default class AccountDashboard extends LightningElement {
           error?.body?.message ??
           error?.statusText ??
           "Failed to update status";
-        console.log(`Failed to update status: ${this.error}`);
+        console.log("Failed to update status:", this.error);
       });
   }
 

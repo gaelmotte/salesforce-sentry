@@ -16,7 +16,7 @@ export default class OpportunityList extends NavigationMixin(LightningElement) {
         error?.body?.message ??
         error?.statusText ??
         "Failed to load opportunities";
-      console.log(`Failed to load opportunities: ${this.error}`);
+      console.log("Failed to load opportunities:", this.error);
     }
   }
 
