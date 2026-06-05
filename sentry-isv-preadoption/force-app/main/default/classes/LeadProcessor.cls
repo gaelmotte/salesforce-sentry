@@ -5,10 +5,15 @@ public with sharing class LeadProcessor {
   )
   public static List<LeadResult> processLeads(List<LeadInput> inputs) {
     List<LeadResult> results = new List<LeadResult>();
+    System.debug('Processing ' + inputs.size() + ' lead(s)');
     for (LeadInput input : inputs) {
       LeadResult result = new LeadResult();
       result.score = input.annualRevenue > 1000000 ? 'Hot' : 'Cold';
       result.queue = result.score == 'Hot' ? 'Enterprise' : 'SMB';
+      System.debug(
+        LoggingLevel.DEBUG,
+        'Lead scored: ' + result.score + ' → queue: ' + result.queue
+      );
       results.add(result);
     }
     return results;
