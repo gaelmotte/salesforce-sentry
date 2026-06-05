@@ -66,8 +66,17 @@ async function adopt(projectArg) {
   let applyAll = false;
   let applied = 0;
   let skipped = 0;
+  // Files where a transform was skipped this run — subsequent migrations for
+  // the same file are auto-skipped so a dependent transform (e.g. v0.2 computed
+  // from v0.1's pending output) is never applied without its predecessor.
+  const skippedFiles = new Set();
 
   for (const transform of transforms) {
+    if (skippedFiles.has(transform.path)) {
+      skipped++;
+      continue;
+    }
+
     if (applyAll) {
       fs.writeFileSync(transform.path, transform.newContent, "utf8");
       runner.saveFileState(
@@ -95,6 +104,7 @@ async function adopt(projectArg) {
       break;
     } else {
       skipped++;
+      skippedFiles.add(transform.path);
     }
   }
 

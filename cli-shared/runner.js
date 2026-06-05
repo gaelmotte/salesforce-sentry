@@ -78,6 +78,9 @@ async function collectPendingTransforms(projectRoot, options = {}) {
   const allFiles = findProjectFiles(projectRoot, () => true);
 
   const transforms = [];
+  // Tracks the latest pending newContent per file so subsequent migrations
+  // see the output of earlier pending migrations rather than stale disk content.
+  const pendingContent = new Map();
 
   for (const migration of registry) {
     const mIdx = migrationIndex(migration.version);
@@ -99,12 +102,13 @@ async function collectPendingTransforms(projectRoot, options = {}) {
 
     if (pendingFiles.length === 0) continue;
 
-    const migrationTransforms = await migration.transform(
-      pendingFiles,
-      options
-    );
+    const migrationTransforms = await migration.transform(pendingFiles, {
+      ...options,
+      pendingContent
+    });
     for (const t of migrationTransforms) {
       transforms.push({ ...t, migrationVersion: migration.version });
+      pendingContent.set(t.path, t.newContent);
     }
   }
 
