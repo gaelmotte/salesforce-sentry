@@ -19,8 +19,10 @@ public with sharing class AccountController {
   @AuraEnabled
   public static void updateAccountStatus(Id accountId, String status) {
     try {
+      Sentry.log('Updating account ' + accountId + ' status to: ' + status);
       Account acc = new Account(Id = accountId, Description = status);
       update acc;
+      Sentry.log(LoggingLevel.INFO, 'Account status updated successfully');
     } catch (Exception e) {
       Sentry.captureException(e);
       throw new AuraHandledException(e.getMessage());
