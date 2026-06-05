@@ -59,6 +59,7 @@ echo "Installing package $NEW_ID into org '$ORG_ALIAS'..."
 sf package install \
   --package "$NEW_ID" \
   --target-org "$ORG_ALIAS" \
-  --wait 20
+  --wait 20 \
+  --no-prompt
 
 echo "Done. Scratch org alias: $ORG_ALIAS"
