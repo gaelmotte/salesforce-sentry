@@ -6,7 +6,7 @@ const path = require("path");
 const STATE_FILE = ".sentry-adoption.json";
 
 /**
- * @typedef {{ schemaVersion: number, lastAppliedMigration: string|null, files: Record<string, { migration: string, instrumentedAt: string }> }} AdoptionState
+ * @typedef {{ schemaVersion: number, lastAppliedMigration: string|null, files: Record<string, { migration: string|null, idempotentHashes?: Record<string, string>, instrumentedAt: string }> }} AdoptionState
  */
 
 /**

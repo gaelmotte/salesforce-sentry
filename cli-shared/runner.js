@@ -1,6 +1,8 @@
 "use strict";
 
 const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
 const { execSync } = require("child_process");
 const { findProjectFiles, readSfdxProject } = require("./utils/sfdx");
 const { readState, writeState } = require("./state");
@@ -51,6 +53,14 @@ function migrationIndex(version) {
   return registry.findIndex((m) => m.version === version);
 }
 
+function fileContentHash(filePath) {
+  return crypto
+    .createHash("sha256")
+    .update(fs.readFileSync(filePath, "utf8"))
+    .digest("hex")
+    .slice(0, 16);
+}
+
 /**
  * Collect all transforms that still need to be applied across all registered migrations.
  * Files already recorded in the state file at the current migration version are skipped,
@@ -75,6 +85,13 @@ async function collectPendingTransforms(projectRoot, options = {}) {
     const pendingFiles = allFiles.filter((f) => {
       const rel = path.relative(projectRoot, f);
       const entry = state.files[rel];
+
+      if (migration.idempotent) {
+        const lastHash = entry?.idempotentHashes?.[migration.version];
+        if (!lastHash) return true;
+        return fileContentHash(f) !== lastHash;
+      }
+
       if (!entry) return true;
       const entryIdx = migrationIndex(entry.migration);
       return entryIdx < mIdx;
@@ -104,8 +121,26 @@ async function collectPendingTransforms(projectRoot, options = {}) {
 function saveFileState(projectRoot, filePath, migrationVersion) {
   const state = readState(projectRoot);
   const rel = path.relative(projectRoot, filePath);
+  const existing = state.files[rel] ?? {};
+  const hash = fileContentHash(filePath);
+  const migration = registry.find((m) => m.version === migrationVersion);
+
+  const idempotentHashes = { ...existing.idempotentHashes };
+  if (migration?.idempotent) {
+    idempotentHashes[migrationVersion] = hash;
+  } else {
+    // Refresh all idempotent hashes so a non-idempotent transform doesn't
+    // look like user-added content to idempotent migrations on the next run.
+    for (const key of Object.keys(idempotentHashes)) {
+      idempotentHashes[key] = hash;
+    }
+  }
+
   state.files[rel] = {
-    migration: migrationVersion,
+    migration: migration?.idempotent
+      ? existing.migration ?? null
+      : migrationVersion,
+    ...(Object.keys(idempotentHashes).length > 0 && { idempotentHashes }),
     instrumentedAt: new Date().toISOString()
   };
   state.lastAppliedMigration = migrationVersion;
