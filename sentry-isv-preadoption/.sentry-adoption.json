@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastAppliedMigration": "v0.2",
+  "lastAppliedMigration": "v0.1",
   "files": {
     "force-app/main/default/lwc/accountDashboard/accountDashboard.js": {
       "migration": "v0.1",
@@ -8,6 +8,10 @@
         "v0.2": "36b4d7f9d65ee6a5"
       },
       "instrumentedAt": "2026-06-05T00:27:45.416Z"
+    },
+    "force-app/main/default/lwc/contactCard/contactCard.js": {
+      "migration": "v0.1",
+      "instrumentedAt": "2026-06-05T00:30:41.242Z"
     }
   }
 }

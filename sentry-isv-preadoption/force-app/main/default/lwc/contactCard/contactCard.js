@@ -1,6 +1,12 @@
 import { LightningElement, api } from "lwc";
 
-export default class ContactCard extends LightningElement {
+// eslint-disable-next-line no-unused-vars
+import { SentryMixin, Sentry } from "c/sentryMixin";
+
+export default class ContactCard extends SentryMixin(
+  LightningElement,
+  "ContactCard"
+) {
   @api contact;
 
   get fullName() {
