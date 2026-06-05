@@ -27,11 +27,11 @@ fi
 echo "==> [1/6] vendor: copying SDK into sentry-isv-preadoption..."
 node "$ISV_CLI" vendor "$PREADOPTION"
 
-echo "==> [2/6] setup: generating config class and metadata (interactive)..."
-node "$ISV_CLI" setup "$PREADOPTION"
-
-echo "==> [3/6] adopt: instrumenting Apex and LWC entry points..."
+echo "==> [2/6] adopt: instrumenting Apex and LWC entry points..."
 node "$ISV_CLI" adopt "$PREADOPTION"
+
+echo "==> [3/6] setup: generating config class and metadata (interactive)..."
+node "$ISV_CLI" setup "$PREADOPTION"
 
 echo "==> [4/6] sync: copying instrumented output to sentry-isv-adoption..."
 rsync -a --delete "$PREADOPTION/force-app/main/"  "$ADOPTION/instrumented/main/"
