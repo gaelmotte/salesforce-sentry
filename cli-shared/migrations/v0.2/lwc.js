@@ -63,7 +63,7 @@ function transformConsoleLogs(source) {
  * @returns {{ path: string, label: string, oldContent: string, newContent: string }[]}
  */
 function collectConsoleLogTransforms(filePaths, options = {}) {
-  const { excludeDir } = options;
+  const { excludeDir, pendingContent } = options;
 
   const jsFiles = filePaths.filter(
     (f) =>
@@ -76,7 +76,11 @@ function collectConsoleLogTransforms(filePaths, options = {}) {
 
   for (const jsFile of jsFiles) {
     const componentName = path.basename(path.dirname(jsFile));
-    const source = fs.readFileSync(jsFile, "utf8");
+    const diskContent = fs.readFileSync(jsFile, "utf8");
+    // Use the output of an earlier pending migration (e.g. v0.1 adding the
+    // sentryMixin import) so this transform sees up-to-date content even
+    // when both migrations are collected in the same pass.
+    const source = pendingContent?.get(jsFile) ?? diskContent;
     const newContent = transformConsoleLogs(source);
     if (!newContent || newContent === source) continue;
 

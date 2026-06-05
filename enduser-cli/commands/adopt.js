@@ -60,8 +60,14 @@ async function adopt(projectArg) {
   let applyAll = false;
   let applied = 0;
   let skipped = 0;
+  const skippedFiles = new Set();
 
   for (const transform of transforms) {
+    if (skippedFiles.has(transform.path)) {
+      skipped++;
+      continue;
+    }
+
     if (applyAll) {
       fs.writeFileSync(transform.path, transform.newContent, "utf8");
       runner.saveFileState(
@@ -89,6 +95,7 @@ async function adopt(projectArg) {
       break;
     } else {
       skipped++;
+      skippedFiles.add(transform.path);
     }
   }
 
