@@ -57,4 +57,26 @@ async function showDiffAndPrompt(transform) {
   return decision ?? "quit";
 }
 
-module.exports = { colorDiff, showDiffAndPrompt };
+/**
+ * For each optional migration, prompt the user to opt in.
+ * @param {Array<{version: string, optionDescription: string}>} optionalMigrations
+ * @returns {Promise<string[]>} versions the user opted into
+ */
+async function promptOptionalMigrations(optionalMigrations) {
+  const selected = [];
+  for (const migration of optionalMigrations) {
+    const { confirm } = await prompts(
+      {
+        type: "confirm",
+        name: "confirm",
+        message: migration.optionDescription,
+        initial: true
+      },
+      { onCancel: () => ({ confirm: false }) }
+    );
+    if (confirm) selected.push(migration.version);
+  }
+  return selected;
+}
+
+module.exports = { colorDiff, showDiffAndPrompt, promptOptionalMigrations };

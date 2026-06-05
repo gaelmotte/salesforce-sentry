@@ -10,6 +10,7 @@ const {
 } = require("@salesforce-sentry/cli-shared/utils/sfdx");
 const { parseDSN } = require("@salesforce-sentry/cli-shared/utils/dsn");
 const runner = require("@salesforce-sentry/cli-shared/runner");
+const migrations = require("../migrations");
 
 const xmlParser = new XMLParser({
   ignoreAttributes: false,
@@ -171,7 +172,8 @@ async function validate(projectArg) {
   process.stdout.write(pc.dim("  Scanning for uninstrumented files…"));
   const violations = await runner.runValidations(projectRoot, {
     capturePrefix: "sentrysdk.Sentry",
-    sentryImportPath: "sentrysdk/sentryMixin"
+    sentryImportPath: "sentrysdk/sentryMixin",
+    migrations
   });
   process.stdout.write("\r" + " ".repeat(50) + "\r");
 

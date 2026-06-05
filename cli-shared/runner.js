@@ -6,10 +6,10 @@ const crypto = require("crypto");
 const { execSync } = require("child_process");
 const { findProjectFiles, readSfdxProject } = require("./utils/sfdx");
 const { readState, writeState } = require("./state");
-const registry = require("./migrations");
 
 /**
- * @typedef {{ capturePrefix?: string, sentryImportPath?: string, excludeDir?: string }} RunnerOptions
+ * @typedef {{ version: string, transform: Function, validate: Function, idempotent?: boolean, optional?: boolean }} Migration
+ * @typedef {{ capturePrefix?: string, sentryImportPath?: string, excludeDir?: string, migrations: Migration[] }} RunnerOptions
  * @typedef {{ path: string, label: string, oldContent: string, newContent: string, migrationVersion: string }} PendingTransform
  * @typedef {{ filePath: string, message: string, severity: 'warn'|'error' }} Violation
  */
@@ -49,8 +49,8 @@ function requireCleanGit(projectRoot) {
   }
 }
 
-function migrationIndex(version) {
-  return registry.findIndex((m) => m.version === version);
+function migrationIndex(version, migrations) {
+  return migrations.findIndex((m) => m.version === version);
 }
 
 function fileContentHash(filePath) {
@@ -74,6 +74,8 @@ async function collectPendingTransforms(projectRoot, options = {}) {
   requireSfdxProject(projectRoot);
   requireCleanGit(projectRoot);
 
+  const { migrations } = options;
+
   const state = readState(projectRoot);
   const allFiles = findProjectFiles(projectRoot, () => true);
 
@@ -82,8 +84,8 @@ async function collectPendingTransforms(projectRoot, options = {}) {
   // see the output of earlier pending migrations rather than stale disk content.
   const pendingContent = new Map();
 
-  for (const migration of registry) {
-    const mIdx = migrationIndex(migration.version);
+  for (const migration of migrations) {
+    const mIdx = migrationIndex(migration.version, migrations);
 
     const pendingFiles = allFiles.filter((f) => {
       const rel = path.relative(projectRoot, f);
@@ -96,7 +98,7 @@ async function collectPendingTransforms(projectRoot, options = {}) {
       }
 
       if (!entry) return true;
-      const entryIdx = migrationIndex(entry.migration);
+      const entryIdx = migrationIndex(entry.migration, migrations);
       return entryIdx < mIdx;
     });
 
@@ -121,13 +123,14 @@ async function collectPendingTransforms(projectRoot, options = {}) {
  * @param {string} projectRoot
  * @param {string} filePath - absolute path to the instrumented file
  * @param {string} migrationVersion - e.g. "v0.1"
+ * @param {Migration[]} migrations
  */
-function saveFileState(projectRoot, filePath, migrationVersion) {
+function saveFileState(projectRoot, filePath, migrationVersion, migrations) {
   const state = readState(projectRoot);
   const rel = path.relative(projectRoot, filePath);
   const existing = state.files[rel] ?? {};
   const hash = fileContentHash(filePath);
-  const migration = registry.find((m) => m.version === migrationVersion);
+  const migration = migrations.find((m) => m.version === migrationVersion);
 
   const idempotentHashes = { ...existing.idempotentHashes };
   if (migration?.idempotent) {
@@ -161,9 +164,10 @@ function saveFileState(projectRoot, filePath, migrationVersion) {
 async function runValidations(projectRoot, options = {}) {
   requireSfdxProject(projectRoot);
   const allFiles = findProjectFiles(projectRoot, () => true);
+  const { migrations } = options;
 
   const violations = [];
-  for (const migration of registry) {
+  for (const migration of migrations) {
     const migrationViolations = await migration.validate(allFiles, options);
     violations.push(...migrationViolations);
   }

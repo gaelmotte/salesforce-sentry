@@ -11,6 +11,7 @@ const {
 } = require("@salesforce-sentry/cli-shared/utils/sfdx");
 const { parseDSN } = require("@salesforce-sentry/cli-shared/utils/dsn");
 const runner = require("@salesforce-sentry/cli-shared/runner");
+const migrations = require("../migrations");
 
 const xmlParser = new XMLParser({
   ignoreAttributes: false,
@@ -204,7 +205,8 @@ async function validate(projectArg) {
   const violations = await runner.runValidations(projectRoot, {
     capturePrefix: "Sentry",
     sentryImportPath: "c/sentryMixin",
-    excludeDir
+    excludeDir,
+    migrations
   });
   process.stdout.write("\r" + " ".repeat(50) + "\r");
 
