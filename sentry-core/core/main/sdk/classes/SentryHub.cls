@@ -88,8 +88,9 @@ public with sharing class SentryHub {
     client.transportEvents(events, scopes.get(scopes.size() - 1));
   }
 
-  // public void addBreadcrumb(SentryBreadcrumb crumb) {
-  // }
+  public void addBreadcrumb(SentryBreadcrumb crumb) {
+    getCurrentScope().addBreadcrumb(crumb);
+  }
 
   // public String getLastEventId() {
   //   // TODO implement this

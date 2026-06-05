@@ -27,9 +27,11 @@ function shouldSkip(filePath) {
 function transform(filePath, content) {
   const normalized = filePath.replace(/\\/g, "/");
 
-  // Strip global access modifier — not needed when vendored into the same package
   if (filePath.endsWith(".cls") || filePath.endsWith(".trigger")) {
+    // Strip global access modifier — not needed when vendored into the same package
     content = content.replace(/\bglobal\b/g, "public");
+    // Activate ISV-only lines (System.debug calls suppressed in the end-user build)
+    content = content.replace(/^(\s*)\/\/ ISV-ONLY: /gm, "$1");
   }
 
   // CMT type visibility: Protected hides records from subscriber org admins
