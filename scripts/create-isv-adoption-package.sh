@@ -30,6 +30,7 @@ fi
 echo "  Package alias: $PACKAGE_ALIAS"
 
 echo "Running 'sf package version create' (this may take a few minutes)..."
+cd "$PROJECT_ROOT"
 SF_OUTPUT="$(sf package version create \
   --package "$PACKAGE_ALIAS" \
   --code-coverage \
