@@ -5,7 +5,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MONOREPO_ROOT="$SCRIPT_DIR/.."
 PROJECT_ROOT="$MONOREPO_ROOT/sentry-isv-adoption"
 SFDX_PROJECT="$PROJECT_ROOT/sfdx-project.json"
-SCRATCH_DEF="$MONOREPO_ROOT/sentry-isv-sample/config/project-scratch-def.json"
 
 if ! command -v sf &>/dev/null; then
   echo "Error: 'sf' (Salesforce CLI) is not installed or not in PATH." >&2
@@ -13,11 +12,6 @@ if ! command -v sf &>/dev/null; then
 fi
 if ! command -v jq &>/dev/null; then
   echo "Error: 'jq' is not installed or not in PATH." >&2
-  exit 1
-fi
-
-if [[ ! -f "$SCRATCH_DEF" ]]; then
-  echo "Error: scratch def not found at $SCRATCH_DEF" >&2
   exit 1
 fi
 
@@ -50,12 +44,21 @@ if [[ -z "$NEW_ID" ]]; then
 fi
 echo "  New subscriberPackageVersionId: $NEW_ID"
 
-OLD_ID="$(jq -r '.packageVersions[0].subscriberPackageVersionId' "$SCRATCH_DEF")"
-echo "Updating $SCRATCH_DEF"
-echo "  $OLD_ID  →  $NEW_ID"
+ORG_ALIAS="$(date +%Y%m%d)"
+SAMPLE_ROOT="$MONOREPO_ROOT/sentry-isv-sample"
 
-TMP_FILE="$(mktemp)"
-jq --arg id "$NEW_ID" '.packageVersions[0].subscriberPackageVersionId = $id' "$SCRATCH_DEF" > "$TMP_FILE"
-mv "$TMP_FILE" "$SCRATCH_DEF"
+echo "Creating scratch org '$ORG_ALIAS'..."
+cd "$SAMPLE_ROOT"
+sf org create scratch \
+  --definition-file config/project-scratch-def.json \
+  --alias "$ORG_ALIAS" \
+  --set-default \
+  --duration-days 7
 
-echo "Done."
+echo "Installing package $NEW_ID into org '$ORG_ALIAS'..."
+sf package install \
+  --package "$NEW_ID" \
+  --target-org "$ORG_ALIAS" \
+  --wait 20
+
+echo "Done. Scratch org alias: $ORG_ALIAS"

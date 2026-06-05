@@ -9,10 +9,5 @@
     "mobileSettings": {
       "enableS1EncryptedStoragePref2": false
     }
-  },
-  "packageVersions": [
-    {
-      "subscriberPackageVersionId": "04tQy000000VvrdIAC"
-    }
-  ]
+  }
 }
