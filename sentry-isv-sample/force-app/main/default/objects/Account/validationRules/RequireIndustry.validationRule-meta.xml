@@ -4,6 +4,7 @@
     <active>true</active>
     <description
   >All accounts must have an Industry set for reporting. AccountController.updateAccountStatus() only updates Description, so any update on an account with a blank Industry triggers this rule → DmlException → Sentry capture.</description>
-    <errorConditionFormula>ISBLANK(Industry)</errorConditionFormula>
+    <errorConditionFormula
+  >AND(NOT(ISNEW()), ISPICKVAL(Industry, ""))</errorConditionFormula>
     <errorMessage>Industry is required on all Account records.</errorMessage>
 </ValidationRule>

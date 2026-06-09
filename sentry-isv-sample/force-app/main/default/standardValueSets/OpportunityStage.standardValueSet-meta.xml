@@ -63,7 +63,6 @@
         <label>Closed Won</label>
         <probability>100</probability>
         <forecastCategory>Closed</forecastCategory>
-        <won>true</won>
     </standardValue>
     <standardValue>
         <fullName>Closed Lost</fullName>
@@ -71,7 +70,6 @@
         <label>Closed Lost</label>
         <probability>0</probability>
         <forecastCategory>Omitted</forecastCategory>
-        <lost>true</lost>
     </standardValue>
     <!-- Customer-added stages unknown to the ISV package — trigger validateStageProbability to throw -->
     <standardValue>
