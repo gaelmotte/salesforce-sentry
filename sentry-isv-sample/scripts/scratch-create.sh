@@ -11,7 +11,7 @@ if [[ ! -f "$VERSION_ID_FILE" ]]; then
 fi
 
 NEW_ID="$(cat "$VERSION_ID_FILE")"
-ORG_ALIAS="$(date +%Y%m%d)"
+ORG_ALIAS="$(date +%Y%m%d-%H%M)"
 
 echo "Creating scratch org '$ORG_ALIAS'..."
 sf org create scratch \

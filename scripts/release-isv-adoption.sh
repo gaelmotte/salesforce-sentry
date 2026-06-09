@@ -38,7 +38,7 @@ rsync -a --delete "$PREADOPTION/force-app/main/"  "$ADOPTION/instrumented/main/"
 rsync -a --delete "$PREADOPTION/force-app/sentry/" "$ADOPTION/instrumented/sentry/"
 
 echo "==> [5/6] package: building adoption package, creating scratch org, and installing package..."
-turbo run scratch:create --filter=sentry-isv-sample
+npx turbo run scratch:create --filter=sentry-isv-sample
 
 echo "==> [6/6] reset: restoring sentry-isv-preadoption to clean state..."
 git -C "$MONOREPO_ROOT" restore sentry-isv-preadoption/
