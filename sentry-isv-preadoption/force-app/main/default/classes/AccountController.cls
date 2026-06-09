@@ -1,7 +1,7 @@
-public with sharing class AccountController {
+global with sharing class AccountController {
   // Plain @AuraEnabled method — codemod should wrap and use AuraHandledException
   @AuraEnabled(cacheable=true)
-  public static Account getAccountDetails(Id accountId) {
+  global static Account getAccountDetails(Id accountId) {
     return [
       SELECT Id, Name, Industry, AnnualRevenue, NumberOfEmployees, OwnerId
       FROM Account
@@ -12,7 +12,7 @@ public with sharing class AccountController {
 
   // Another @AuraEnabled — DML, non-cacheable
   @AuraEnabled
-  public static void updateAccountStatus(Id accountId, String status) {
+  global static void updateAccountStatus(Id accountId, String status) {
     System.debug('Updating account ' + accountId + ' status to: ' + status);
     Account acc = new Account(Id = accountId, Description = status);
     update acc;
@@ -20,7 +20,7 @@ public with sharing class AccountController {
   }
 
   @AuraEnabled(cacheable=true)
-  public static List<Contact> getContactsByAccount(Id accountId) {
+  global static List<Contact> getContactsByAccount(Id accountId) {
     return [
       SELECT Id, FirstName, LastName, Email, Phone
       FROM Contact
@@ -31,7 +31,7 @@ public with sharing class AccountController {
 
   // Already has try-catch but no Sentry — codemod should SKIP this one
   @AuraEnabled
-  public static List<Account> searchAccounts(String searchTerm) {
+  global static List<Account> searchAccounts(String searchTerm) {
     try {
       String query = '%' + searchTerm + '%';
       return [

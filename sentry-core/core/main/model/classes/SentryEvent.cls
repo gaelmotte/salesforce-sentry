@@ -66,6 +66,9 @@ global with sharing class SentryEvent implements JSONDeserializer.Deserializable
       when 'environment' {
         this.environment = (String) value;
       }
+      when 'release' {
+        this.release = (String) value;
+      }
       when 'transaction' {
         this.transac = (String) value;
       }

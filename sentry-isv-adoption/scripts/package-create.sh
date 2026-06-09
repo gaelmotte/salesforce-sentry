@@ -9,15 +9,20 @@ SF_OUTPUT="$(sf package version create \
   --code-coverage \
   --installation-key-bypass \
   --json \
-  --wait 20)"
+  --wait 20 2>&1)" || true
 
-NEW_ID="$(echo "$SF_OUTPUT" | node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).result.SubscriberPackageVersionId")"
+NEW_ID="$(echo "$SF_OUTPUT" | node -e "
+  let d = '';
+  process.stdin.on('data', c => d += c);
+  process.stdin.on('end', () => {
+    const json = d.slice(d.indexOf('{'));
+    const result = JSON.parse(json);
+    if (result.status !== 0) {
+      process.stderr.write('sf error: ' + (result.message || JSON.stringify(result)) + '\n');
+      process.exit(1);
+    }
+    process.stdout.write(result.result.SubscriberPackageVersionId);
+  });
+")"
 
-if [[ -z "$NEW_ID" ]]; then
-  echo "Error: could not extract SubscriberPackageVersionId from sf output:" >&2
-  echo "$SF_OUTPUT" >&2
-  exit 1
-fi
-
-echo "$NEW_ID" > .last-package-version-id
 echo "Package version created: $NEW_ID"

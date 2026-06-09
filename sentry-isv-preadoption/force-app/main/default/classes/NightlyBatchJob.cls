@@ -1,11 +1,11 @@
-public class NightlyBatchJob implements Database.Batchable<SObject> {
-  public Database.QueryLocator start(Database.BatchableContext bc) {
+global class NightlyBatchJob implements Database.Batchable<SObject> {
+  global Database.QueryLocator start(Database.BatchableContext bc) {
     return Database.getQueryLocator(
       'SELECT Id, LastActivityDate FROM Opportunity WHERE IsClosed = false'
     );
   }
 
-  public void execute(Database.BatchableContext bc, List<Opportunity> scope) {
+  global void execute(Database.BatchableContext bc, List<Opportunity> scope) {
     System.debug(
       LoggingLevel.INFO,
       'NightlyBatchJob.execute — processing ' + scope.size() + ' records'
@@ -23,7 +23,7 @@ public class NightlyBatchJob implements Database.Batchable<SObject> {
     }
   }
 
-  public void finish(Database.BatchableContext bc) {
+  global void finish(Database.BatchableContext bc) {
     AsyncApexJob job = [
       SELECT Id, Status, NumberOfErrors
       FROM AsyncApexJob

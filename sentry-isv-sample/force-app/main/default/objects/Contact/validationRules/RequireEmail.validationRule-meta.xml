@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RequireEmail</fullName>
+    <active>true</active>
+    <description
+  >All contacts created via the REST API must include an email address for deliverability. ContactRestService.createContact() sets Email from the JSON payload; omitting the field leaves it null, triggering this rule → DmlException → Sentry capture.</description>
+    <errorConditionFormula>ISBLANK(Email)</errorConditionFormula>
+    <errorMessage>Email is required on all Contact records.</errorMessage>
+</ValidationRule>
