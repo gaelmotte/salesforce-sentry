@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "test": "node --test 'test/*.test.js'",
-    "release": "npm publish"
+    "release": "npm view $npm_package_name@$npm_package_version version 2>/dev/null && echo 'already published, skipping' || npm publish"
   },
   "dependencies": {
     "diff": "^5.2.0",
