@@ -79,6 +79,10 @@ npx @salesforce-sentry/isv-cli adopt
 
 No namespace prefix on `Sentry` calls — the SDK is vendored into the same package.
 
+**Optional migration (prompted):**
+
+`adopt` also offers to replace `System.debug()` calls with `Sentry.log()` across all `.cls` and `.trigger` files. `Sentry.log()` is a drop-in replacement that captures the message as a breadcrumb on the current scope instead of (or alongside) writing to the debug log. Breadcrumbs are attached to the next error event sent to Sentry, giving you the log trail leading up to the exception. The migration is idempotent and skips strings and comments.
+
 ### `validate`
 
 Checks that the SDK is correctly wired up:

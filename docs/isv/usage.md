@@ -17,6 +17,17 @@ try {
 
 Add this to catch blocks in your triggers, service classes, and controllers wherever you want visibility in Sentry.
 
+## Sentry.log()
+
+`Sentry.log()` is a drop-in replacement for `System.debug()`. Instead of writing to the Apex debug log, it adds a breadcrumb to the current scope. Breadcrumbs are attached to the next error event captured by `Sentry.captureException()`, giving you a trail of log output that led up to the exception.
+
+```apex
+Sentry.log('Starting account sync');
+Sentry.log(System.LoggingLevel.WARN, 'Retry limit approaching: ' + retryCount);
+```
+
+The `adopt` codemod can migrate your existing `System.debug()` calls automatically — it rewrites `.cls` and `.trigger` files while skipping strings and comments.
+
 ## Flows
 
 In Flow Builder, search for **"Capture Sentry Event"** — the same element name as the end-user SDK. Drag it onto the canvas, connect it from the fault path of any monitored element, and set the **Error Message** input to `{!$Flow.FaultMessage}`.

@@ -54,6 +54,8 @@ npx @salesforce-sentry/isv-cli adopt
 
 This runs codemods that instrument your existing package code — adding `Sentry.captureException()` calls to Apex catch blocks, wiring Flow fault paths to the Capture Sentry Event element, and wrapping LWC components with the appropriate mixin.
 
+You will also be prompted for an optional migration: replacing `System.debug()` calls with `Sentry.log()` across your Apex files. This is a drop-in replacement that captures each log call as a breadcrumb, giving you a trail of debug output attached to the next error Sentry receives. See [Sentry.log()](./usage#sentrylog) for details.
+
 Review the changes before committing. The codemod covers common cases; you may want to add instrumentation manually in areas it didn't reach. See [Using the SDK in Your Package](./usage) for the full usage patterns.
 
 ## 4. Package
