@@ -8,47 +8,98 @@ salesforce-sentry is a Sentry SDK for the Salesforce Platform, enabling error tr
 
 ## Commands
 
-```bash
-# LWC/JavaScript
-npm run lint                  # ESLint on Aura/LWC
-npm run test                  # Run LWC Jest tests
-npm run test:unit:watch       # Watch mode
-npm run test:unit:coverage    # Coverage report
-npm run prettier              # Format code
-npm run prettier:verify       # Verify formatting
+### First-time setup
 
-# Docs
-npm run docs:dev              # VitePress dev server
-npm run docs:build            # Build docs
+```bash
+npm install       # install all deps and wire workspace symlinks between local packages
+npm run build     # seed all derived directories in topological order:
+                  #   sentry-core:build  → core/deps/apex-json-serialization/
+                  #   sentry-isv:build   → sentry-isv/core/ (copied from sentry-core source)
+                  #   sentry-enduser:build → sentry-enduser/core/ (copied from sentry-core)
 ```
 
-Apex tests are run via SFDX CLI against a Salesforce org:
+### Active development
+
+```bash
+npm run dev       # start watch scripts for sentry-core and sentry-enduser in parallel
+                  # sentry-enduser watcher only starts after sentry-core:build completes
+```
+
+Changes to `cli-shared`, `isv-cli`, or `enduser-cli` are immediately visible to consumers — no rebuild needed (workspace symlinks). Changes to `sentry-core` Apex/LWC are picked up automatically by the sentry-enduser watcher; for sentry-isv you need a manual rebuild:
+
+```bash
+npm run build -- --filter=@salesforce-sentry/sentry-isv
+```
+
+### Testing
+
+```bash
+npm run test                          # run all LWC Jest tests across all packages (via turbo)
+npm run test -- --filter=sentry-core  # single package
+
+npm run test:unit:watch               # watch mode (run from within a specific package)
+npm run test:unit:coverage            # coverage report (run from within a specific package)
+```
+
+Apex tests require a live Salesforce org:
 
 ```bash
 sf apex run test --test-level RunLocalTests
-sf apex run test --class-names MyTestClass   # Single test class
+sf apex run test --class-names MyTestClass
 ```
 
-Deploy to a Salesforce org:
+### Linting and formatting
 
 ```bash
-source .env  # sets SENTRY_REMOTE_SITE and SENTRY_DSN
+npm run lint              # ESLint on Aura/LWC across all packages
+npm run prettier          # format all source files
+npm run prettier:verify   # verify formatting
+```
+
+### Deploying to a Salesforce org
+
+```bash
+source .env               # sets SENTRY_REMOTE_SITE and SENTRY_DSN
 sf project deploy start
+```
+
+### Docs
+
+```bash
+npm run docs:dev          # VitePress dev server
+npm run docs:build        # build docs
+```
+
+### Releasing npm packages
+
+Bump versions first (in dependency order: cli-shared and sentry-isv before the CLIs), then:
+
+```bash
+npm run release           # publishes all npm packages in topological order via turbo:
+                          #   1. @salesforce-sentry/cli-shared
+                          #   2. @salesforce-sentry/sentry-isv
+                          #   3. @salesforce-sentry/isv-cli, @salesforce-sentry/enduser-cli
 ```
 
 ## Monorepo Structure
 
-| Directory                 | Purpose                                                                               |
-| ------------------------- | ------------------------------------------------------------------------------------- |
-| `sentry-core/`            | Base SDK — Apex classes, LWC mixin, platform event, metadata                          |
-| `sentry-enduser/`         | Managed package (namespace `sentrysdk`) — setup UI, DebugLogs integration             |
-| `sentry-enduser-sample/`  | Sample customer org implementation                                                    |
-| `sentry-isv-preadoption/` | ISV working directory — vendor SDK + instrument Apex/LWC here before packaging        |
-| `sentry-isv-adoption/`    | ISV managed package — holds the instrumented output (`instrumented/`) that gets built |
-| `sentry-isv-sample/`      | Sample ISV customer org (scratch org scratch-def used by the adoption pipeline)       |
-| `isv-cli/`                | CLI tool driving the ISV adoption pipeline (`vendor`, `setup`, `adopt` commands)      |
-| `scripts/`                | Shell scripts automating the ISV packaging pipeline                                   |
-| `docs/`                   | VitePress documentation site                                                          |
+| Directory                  | Purpose                                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `sentry-core/`             | Base SDK — Apex classes, LWC mixin, platform event, metadata                             |
+| `sentry-enduser/`          | Managed package (namespace `sentrysdk`) — setup UI, DebugLogs integration                |
+| `sentry-enduser-adoption/` | Sample enduser adoption project                                                          |
+| `sentry-enduser-sample/`   | Sample customer org implementation                                                       |
+| `sentry-isv/`              | npm package — transformed SDK source for ISV vendoring (`@salesforce-sentry/sentry-isv`) |
+| `sentry-isv-preadoption/`  | ISV working directory — vendor SDK + instrument Apex/LWC here before packaging           |
+| `sentry-isv-adoption/`     | ISV managed package — holds the instrumented output (`instrumented/`) that gets built    |
+| `sentry-isv-sample/`       | Sample ISV customer org (scratch org scratch-def used by the adoption pipeline)          |
+| `isv-cli/`                 | npm — CLI driving the ISV adoption pipeline (`vendor`, `setup`, `adopt` commands)        |
+| `enduser-cli/`             | npm — CLI driving the enduser adoption pipeline                                          |
+| `cli-shared/`              | npm — shared utilities and codemods used by both CLIs                                    |
+| `scripts/`                 | Shell scripts automating the ISV packaging pipeline                                      |
+| `docs/`                    | VitePress documentation site                                                             |
+
+All packages are npm workspace members. Build orchestration uses Turborepo (`turbo.json`). Published packages are scoped under `@salesforce-sentry/`.
 
 ## ISV Adoption Pipeline
 
@@ -69,19 +120,24 @@ ISVs embed the SDK in their own managed package rather than installing it as a d
 This script runs 6 steps end-to-end:
 
 1. **vendor** — `isv-cli vendor sentry-isv-preadoption` copies the SDK source into `sentry-isv-preadoption/force-app/sentry/`
-2. **setup** — `isv-cli setup sentry-isv-preadoption` interactively generates the config class and metadata (prompts for DSN, namespace, etc.)
-3. **adopt** — `isv-cli adopt sentry-isv-preadoption` instruments Apex and LWC entry points in-place
+2. **adopt** — `isv-cli adopt sentry-isv-preadoption` instruments Apex and LWC entry points in-place
+3. **setup** — `isv-cli setup sentry-isv-preadoption` interactively generates the config class and metadata (prompts for DSN, namespace, etc.)
 4. **sync** — `rsync` copies the instrumented output from `sentry-isv-preadoption/force-app/` into `sentry-isv-adoption/instrumented/`
-5. **package** — `./scripts/create-isv-adoption-package.sh` runs `sf package version create` for `sentry-isv-adoption` and updates the subscriber package version ID in `sentry-isv-sample/config/project-scratch-def.json`
+5. **package + scratch org** — `turbo run scratch:create --filter=sentry-isv-sample` runs `sf package version create` in `sentry-isv-adoption`, then creates a scratch org in `sentry-isv-sample` and installs the new version
 6. **reset** — `git restore` + `git clean` bring `sentry-isv-preadoption/force-app/main/` back to the checked-in state and delete `force-app/sentry/`
 
-### Partial run — package only
+Steps 1–4 and 6 are stateful/interactive and stay in the shell script. Step 5 is orchestrated by turbo, which guarantees `package:create` completes before `scratch:create` starts.
+
+### Partial runs
 
 ```bash
-./scripts/create-isv-adoption-package.sh
-```
+# Re-package and create scratch org when instrumented/ is already up to date:
+turbo run scratch:create --filter=sentry-isv-sample
 
-Use this when `sentry-isv-adoption/instrumented/` is already up to date and you only need to cut a new package version (e.g. after a metadata-only change).
+# Vendor and adopt only (no setup, no packaging):
+npm run vendor --workspace=sentry-isv-preadoption
+npm run adopt  --workspace=sentry-isv-preadoption
+```
 
 ## Architecture
 
