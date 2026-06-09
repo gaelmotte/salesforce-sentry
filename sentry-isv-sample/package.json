@@ -1,9 +1,10 @@
 {
-  "name": "salesforce-app",
+  "name": "sentry-isv-sample",
   "private": true,
   "version": "1.0.0",
   "description": "Salesforce App",
   "scripts": {
+    "scratch:create": "bash scripts/scratch-create.sh",
     "lint": "eslint **/{aura,lwc}/**/*.js",
     "test": "npm run test:unit",
     "test:unit": "sfdx-lwc-jest",

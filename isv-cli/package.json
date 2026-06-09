@@ -3,6 +3,9 @@
   "version": "0.3.0",
   "description": "CLI to vendor and adopt the salesforce-sentry ISV SDK",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "sentry-isv": "index.js"
   },
@@ -14,9 +17,12 @@
   "engines": {
     "node": ">=18"
   },
+  "scripts": {
+    "release": "npm view $npm_package_name@$npm_package_version version 2>/dev/null && echo 'already published, skipping' || npm publish"
+  },
   "dependencies": {
-    "@salesforce-sentry/cli-shared": "^0.3.0",
-    "@salesforce-sentry/sentry-isv": "^0.2.0",
+    "@salesforce-sentry/cli-shared": "*",
+    "@salesforce-sentry/sentry-isv": "*",
     "diff": "^5.2.0",
     "fast-xml-parser": "^4.3.6",
     "jscodeshift": "^0.16.1",

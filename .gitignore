@@ -45,3 +45,9 @@ $RECYCLE.BIN/
 **/venv/
 
 sentry-isv/sentry-isv/core/**
+
+.turbo/
+
+# VitePress build output and dev cache
+docs/.vitepress/cache/
+docs/.vitepress/dist/
