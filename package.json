@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Sentry SDK for the Salesforce Platform",
+  "packageManager": "npm@10.9.2",
   "workspaces": [
     "cli-shared",
     "isv-cli",
