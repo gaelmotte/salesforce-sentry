@@ -8,8 +8,10 @@ const SRC = path.resolve(__dirname, "../sentry-core/core/main");
 const DEST = path.resolve(CORE_ROOT, "main");
 
 const DEP_SRC = path.resolve(
-  __dirname,
-  "node_modules/@guimini/apex-json-serialization/force-app/main"
+  path.dirname(
+    require.resolve("@guimini/apex-json-serialization/package.json")
+  ),
+  "force-app/main"
 );
 const DEP_DEST = path.resolve(CORE_ROOT, "deps/apex-json-serialization");
 
