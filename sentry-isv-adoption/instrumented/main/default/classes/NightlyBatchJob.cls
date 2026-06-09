@@ -1,5 +1,5 @@
-public class NightlyBatchJob implements Database.Batchable<SObject> {
-  public Database.QueryLocator start(Database.BatchableContext bc) {
+global class NightlyBatchJob implements Database.Batchable<SObject> {
+  global Database.QueryLocator start(Database.BatchableContext bc) {
     try {
       return Database.getQueryLocator(
         'SELECT Id, LastActivityDate FROM Opportunity WHERE IsClosed = false'
@@ -10,7 +10,7 @@ public class NightlyBatchJob implements Database.Batchable<SObject> {
     }
   }
 
-  public void execute(Database.BatchableContext bc, List<Opportunity> scope) {
+  global void execute(Database.BatchableContext bc, List<Opportunity> scope) {
     try {
       Sentry.log(
         LoggingLevel.INFO,
@@ -33,7 +33,7 @@ public class NightlyBatchJob implements Database.Batchable<SObject> {
     }
   }
 
-  public void finish(Database.BatchableContext bc) {
+  global void finish(Database.BatchableContext bc) {
     try {
       AsyncApexJob job = [
         SELECT Id, Status, NumberOfErrors
