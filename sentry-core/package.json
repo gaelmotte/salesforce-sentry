@@ -12,7 +12,8 @@
     "test:unit:coverage": "sfdx-lwc-jest --coverage",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
     "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
-    "start": "cpx \"node_modules/@guimini/apex-json-serialization/force-app/main/**/*\" core/deps/apex-json-serialization --watch"
+    "build": "cpx \"node_modules/@guimini/apex-json-serialization/force-app/main/**/*\" core/deps/apex-json-serialization",
+    "dev": "cpx \"node_modules/@guimini/apex-json-serialization/force-app/main/**/*\" core/deps/apex-json-serialization --watch"
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^1.1.2",

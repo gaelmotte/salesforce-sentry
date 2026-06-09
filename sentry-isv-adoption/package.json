@@ -1,9 +1,10 @@
 {
-  "name": "sentry-enduser-adoption",
+  "name": "sentry-isv-adoption",
   "private": true,
   "version": "1.0.0",
   "description": "Sample repo that mimicks what our users migh have in temrs of existing metadata",
   "scripts": {
+    "package:create": "bash scripts/package-create.sh",
     "lint": "eslint **/{aura,lwc}/**",
     "test": "npm run test:unit",
     "test:unit": "sfdx-lwc-jest",
@@ -16,8 +17,8 @@
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^1.1.2",
     "@prettier/plugin-xml": "^2.0.1",
-    "@salesforce-sentry/isv-cli": "^0.1.5",
-    "@salesforce-sentry/sentry-isv": "^0.1.3",
+    "@salesforce-sentry/isv-cli": "*",
+    "@salesforce-sentry/sentry-isv": "*",
     "@salesforce/eslint-config-lwc": "^3.2.3",
     "@salesforce/eslint-plugin-aura": "^2.0.0",
     "@salesforce/eslint-plugin-lightning": "^1.0.0",

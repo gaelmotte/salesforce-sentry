@@ -3,7 +3,23 @@
   "private": true,
   "version": "1.0.0",
   "description": "Sentry SDK for the Salesforce Platform",
+  "workspaces": [
+    "cli-shared",
+    "isv-cli",
+    "enduser-cli",
+    "sentry-isv",
+    "sentry-core",
+    "sentry-enduser",
+    "sentry-enduser-adoption",
+    "sentry-enduser-sample",
+    "sentry-isv-adoption",
+    "sentry-isv-preadoption",
+    "sentry-isv-sample"
+  ],
   "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "release": "turbo run release",
     "lint": "eslint **/{aura,lwc}/**",
     "test": "npm run test:unit",
     "test:unit": "sfdx-lwc-jest",
@@ -14,7 +30,6 @@
     "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
     "postinstall": "husky install",
     "precommit": "lint-staged",
-    "start": "concurrently \"npm run start --prefix sentry-core\" \"npm run start --prefix sentry-enduser\"",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -35,6 +50,7 @@
     "lint-staged": "^12.3.7",
     "prettier": "^2.6.0",
     "prettier-plugin-apex": "^1.10.0",
+    "turbo": "^2",
     "vitepress": "^2.0.0-alpha.17"
   },
   "lint-staged": {

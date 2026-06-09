@@ -1,0 +1,34 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "core/deps/**", "sentry-isv/core/**"]
+    },
+    "@salesforce-sentry/sentry-isv#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["build.js", "package.json", "../sentry-core/core/main/**"],
+      "outputs": ["sentry-isv/core/**"]
+    },
+    "dev": {
+      "persistent": true,
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "cache": false
+    },
+    "lint": {},
+    "release": {
+      "dependsOn": ["^release", "build"],
+      "cache": false
+    },
+    "package:create": {
+      "outputs": [".last-package-version-id"],
+      "cache": false
+    },
+    "sentry-isv-sample#scratch:create": {
+      "dependsOn": ["sentry-isv-adoption#package:create"],
+      "cache": false
+    }
+  }
+}

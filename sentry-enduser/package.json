@@ -12,7 +12,8 @@
     "test:unit:coverage": "sfdx-lwc-jest --coverage",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
     "prettier:verify": "prettier --list-different \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
-    "start": "cpx \"../sentry-core/core/**/*\" sentry-enduser/core --watch"
+    "build": "cpx \"../sentry-core/core/**/*\" sentry-enduser/core",
+    "dev": "cpx \"../sentry-core/core/**/*\" sentry-enduser/core --watch"
   },
   "devDependencies": {
     "@lwc/eslint-plugin-lwc": "^1.1.2",

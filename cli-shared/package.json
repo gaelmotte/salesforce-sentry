@@ -3,6 +3,9 @@
   "version": "0.3.0",
   "description": "Shared utilities, migration runner, and codemods for salesforce-sentry CLI tools",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   },
@@ -13,7 +16,8 @@
     "state.js"
   ],
   "scripts": {
-    "test": "node --test 'test/*.test.js'"
+    "test": "node --test 'test/*.test.js'",
+    "release": "npm publish"
   },
   "dependencies": {
     "diff": "^5.2.0",

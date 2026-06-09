@@ -3,6 +3,9 @@
   "version": "0.3.0",
   "description": "CLI to adopt the salesforce-sentry SDK in an SFDX project",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "sentry-enduser": "index.js"
   },
@@ -15,8 +18,11 @@
     "node": ">=18"
   },
   "main": "index.js",
+  "scripts": {
+    "release": "npm publish"
+  },
   "dependencies": {
-    "@salesforce-sentry/cli-shared": "^0.1.0",
+    "@salesforce-sentry/cli-shared": "*",
     "diff": "^5.2.0",
     "fast-xml-parser": "^4.3.6",
     "jscodeshift": "^0.16.1",
