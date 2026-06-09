@@ -27,4 +27,16 @@ sf package install \
   --wait 20 \
   --no-prompt
 
-echo "Done. Scratch org alias: $ORG_ALIAS"
+echo "Deploying subscriber metadata (validation rules, custom stages)..."
+sf project deploy start \
+  --target-org "$ORG_ALIAS" \
+  --wait 10
+
+echo "Seeding crash-scenario data..."
+sf apex run \
+  --file "$SCRIPT_DIR/seed-data.apex" \
+  --target-org "$ORG_ALIAS"
+
+echo ""
+echo "Running crash scenarios..."
+"$SCRIPT_DIR/crash-scenarios.sh" "$ORG_ALIAS"
