@@ -23,8 +23,8 @@
       "cache": false
     },
     "package:create": {
-      "outputs": [".last-package-version-id"],
-      "cache": false
+      "inputs": ["instrumented/**", "scripts/package-create.sh"],
+      "outputs": ["sfdx-project.json"]
     },
     "sentry-isv-sample#scratch:create": {
       "dependsOn": ["sentry-isv-adoption#package:create"],

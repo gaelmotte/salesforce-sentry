@@ -13,17 +13,27 @@ sep() { echo; printf '%.0s─' {1..60}; echo; }
 # ── Credentials ───────────────────────────────────────────────
 echo "Fetching org credentials..."
 read -r INSTANCE_URL ACCESS_TOKEN < <(
-  sf org display "${SF_ARGS[@]}" --json | node -e "
+  sf org display "${SF_ARGS[@]}" --json 2>/dev/null | node -e "
     const chunks = [];
     process.stdin.on('data', d => chunks.push(d));
     process.stdin.on('end', () => {
       const r = JSON.parse(Buffer.concat(chunks).toString()).result;
-      process.stdout.write(r.instanceUrl + ' ' + r.accessToken);
+      console.log(r.instanceUrl + ' ' + r.accessToken);
     });
   "
 )
 REST_BASE="$INSTANCE_URL/services/apexrest/sentrysdk"
+DATA_BASE="$INSTANCE_URL/services/data/v61.0"
 echo "Org: $INSTANCE_URL"
+
+echo "Fetching seed data IDs..."
+ACME_ID=$(sf data query "${SF_ARGS[@]}" \
+  --query "SELECT Id FROM Account WHERE Name='Acme Corp' LIMIT 1" \
+  --json 2>/dev/null | node -e "
+    let d='';
+    process.stdin.on('data',c=>d+=c);
+    process.stdin.on('end',()=>process.stdout.write(JSON.parse(d).result.records[0].Id));
+  ")
 
 # ── Helpers ────────────────────────────────────────────────────
 rest_call() {
@@ -36,7 +46,7 @@ rest_call() {
   raw=$(curl "${args[@]}" "$REST_BASE$path")
   local http_status body_text
   http_status=$(echo "$raw" | tail -1)
-  body_text=$(echo "$raw" | head -n -1)
+  body_text=$(echo "$raw" | sed '$d')
   echo "  HTTP $http_status — $body_text"
 }
 
@@ -50,9 +60,16 @@ rest_call POST /contacts '{"firstName":"John","lastName":"Doe"}'
 # ── Scenario 2 — VR on Account ────────────────────────────────
 sep
 echo "Scenario 2 — VR on Account"
-echo "  AccountController.updateAccountStatus() on Acme Corp (no Industry)"
-echo "  Expect: DmlException (RequireIndustry VR) → Sentry capture"
-sf apex run "${SF_ARGS[@]}" --file "$SCRIPT_DIR/crash-account-vr.apex"
+echo "  PATCH Account $ACME_ID (Description only, Industry blank)"
+echo "  Expect: 400 FIELD_CUSTOM_VALIDATION_EXCEPTION (RequireIndustry VR)"
+echo "  Note: captured by Sentry when triggered from LWC via AccountController."
+echo "        The sObject REST path bypasses the package controller."
+raw=$(curl -s -w "\n%{http_code}" -X PATCH \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"Description":"crash-test"}' \
+  "$DATA_BASE/sobjects/Account/$ACME_ID")
+echo "  HTTP $(echo "$raw" | tail -1) — $(echo "$raw" | sed '$d')"
 
 # ── Scenario 3 — NightlyBatchJob → unknown stage 'Stalled' ────
 sep
@@ -70,3 +87,5 @@ rest_call GET /contacts/000000000000000
 
 sep
 echo "Done. Check Sentry for captured events."
+echo "Opening scratch org (Acme Corp record)..."
+sf org open "${SF_ARGS[@]}" --path "/$ACME_ID"
