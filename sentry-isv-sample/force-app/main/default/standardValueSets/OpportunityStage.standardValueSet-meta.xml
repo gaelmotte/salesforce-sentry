@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Prospecting</fullName>
+        <default>true</default>
+        <label>Prospecting</label>
+        <probability>10</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Qualification</fullName>
+        <default>false</default>
+        <label>Qualification</label>
+        <probability>20</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Needs Analysis</fullName>
+        <default>false</default>
+        <label>Needs Analysis</label>
+        <probability>30</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Value Proposition</fullName>
+        <default>false</default>
+        <label>Value Proposition</label>
+        <probability>40</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Id. Decision Makers</fullName>
+        <default>false</default>
+        <label>Id. Decision Makers</label>
+        <probability>50</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Perception Analysis</fullName>
+        <default>false</default>
+        <label>Perception Analysis</label>
+        <probability>60</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal/Price Quote</fullName>
+        <default>false</default>
+        <label>Proposal/Price Quote</label>
+        <probability>70</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Negotiation/Review</fullName>
+        <default>false</default>
+        <label>Negotiation/Review</label>
+        <probability>80</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Won</fullName>
+        <default>false</default>
+        <label>Closed Won</label>
+        <probability>100</probability>
+        <forecastCategory>Closed</forecastCategory>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Lost</fullName>
+        <default>false</default>
+        <label>Closed Lost</label>
+        <probability>0</probability>
+        <forecastCategory>Omitted</forecastCategory>
+        <lost>true</lost>
+    </standardValue>
+    <!-- Customer-added stages unknown to the ISV package — trigger validateStageProbability to throw -->
+    <standardValue>
+        <fullName>On Hold</fullName>
+        <default>false</default>
+        <label>On Hold</label>
+        <probability>50</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+    <standardValue>
+        <fullName>Stalled</fullName>
+        <default>false</default>
+        <label>Stalled</label>
+        <probability>20</probability>
+        <forecastCategory>Pipeline</forecastCategory>
+    </standardValue>
+</StandardValueSet>

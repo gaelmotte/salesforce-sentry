@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RequireIndustry</fullName>
+    <active>true</active>
+    <description
+  >All accounts must have an Industry set for reporting. AccountController.updateAccountStatus() only updates Description, so any update on an account with a blank Industry triggers this rule → DmlException → Sentry capture.</description>
+    <errorConditionFormula>ISBLANK(Industry)</errorConditionFormula>
+    <errorMessage>Industry is required on all Account records.</errorMessage>
+</ValidationRule>
