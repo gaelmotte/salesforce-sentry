@@ -1,6 +1,7 @@
 import { LightningElement, api } from "lwc";
 
-import { SentryMixin } from "c/sentryMixin";
+// eslint-disable-next-line no-unused-vars
+import { SentryMixin, Sentry } from "c/sentryMixin";
 
 export default class ContactCard extends SentryMixin(
   LightningElement,
@@ -13,6 +14,7 @@ export default class ContactCard extends SentryMixin(
   }
 
   handleClick() {
+    this[Sentry].log(`Contact selected: ${this.contact.Id}`);
     this.dispatchEvent(
       new CustomEvent("contactselected", { detail: this.contact.Id })
     );

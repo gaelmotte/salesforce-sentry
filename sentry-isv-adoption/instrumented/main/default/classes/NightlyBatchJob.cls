@@ -12,9 +12,14 @@ public class NightlyBatchJob implements Database.Batchable<SObject> {
 
   public void execute(Database.BatchableContext bc, List<Opportunity> scope) {
     try {
+      Sentry.log(
+        LoggingLevel.INFO,
+        'NightlyBatchJob.execute — processing ' + scope.size() + ' records'
+      );
       List<Opportunity> toUpdate = new List<Opportunity>();
       for (Opportunity opp : scope) {
         if (opp.LastActivityDate < Date.today().addDays(-90)) {
+          Sentry.log('Marking opportunity ' + opp.Id + ' as Stalled');
           opp.StageName = 'Stalled';
           toUpdate.add(opp);
         }
@@ -35,7 +40,7 @@ public class NightlyBatchJob implements Database.Batchable<SObject> {
         FROM AsyncApexJob
         WHERE Id = :bc.getJobId()
       ];
-      System.debug('NightlyBatchJob finished. Errors: ' + job.NumberOfErrors);
+      Sentry.log('NightlyBatchJob finished. Errors: ' + job.NumberOfErrors);
     } catch (Exception e) {
       Sentry.captureException(e);
       throw e;

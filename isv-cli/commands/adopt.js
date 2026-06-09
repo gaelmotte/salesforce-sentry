@@ -4,13 +4,15 @@ const path = require("path");
 const fs = require("fs");
 const runner = require("@salesforce-sentry/cli-shared/runner");
 const {
-  showDiffAndPrompt
+  showDiffAndPrompt,
+  promptOptionalMigrations
 } = require("@salesforce-sentry/cli-shared/utils/interactive");
 const {
   getSourceDirs,
   getDefaultSourceDir
 } = require("@salesforce-sentry/cli-shared/utils/sfdx");
 const pc = require("picocolors");
+const allMigrations = require("../migrations");
 
 async function adopt(projectArg) {
   const projectRoot = projectArg ? path.resolve(projectArg) : process.cwd();
@@ -38,12 +40,21 @@ async function adopt(projectArg) {
       .join(", ")}\n`
   );
 
+  const optionalMigrations = allMigrations.filter((m) => m.optional);
+  const selectedOptional = optionalMigrations.length
+    ? await promptOptionalMigrations(optionalMigrations)
+    : [];
+  const migrations = allMigrations.filter(
+    (m) => !m.optional || selectedOptional.includes(m.version)
+  );
+
   let transforms;
   try {
     transforms = await runner.collectPendingTransforms(projectRoot, {
       capturePrefix: "Sentry",
       sentryImportPath: "c/sentryMixin",
-      excludeDir
+      excludeDir,
+      migrations
     });
   } catch (e) {
     console.error(pc.red(e.message));
@@ -82,7 +93,8 @@ async function adopt(projectArg) {
       runner.saveFileState(
         projectRoot,
         transform.path,
-        transform.migrationVersion
+        transform.migrationVersion,
+        migrations
       );
       applied++;
       continue;
@@ -95,7 +107,8 @@ async function adopt(projectArg) {
       runner.saveFileState(
         projectRoot,
         transform.path,
-        transform.migrationVersion
+        transform.migrationVersion,
+        migrations
       );
       applied++;
       if (decision === "all") applyAll = true;

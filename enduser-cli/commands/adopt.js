@@ -8,6 +8,7 @@ const {
 } = require("@salesforce-sentry/cli-shared/utils/interactive");
 const { getSourceDirs } = require("@salesforce-sentry/cli-shared/utils/sfdx");
 const pc = require("picocolors");
+const migrations = require("../migrations");
 
 async function adopt(projectArg) {
   const projectRoot = projectArg ? path.resolve(projectArg) : process.cwd();
@@ -37,7 +38,8 @@ async function adopt(projectArg) {
   try {
     transforms = await runner.collectPendingTransforms(projectRoot, {
       capturePrefix: "sentrysdk.Sentry",
-      sentryImportPath: "sentrysdk/sentryMixin"
+      sentryImportPath: "sentrysdk/sentryMixin",
+      migrations
     });
   } catch (e) {
     console.error(pc.red(e.message));
@@ -73,7 +75,8 @@ async function adopt(projectArg) {
       runner.saveFileState(
         projectRoot,
         transform.path,
-        transform.migrationVersion
+        transform.migrationVersion,
+        migrations
       );
       applied++;
       continue;
@@ -86,7 +89,8 @@ async function adopt(projectArg) {
       runner.saveFileState(
         projectRoot,
         transform.path,
-        transform.migrationVersion
+        transform.migrationVersion,
+        migrations
       );
       applied++;
       if (decision === "all") applyAll = true;

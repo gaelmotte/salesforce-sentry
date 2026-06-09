@@ -13,8 +13,10 @@ public with sharing class AccountController {
   // Another @AuraEnabled — DML, non-cacheable
   @AuraEnabled
   public static void updateAccountStatus(Id accountId, String status) {
+    System.debug('Updating account ' + accountId + ' status to: ' + status);
     Account acc = new Account(Id = accountId, Description = status);
     update acc;
+    System.debug(LoggingLevel.INFO, 'Account status updated successfully');
   }
 
   @AuraEnabled(cacheable=true)

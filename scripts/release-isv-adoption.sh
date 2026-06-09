@@ -27,22 +27,22 @@ fi
 echo "==> [1/6] vendor: copying SDK into sentry-isv-preadoption..."
 node "$ISV_CLI" vendor "$PREADOPTION"
 
-echo "==> [2/6] setup: generating config class and metadata (interactive)..."
-node "$ISV_CLI" setup "$PREADOPTION"
-
-echo "==> [3/6] adopt: instrumenting Apex and LWC entry points..."
+echo "==> [2/6] adopt: instrumenting Apex and LWC entry points..."
 node "$ISV_CLI" adopt "$PREADOPTION"
+
+echo "==> [3/6] setup: generating config class and metadata (interactive)..."
+node "$ISV_CLI" setup "$PREADOPTION"
 
 echo "==> [4/6] sync: copying instrumented output to sentry-isv-adoption..."
 rsync -a --delete "$PREADOPTION/force-app/main/"  "$ADOPTION/instrumented/main/"
 rsync -a --delete "$PREADOPTION/force-app/sentry/" "$ADOPTION/instrumented/sentry/"
 
-echo "==> [5/6] package: building adoption package and updating sentry-isv-sample scratch-def..."
+echo "==> [5/6] package: building adoption package, creating scratch org, and installing package..."
 "$SCRIPT_DIR/create-isv-adoption-package.sh"
 
 echo "==> [6/6] reset: restoring sentry-isv-preadoption to clean state..."
-git -C "$MONOREPO_ROOT" restore sentry-isv-preadoption/force-app/main/
-git -C "$MONOREPO_ROOT" clean -fd sentry-isv-preadoption/force-app/main/
-rm -rf "$PREADOPTION/force-app/sentry/"
+git -C "$MONOREPO_ROOT" restore sentry-isv-preadoption/
+git -C "$MONOREPO_ROOT" clean -fd sentry-isv-preadoption/
 
-echo "Done. sentry-isv-adoption/instrumented/ is up to date and the package version is created."
+
+echo "Done. sentry-isv-adoption/instrumented/ is up to date, the package version is created, and a new scratch org is ready."

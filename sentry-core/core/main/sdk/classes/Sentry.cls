@@ -60,12 +60,21 @@ global with sharing class Sentry {
     }
   }
 
+  global static void log(Object msg) {
+    log(System.LoggingLevel.DEBUG, msg);
+  }
+
+  global static void log(System.LoggingLevel level, Object msg) {
+    // ISV-ONLY: System.debug(level, msg);
+    SentryBreadcrumb crumb = new SentryBreadcrumb(String.valueOf(level));
+    crumb.message = String.valueOf(msg);
+    crumb.category = 'log';
+    crumb.timestamp = Datetime.now();
+    SentryHub.getCurrentHub().addBreadcrumb(crumb);
+  }
+
   // public static void captureMessage(String message) {
   //   SentryHub.getCurrentHub().captureMessage(message);
-  // }
-
-  // public static void addBreadcrumb(SentryBreadcrumb crumb) {
-  //   SentryHub.getCurrentHub().addBreadcrumb(crumb);
   // }
 
   /**
